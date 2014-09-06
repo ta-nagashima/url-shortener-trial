@@ -110,6 +110,12 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
     <!-- extension -->
     <context:component-scan base-package="jp.co.biglobe.isp.mobile.extension" />
 
+
+    <!-- サンプル（こっから下は消してください） -->
+    <!-- Controller層 -->
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.api"/>
+
+
     <beans profile="local,development,testing">
         <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.testdata" />
     </beans>
