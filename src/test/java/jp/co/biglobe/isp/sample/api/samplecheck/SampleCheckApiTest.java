@@ -73,7 +73,7 @@ public class SampleCheckApiTest {
 
             // 実行
             ResultActions resultActions = mockMvc.perform(post(URI)
-                    .param("sampleDateTimeForm", "20140401000000"));
+                    .param("sampleDateTimeForm", "20140401235959"));
 
 //            resultActions.andExpect(content().string(""));
 
@@ -89,107 +89,6 @@ public class SampleCheckApiTest {
             resultActions.andExpect(jsonPath("$.error").doesNotExist());
         }
     }
-
-    /*
-    @RunWith(Enclosed.class)
-    public static class _正常処理 {
-
-        @RunWith(SpringJUnit4ClassRunner.class)
-        @WebAppConfiguration
-        @ContextConfiguration(locations = {"classpath:context.xml"})
-        public static class _契約中 {
-
-            @Autowired
-            public DbUnitTester tester;
-
-            @Autowired
-            private WebApplicationContext wac;
-            private MockMvc mockMvc;
-
-            @Before
-            public void setup() throws IOException, DatabaseUnitException, SQLException {
-                mockMvc = webAppContextSetup(wac).build();
-
-                testcase.set("DEFAULT");
-
-                // 処理前にテーブルをクリアする
-                tester.executeAllClearTableAndSeq();
-
-            }
-
-            @After
-            public void tearDown() throws IOException {
-                testcase.unset();
-            }
-
-            @Test
-            public void _契約中_転出実績なし_転出処理なし_契約解除料発生のときに解約可能_契約解除料発生() throws Exception {
-
-                // 事前準備
-                tester.cleanInsertQuery(SIM_INFO.lte);
-                tester.cleanInsertQuery(FixtureVoiceEngagementState.One.getForEngagement());
-                testcase.set("NOTEND");
-
-                // 実行
-                ResultActions resultActions = getValidResultActions(mockMvc, URI);
-
-                // 確認：JSON（API固有部分）
-                assertForCostPenaltyCharge(resultActions);
-                resultActions.andExpect(jsonPath("$.disengagement.result").value("ok"));
-                resultActions.andExpect(jsonPath("$.mnp_out_completion_and_disengagement.result").value("ng"));
-                MultiCheckApiResponseAssert.assertJsonPath(resultActions);
-            }
-        }
-
-        @RunWith(SpringJUnit4ClassRunner.class)
-        @WebAppConfiguration
-        @ContextConfiguration(locations = {"classpath:context.xml"})
-        public static class _契約中以外 {
-
-            @Autowired
-            public DbUnitTester tester;
-
-            @Autowired
-            private WebApplicationContext wac;
-            private MockMvc mockMvc;
-
-            @Before
-            public void setup() throws IOException, DatabaseUnitException, SQLException {
-                mockMvc = webAppContextSetup(wac).build();
-
-                testcase.set("DEFAULT");
-
-                // 処理前にテーブルをクリアする
-                tester.executeAllClearTableAndSeq();
-
-            }
-
-            @After
-            public void tearDown() throws IOException {
-                testcase.unset();
-            }
-
-            @Test
-            public void _申し込み中のときに解除不可能() throws Exception {
-
-                // 事前準備
-                tester.cleanInsertQuery(SIM_INFO.lte);
-                tester.cleanInsertQuery(FixtureVoiceEngagementState.One.getDefaultData());
-                testcase.set("NOTEXIST");
-
-                // 実行
-                ResultActions resultActions = getValidResultActions(mockMvc, URI);
-
-                // 確認：JSON（API固有部分）
-                assertForNotExistCostPenaltyCharge(resultActions);
-                resultActions.andExpect(jsonPath("$.disengagement.result").value("ng"));
-                resultActions.andExpect(jsonPath("$.mnp_out_completion_and_disengagement.result").value("ng"));
-                MultiCheckApiResponseAssert.assertJsonPath(resultActions);
-            }
-        }
-
-    }
-*/
 
     @RunWith(Enclosed.class)
     public static class _バリデーションエラー {
