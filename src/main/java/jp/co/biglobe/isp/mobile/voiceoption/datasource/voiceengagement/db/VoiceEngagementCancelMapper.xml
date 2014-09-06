@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.voiceengagement.db.VoiceEngagementCancelMapper">
+
+    <!-- EventテーブルのInsert-->
+
+    <insert id="insertEvent">
+        INSERT INTO voice_engagement_cancel_event
+        ( event_id,
+          event_type,
+          event_date,
+          event_process,
+          voice_engagement_number,
+          cancel_reason,
+          cancel_sys_receipt_date_time,
+          cancel_user_order_date
+        )
+        VALUES
+        ( seq_voice_cancel_event.NEXTVAL,
+          BINARY_TO_EUC(#{eventType.dbValue}),
+          #{eventDate},
+          BINARY_TO_EUC(#{eventProcess}),
+          #{validData.voiceEngagementNumber.value},
+          BINARY_TO_EUC(#{validData.voiceEngagementCancelReason.dbValue}),
+          #{validData.voiceEngagementCancelSystemReceiptDateTime.value},
+          BINARY_TO_EUC(#{validData.voiceEngagementCancelOrderDate.value})
+        )
+    </insert>
+
+    <!-- StateテーブルのInsert-->
+
+    <insert id="insertState">
+        INSERT INTO voice_engagement_cancel_state
+        ( voice_engagement_number,
+          cancel_reason,
+          cancel_sys_receipt_date_time,
+          cancel_user_order_date
+        )
+        VALUES
+        ( #{after.voiceEngagementNumber.value},
+          BINARY_TO_EUC(#{after.voiceEngagementCancelReason.dbValue}),
+          #{after.voiceEngagementCancelSystemReceiptDateTime.value},
+          BINARY_TO_EUC(#{after.voiceEngagementCancelOrderDate.value})
+        )
+    </insert>
+
+</mapper>

@@ -1,0 +1,1 @@
+CREATE SEQUENCE seq_biglobe_denwa_linkage_e

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.datasource.view.chargeengagementlistrefer.db.ChargeEngagementRepositoryQueryMapper">
+
+    <select id="findByLteThreeGEngagementNumberForCount" resultMap="ChargeEngagementEntityTotalCountMap">
+        SELECT
+        count(*) AS total_count
+        FROM
+        (
+            <include refid="coreSqlDefine"/>
+        )
+    </select>
+
+    <resultMap id="ChargeEngagementEntityTotalCountMap" type="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.view.chargeengagementlistrefer.ChargeEngagementEntityTotalCount">
+        <constructor>
+            <arg column="total_count" javaType="Integer" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+
+
+    <select id="findAllByLteThreeGEngagementNumber" resultMap="ChargeEngagementEntityMap">
+        SELECT
+          *
+        FROM
+        (
+            SELECT
+              rownum as row_id,
+              option_name,
+              charge_engagement_number,
+              completion_status,
+              order_date_time,
+              purchased_volume,
+              application_end_date_time
+            FROM
+            (
+                SELECT
+                  *
+                FROM
+                (
+                  <include refid="coreSqlDefine"/>
+                )
+                ORDER BY order_date_time DESC
+            )
+        )
+        WHERE row_id BETWEEN #{row} AND #{high}
+
+    </select>
+
+    <sql id="coreSqlDefine">
+        SELECT
+         EUC_TO_BINARY('スピードチャージ') AS option_name,
+         EUC_TO_BINARY(p.scharge_engagement_number) AS charge_engagement_number,
+         CASE
+    　　　 WHEN c.scharge_engagement_number IS NULL THEN EUC_TO_BINARY('remained')
+    　　　 ELSE EUC_TO_BINARY('completion')
+         END AS completion_status,
+         p.order_date_time AS order_date_time,
+         p.purchased_volume AS purchased_volume,
+         c.application_end_date_time AS application_end_date_time
+        FROM lte_scharge_purchase_event p LEFT OUTER JOIN lte_scharge_complete_event c
+        ON p.scharge_engagement_number = c.scharge_engagement_number
+        WHERE p.lte_three_g_engagement_number = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+        UNION ALL
+        SELECT
+        EUC_TO_BINARY('ボリュームチャージ') AS option_name,
+        EUC_TO_BINARY(p.vcharge_engagement_number) AS charge_engagement_number,
+    　　 CASE
+    　　　 WHEN c.vcharge_engagement_number IS NULL THEN EUC_TO_BINARY('remained')
+    　　　 ELSE EUC_TO_BINARY('completion')
+    　　 END AS completion_status,
+        p.order_date_time AS order_date_time,
+        p.purchased_volume AS purchased_volume,
+        c.application_end_date_time AS application_end_date_time
+        FROM lte_vcharge_purchase_event p LEFT OUTER JOIN lte_vcharge_complete_event c
+        ON p.vcharge_engagement_number = c.vcharge_engagement_number
+        WHERE p.lte_three_g_engagement_number = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+    </sql>
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="ChargeEngagementEntityMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.view.chargeengagementlistrefer.ChargeEngagementEntity">
+        <constructor>
+            <arg column="row_id" javaType="Integer" jdbcType="INTEGER"/>
+            <arg column="option_name" javaType="String" jdbcType="VARCHAR"/>
+            <arg column="charge_engagement_number" javaType="String" jdbcType="VARCHAR"/>
+            <arg column="purchased_volume" javaType="int" jdbcType="INTEGER"/>
+            <arg column="completion_status" javaType="String" jdbcType="VARCHAR"/>
+            <arg column="order_date_time" javaType="Date" jdbcType="TIMESTAMP"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.view.chargeengagementlistrefer.end.ValidChargeApplicationEnd"
+                 resultMap="ValidChargeApplicationEndMap"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="ValidChargeApplicationEndMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.view.chargeengagementlistrefer.end.ValidChargeApplicationEnd">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.view.chargeengagementlistrefer.end.ChargeApplicationEndDateTime"
+                 resultMap="ChargeApplicationEndDateTimeMap"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="ChargeApplicationEndDateTimeMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.view.chargeengagementlistrefer.end.ChargeApplicationEndDateTime">
+        <constructor>
+            <arg column="application_end_date_time" javaType="Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+
+
+</mapper>

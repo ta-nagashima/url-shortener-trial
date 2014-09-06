@@ -1,0 +1,1 @@
+ALTER TABLE voice_identification_upload_s ADD CONSTRAINT fk_voice_identity_upload_s FOREIGN KEY ( identification_receipt_number ) REFERENCES voice_identification_state( identification_receipt_number )

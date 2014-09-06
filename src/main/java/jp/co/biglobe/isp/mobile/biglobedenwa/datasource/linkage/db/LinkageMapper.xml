@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.biglobedenwa.datasource.linkage.db.LinkageMapper">
+
+    <insert id="insertEvent">
+        INSERT INTO biglobe_denwa_linkage_event
+        ( event_id,
+          event_type,
+          event_date,
+          event_process,
+          msisdn,
+          linkage_status,
+          notification,
+          update_date,
+          apply_channel
+        )
+        VALUES
+        ( seq_biglobe_denwa_linkage_e.NEXTVAL,
+          BINARY_TO_EUC(#{eventType.dbValue}),
+          #{eventDate},
+          BINARY_TO_EUC(#{eventProcess}),
+          BINARY_TO_EUC(#{validData.biglobeDenwaMsisdn.value}),
+          BINARY_TO_EUC(#{validData.biglobeDenwaLinkageStatus.dbValue}),
+          BINARY_TO_EUC(#{validData.biglobeDenwaNotification.dbValue}),
+          #{validData.biglobeDenwaStatusChangeDateTime.value},
+          BINARY_TO_EUC(#{validData.biglobeDenwaApplyChannel.dbValue})
+        )
+    </insert>
+
+    <insert id="insertState">
+        INSERT INTO biglobe_denwa_linkage_state
+        ( msisdn,
+          linkage_status,
+          notification,
+          update_date,
+          apply_channel
+        )
+        VALUES
+        ( BINARY_TO_EUC(#{after.biglobeDenwaMsisdn.value}),
+          BINARY_TO_EUC(#{after.biglobeDenwaLinkageStatus.dbValue}),
+          BINARY_TO_EUC(#{after.biglobeDenwaNotification.dbValue}),
+          #{after.biglobeDenwaStatusChangeDateTime.value},
+          BINARY_TO_EUC(#{after.biglobeDenwaApplyChannel.dbValue})
+        )
+    </insert>
+
+    <update id="updateState">
+        UPDATE biglobe_denwa_linkage_state
+        SET linkage_status = BINARY_TO_EUC(#{after.biglobeDenwaLinkageStatus.dbValue}),
+            notification = BINARY_TO_EUC(#{after.biglobeDenwaNotification.dbValue}),
+            update_date = #{after.biglobeDenwaStatusChangeDateTime.value},
+            apply_channel = BINARY_TO_EUC(#{after.biglobeDenwaApplyChannel.dbValue})
+        WHERE msisdn = BINARY_TO_EUC(#{after.biglobeDenwaMsisdn.value})
+    </update>
+
+    <delete id="deleteState">
+        DELETE FROM biglobe_denwa_linkage_state
+        WHERE msisdn = BINARY_TO_EUC(#{before.biglobeDenwaMsisdn.value})
+    </delete>
+
+    <select id="findByMsisdn" resultMap="ValidLinkage">
+        SELECT
+            EUC_TO_BINARY(e.msisdn) AS msisdn,
+            EUC_TO_BINARY(e.linkage_status) AS linkage_status,
+            EUC_TO_BINARY(e.notification) AS notification,
+            e.update_date AS update_date,
+            EUC_TO_BINARY(e.apply_channel) AS apply_channel
+        FROM biglobe_denwa_linkage_state e
+        WHERE e.msisdn = BINARY_TO_EUC(#{msisdn.value})
+    </select>
+
+
+    <select id="lockByMsisdn" resultMap="DenwaMsisdnMap">
+        SELECT EUC_TO_BINARY(e.msisdn) AS msisdn
+        FROM biglobe_denwa_linkage_state e
+        WHERE e.msisdn = BINARY_TO_EUC(#{msisdn.value})
+        FOR UPDATE
+    </select>
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="ValidLinkage"
+               type="jp.co.biglobe.isp.mobile.biglobedenwa.domain.linkage.ValidBiglobeDenwaLinkage">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.biglobedenwa.domain.linkage.BiglobeDenwaMsisdn"
+                 resultMap="DenwaMsisdnMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.biglobedenwa.domain.linkage.BiglobeDenwaLinkageStatus"
+                 column="linkage_status"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.biglobedenwa.domain.linkage.BiglobeDenwaStatusChangeDateTime"
+                 resultMap="DenwaStatusChangeDateTimeMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.biglobedenwa.domain.linkage.BiglobeDenwaNotification"
+                 column="notification"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.biglobedenwa.domain.linkage.BiglobeDenwaApplyChannel"
+                 column="apply_channel"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+        </constructor>
+    </resultMap>
+
+    <!--  各ValueObjectのマッピング  -->
+    <resultMap id="DenwaMsisdnMap" type="jp.co.biglobe.isp.mobile.biglobedenwa.domain.linkage.BiglobeDenwaMsisdn">
+        <constructor>
+            <arg column="msisdn" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="DenwaStatusChangeDateTimeMap"
+               type="jp.co.biglobe.isp.mobile.biglobedenwa.domain.linkage.BiglobeDenwaStatusChangeDateTime">
+        <constructor>
+            <arg column="update_date" javaType="Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+
+</mapper>

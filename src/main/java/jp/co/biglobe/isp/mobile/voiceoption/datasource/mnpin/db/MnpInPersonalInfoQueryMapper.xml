@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpin.db.MnpInPersonalInfoQueryMapper">
+
+    <select id="findByVoiceEngagementNumber" resultMap="ValidMnpInputItemsMap">
+        SELECT
+            voice_engagement_number AS pi_voice_engagement_number,
+            EUC_TO_BINARY(pi.mnp_in_full_name) AS pi_mnp_in_full_name,
+            EUC_TO_BINARY(pi.mnp_in_full_name_kana) AS pi_mnp_in_full_name_kana,
+            EUC_TO_BINARY(pi.mnp_in_gender) AS pi_mnp_in_gender,
+            EUC_TO_BINARY(pi.mnp_in_birthday) AS pi_mnp_in_birthday
+        FROM voice_mnp_in_personal_info_s pi
+        WHERE voice_engagement_number = #{voiceEngagementNumber.value}
+    </select>
+
+    <insert id="insertEvent">
+        INSERT INTO voice_mnp_in_personal_info_e
+        ( event_id,
+          event_type,
+          event_date,
+          event_process,
+          voice_engagement_number,
+          mnp_in_full_name,
+          mnp_in_full_name_kana,
+          mnp_in_birthday,
+          mnp_in_gender
+        )
+        VALUES
+        ( seq_voice_mnp_in_psnl_inf_e.NEXTVAL,
+          BINARY_TO_EUC(#{eventType.dbValue}),
+          #{eventDate},
+          BINARY_TO_EUC(#{eventProcess}),
+          #{validData.voiceEngagementNumber.value},
+          BINARY_TO_EUC(#{validData.mnpFullName.value}),
+          BINARY_TO_EUC(#{validData.mnpFullNameKana.value}),
+          BINARY_TO_EUC(#{validData.mnpBirthday.value}),
+          BINARY_TO_EUC(#{validData.mnpGender.dbValue})
+        )
+    </insert>
+
+    <insert id="insertState">
+        INSERT INTO voice_mnp_in_personal_info_s
+        ( voice_engagement_number,
+          mnp_in_full_name,
+          mnp_in_full_name_kana,
+          mnp_in_birthday,
+          mnp_in_gender
+        )
+        VALUES
+        ( #{after.voiceEngagementNumber.value},
+          BINARY_TO_EUC(#{after.mnpFullName.value}),
+          BINARY_TO_EUC(#{after.mnpFullNameKana.value}),
+          BINARY_TO_EUC(#{after.mnpBirthday.value}),
+          BINARY_TO_EUC(#{after.mnpGender.dbValue})
+        )
+    </insert>
+
+    <delete id="deleteState">
+        DELETE FROM voice_mnp_in_personal_info_s
+        WHERE voice_engagement_number = #{before.voiceEngagementNumber.value}
+    </delete>
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="ValidMnpInputItemsMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.ValidMnpInPersonalInfo">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.voiceengagement.VoiceEngagementNumber" resultMap="VoiceEngagementNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnppersonalinfo.MnpFullName" resultMap="MnpFullNameMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnppersonalinfo.MnpFullNameKana" resultMap="MnpFullNameKanaMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnppersonalinfo.MnpGender"
+                 column="pi_mnp_in_gender" typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnppersonalinfo.MnpBirthday" resultMap="MnpBirthdayMap"/>
+        </constructor>
+    </resultMap>
+
+    <!--  各ValueObjectのマッピング  -->
+    <resultMap id="VoiceEngagementNumberMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.voiceengagement.VoiceEngagementNumber">
+        <constructor>
+            <arg column="pi_voice_engagement_number" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="MnpFullNameMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnppersonalinfo.MnpFullName">
+        <constructor>
+            <arg column="pi_mnp_in_full_name" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="MnpFullNameKanaMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnppersonalinfo.MnpFullNameKana">
+        <constructor>
+            <arg column="pi_mnp_in_full_name_kana" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="MnpBirthdayMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnppersonalinfo.MnpBirthday">
+        <constructor>
+            <arg column="pi_mnp_in_birthday" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+</mapper>

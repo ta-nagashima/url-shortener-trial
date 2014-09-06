@@ -1,0 +1,1 @@
+CREATE SEQUENCE seq_voice_first_month_charge_e

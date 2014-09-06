@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpout.db.MnpOutNumberQueryMapper">
+
+    <insert id="insertEvent">
+        INSERT INTO voice_mnp_out_number_event
+        ( event_id,
+          event_type,
+          event_date,
+          event_process,
+          voice_mnp_out_id,
+          mnp_reservation_number,
+          expire_date,
+          execution_date,
+          operator_id
+        )
+        VALUES (
+          seq_voice_mnp_out_num_e.NEXTVAL,
+          BINARY_TO_EUC(#{eventType.dbValue}),
+          #{eventDate},
+          BINARY_TO_EUC(#{eventProcess}),
+          #{validData.voiceMnpOutId.value},
+          BINARY_TO_EUC(#{validData.mnpOutReservationNumber.value}),
+          BINARY_TO_EUC(#{validData.expireDate.value}),
+          BINARY_TO_EUC(#{validData.executionDate.value}),
+          BINARY_TO_EUC(#{validData.operatorId.value})
+        )
+    </insert>
+
+    <insert id="insertState">
+        INSERT INTO voice_mnp_out_number_state
+        (
+          voice_mnp_out_id,
+          mnp_reservation_number,
+          expire_date,
+          execution_date,
+          operator_id
+        )
+        VALUES (
+          #{after.voiceMnpOutId.value},
+          BINARY_TO_EUC(#{after.mnpOutReservationNumber.value}),
+          BINARY_TO_EUC(#{after.expireDate.value}),
+          BINARY_TO_EUC(#{after.executionDate.value}),
+          BINARY_TO_EUC(#{after.operatorId.value})
+          )
+    </insert>
+
+    <delete id="deleteState">
+        DELETE FROM voice_mnp_out_number_state
+        WHERE voice_mnp_out_id = #{before.voiceMnpOutId.value}
+    </delete>
+
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="MnpOutReservationNumberMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.mnpoutreservationnumber.ValidMnpOutReservationNumber">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.VoiceMnpOutId"
+                 resultMap="VoiceMnpOutIdMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.MnpReservationNumber"
+                 resultMap="MnpReservationNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.mnpoutreservationnumber.ExpireDate"
+                 resultMap="ExpireDateMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.executiondate.ExecutionDate"
+                 resultMap="ExecutionDateMap"/>
+            <arg javaType="jp.co.biglobe.isp.auth.domain.operatornouser.OperatorId" resultMap="OperatorIdMap"/>
+        </constructor>
+    </resultMap>
+
+    <!--  各ValueObjectのマッピング  -->
+    <resultMap id="VoiceMnpOutIdMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.VoiceMnpOutId">
+        <constructor>
+            <arg column="n_voice_mnp_out_id" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="MnpReservationNumberMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.MnpReservationNumber">
+        <constructor>
+            <arg column="o_mnp_reservation_number" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="ExpireDateMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.mnpoutreservationnumber.ExpireDate">
+        <constructor>
+            <arg column="expire_date" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="ExecutionDateMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.executiondate.ExecutionDate">
+        <constructor>
+            <arg column="execution_date" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="OperatorIdMap" type="jp.co.biglobe.isp.auth.domain.operatornouser.OperatorId">
+        <constructor>
+            <arg column="operator_id" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+
+</mapper>

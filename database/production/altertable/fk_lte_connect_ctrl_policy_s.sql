@@ -1,0 +1,1 @@
+ALTER TABLE lte_connect_control_policy_s ADD CONSTRAINT fk_lte_connect_ctrl_policy_s FOREIGN KEY ( lte_three_g_engagement_number ) REFERENCES lte_contract_info( primary_key1 )

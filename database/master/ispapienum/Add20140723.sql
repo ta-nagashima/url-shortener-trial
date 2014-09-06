@@ -1,0 +1,1 @@
+insert into isp_api_client_enum values(2052,2002,'Scenario','C_BDCM_VoOptNonAc_tim_get_act','LTE・3G ノンアクティベーションリスト抽出バッチアクションシナリオ（音声通話オプション用）',SYSDATE);

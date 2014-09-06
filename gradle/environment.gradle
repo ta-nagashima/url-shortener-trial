@@ -1,0 +1,33 @@
+import java.lang.management.ManagementFactory
+
+def envList = ['localMac', 'localWindows', 'localTomcat', 'localOracle',
+               'cloudHosting', 'cloudHostingTomcat', 'cloudHostingFromLocal',
+               'development', 'testing', 'staging', 'production']
+
+if (!hasProperty('env')) {
+    def osMXBean = ManagementFactory.getOperatingSystemMXBean()
+    if("${osMXBean.name}".contains("Mac")){
+        env = envList[0]
+    }else{
+        env = envList[1]
+    }
+}
+
+if(!envList.find{it == env}){
+    throw new Exception("There is no environment named '$env'")
+}
+
+if("${env}" != envList[0] && "${env}" != envList[1] && "${env}" != envList[2] && "${env}" != envList[4]){
+    // warファイルからローカル専用のファイルを削除
+    processResources{
+        exclude '**/wifi-spot-development.properties'
+    }
+
+    ext{
+        localLibraryConfigrations = 'testCompile'
+    }
+}else{
+    ext{
+        localLibraryConfigrations = 'compile'
+    }
+}

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpin.db.MnpInQueryMapper">
+
+    <insert id="insertEvent">
+        INSERT INTO voice_mnp_in_event
+        ( event_id,
+          event_type,
+          event_date,
+          event_process,
+          voice_engagement_number,
+          voice_msisdn,
+          mnp_reservation_number
+        )
+        VALUES
+        ( seq_voice_mnp_in_event.NEXTVAL,
+          BINARY_TO_EUC(#{eventType.dbValue}),
+          #{eventDate},
+          BINARY_TO_EUC(#{eventProcess}),
+          #{validData.voiceEngagementNumber.value},
+          BINARY_TO_EUC(#{validData.voiceMsisdn.value}),
+          BINARY_TO_EUC(#{validData.mnpReservationNumber.value})
+        )
+    </insert>
+
+    <insert id="insertState">
+        INSERT INTO voice_mnp_in_state
+        ( voice_engagement_number,
+          voice_msisdn,
+          mnp_reservation_number
+        )
+        VALUES
+        ( #{after.voiceEngagementNumber.value},
+          BINARY_TO_EUC(#{after.voiceMsisdn.value}),
+          BINARY_TO_EUC(#{after.mnpReservationNumber.value})
+        )
+    </insert>
+
+    <update id="updateState">
+        UPDATE voice_mnp_in_state
+        SET voice_msisdn = BINARY_TO_EUC(#{after.voiceMsisdn.value}),
+        mnp_reservation_number = BINARY_TO_EUC(#{after.mnpReservationNumber.value})
+        WHERE voice_engagement_number = #{before.voiceEngagementNumber.value}
+    </update>
+
+    <delete id="deleteState">
+        DELETE FROM  voice_mnp_in_state
+        WHERE voice_engagement_number = #{before.voiceEngagementNumber.value}
+    </delete>
+
+    <select id="selectState" resultMap="ValidMnpInMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_mnp_in_state mi LEFT OUTER JOIN voice_mnp_in_personal_info_s pi
+        ON mi.voice_engagement_number = pi.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_activation_state a
+        ON mi.voice_engagement_number = a.voice_engagement_number
+        WHERE mi.voice_engagement_number = #{before.voiceEngagementNumber.value}
+    </select>
+
+    <insert id="insertUpdateEvent">
+        INSERT INTO voice_mnp_in_event
+        ( event_id,
+        event_type,
+        event_date,
+        event_process,
+        voice_engagement_number,
+        voice_msisdn,
+        mnp_reservation_number
+        )
+        SELECT
+          seq_voice_mnp_in_event.NEXTVAL,
+          BINARY_TO_EUC(#{eventType.dbValue}),
+          #{eventDate},
+          BINARY_TO_EUC(#{eventProcess}),
+          #{validMnpIn.voiceEngagementNumber.value},
+          BINARY_TO_EUC(#{validMnpIn.voiceMsisdn.value}),
+          BINARY_TO_EUC(#{validMnpIn.mnpReservationNumber.value})
+        FROM voice_mnp_in_state
+        WHERE voice_engagement_number = #{validMnpIn.voiceEngagementNumber.value}
+    </insert>
+
+    <select id="findByVoiceEngagementNumber" resultMap="ValidMnpInMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_mnp_in_state mi LEFT OUTER JOIN voice_mnp_in_personal_info_s pi
+        ON mi.voice_engagement_number = pi.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_activation_state a
+        ON mi.voice_engagement_number = a.voice_engagement_number
+        WHERE mi.voice_engagement_number = #{voiceEngagementNumber.value}
+    </select>
+
+    <select id="findByIdentificationReceiptNumber" resultMap="ValidMnpInMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_mnp_in_state mi
+        LEFT OUTER JOIN voice_mnp_in_personal_info_s pi
+        ON mi.voice_engagement_number = pi.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_activation_state a
+        ON mi.voice_engagement_number = a.voice_engagement_number
+        JOIN voice_engagement_state e
+        ON mi.voice_engagement_number = e.voice_engagement_number
+        LEFT OUTER JOIN voice_identification_state i
+        ON e.voice_engagement_number = i.voice_engagement_number
+        WHERE i.identification_receipt_number = BINARY_TO_EUC(#{identificationReceiptNumber.value})
+    </select>
+
+    <select id="findByVoiceMsisdnUnderValidForAll" resultMap="ValidMnpInMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_engagement_state e
+        LEFT OUTER JOIN voice_mnp_in_state mi
+        ON e.voice_engagement_number = mi.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_personal_info_s pi
+        ON mi.voice_engagement_number = pi.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_activation_state a
+        ON mi.voice_engagement_number = a.voice_engagement_number
+        WHERE mi.voice_msisdn = BINARY_TO_EUC(#{voiceMsisdn.value})
+        AND ( e.voice_engagement_status IN ( BINARY_TO_EUC(#{voiceEngagementStatusOrdered.dbValue}), BINARY_TO_EUC(#{voiceEngagementStatusEngaged.dbValue}) )
+        OR ( e.voice_engagement_status = BINARY_TO_EUC(#{voiceEngagementStatusDisengaged.dbValue}) AND e.engagement_end_date_time <![CDATA[ >= ]]> #{eventDate.value}))
+    </select>
+
+    <select id="findByBiglobeDenwaMsisdnUnderValidForAll" resultMap="ValidMnpInMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_engagement_state e
+        LEFT OUTER JOIN voice_mnp_in_state mi
+        ON e.voice_engagement_number = mi.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_personal_info_s pi
+        ON mi.voice_engagement_number = pi.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_activation_state a
+        ON mi.voice_engagement_number = a.voice_engagement_number
+        WHERE mi.voice_msisdn = BINARY_TO_EUC(#{biglobeDenwaMsisdn.value})
+        AND ( e.voice_engagement_status IN ( BINARY_TO_EUC(#{voiceEngagementStatusOrdered.dbValue}), BINARY_TO_EUC(#{voiceEngagementStatusEngaged.dbValue}) )
+        OR ( e.voice_engagement_status = BINARY_TO_EUC(#{voiceEngagementStatusDisengaged.dbValue}) AND e.engagement_end_date_time <![CDATA[ >= ]]> #{eventDate.value}))
+    </select>
+
+    <select id="findByUserId" resultMap="ValidMnpInMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_engagement_state ve LEFT JOIN voice_mnp_in_state mi
+        ON ve.voice_engagement_number = mi.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_personal_info_s pi
+        ON mi.voice_engagement_number = pi.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_activation_state a
+        ON mi.voice_engagement_number = a.voice_engagement_number
+        WHERE ve.user_id = BINARY_TO_EUC(#{userId.value})
+    </select>
+
+    <select id="lockByVoiceEngagementNumber" resultMap="VoiceEngagementNumberMap">
+        SELECT voice_engagement_number AS mi_voice_engagement_number
+        FROM voice_mnp_in_state
+        WHERE voice_engagement_number = #{voiceEngagementNumber.value}
+        FOR UPDATE
+    </select>
+
+    <!--  select文のカラム指定  -->
+    <sql id="selectColumnsDefine">
+        mi.voice_engagement_number AS mi_voice_engagement_number,
+        EUC_TO_BINARY(mi.voice_msisdn) AS voice_msisdn,
+        EUC_TO_BINARY(mi.mnp_reservation_number) AS mi_mnp_reservation_number,
+        pi.voice_engagement_number AS pi_voice_engagement_number,
+        EUC_TO_BINARY(pi.mnp_in_full_name) AS pi_mnp_in_full_name,
+        EUC_TO_BINARY(pi.mnp_in_full_name_kana) AS pi_mnp_in_full_name_kana,
+        EUC_TO_BINARY(pi.mnp_in_gender) AS pi_mnp_in_gender,
+        EUC_TO_BINARY(pi.mnp_in_birthday) AS pi_mnp_in_birthday,
+        a.voice_engagement_number AS a_voice_engagement_number,
+        EUC_TO_BINARY(a.mnp_activation_due_date) AS a_mnp_activation_due_date
+    </sql>
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="ValidMnpInMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.ValidMnpIn">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.voiceengagement.VoiceEngagementNumber" resultMap="VoiceEngagementNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.VoiceMsisdn" resultMap="VoiceMsisdnMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.MnpReservationNumber" resultMap="MnpReservationNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.ValidMnpInPersonalInfo"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpin.db.MnpInPersonalInfoQueryMapper.ValidMnpInputItemsMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.mnpinactivationduedate.ValidMnpInActivation"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpin.db.MnpInActivationDateMapper.ValidMnpInActivationMap"/>
+        </constructor>
+    </resultMap>
+
+    <!--  各ValueObjectのマッピング  -->
+    <resultMap id="VoiceEngagementNumberMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.voiceengagement.VoiceEngagementNumber">
+        <constructor>
+            <arg column="mi_voice_engagement_number" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="VoiceMsisdnMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.VoiceMsisdn">
+        <constructor>
+            <arg column="voice_msisdn" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="MnpReservationNumberMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.MnpReservationNumber">
+        <constructor>
+            <arg column="mi_mnp_reservation_number" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+</mapper>

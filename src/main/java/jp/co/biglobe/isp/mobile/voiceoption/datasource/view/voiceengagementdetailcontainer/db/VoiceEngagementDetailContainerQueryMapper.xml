@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.view.voiceengagementdetailcontainer.db.VoiceEngagementDetailContainerQueryMapper">
+
+    <select id="findByLteThreeGEngagementNumberForAll" resultMap="VoiceEngagementDetailReferContainerMap">
+        SELECT
+        <include refid="jp.co.biglobe.isp.mobile.voiceoption.datasource.voiceengagement.db.VoiceEngagementMapper.selectColumnsDefine"/>,
+        <include refid="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpin.db.MnpInQueryMapper.selectColumnsDefine"/>,
+        <include refid="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpout.db.MnpOutQueryMapper.selectColumnsDefine"/>,
+        <include refid="jp.co.biglobe.isp.mobile.voiceoption.datasource.charge.engagementmonthdisengagementcharge.db.EngagementMonthDisengagementChargeQueryMapper.selectColumnsDefine"/>
+        FROM voice_engagement_state v
+        LEFT OUTER JOIN voice_engagement_cancel_state c ON v.voice_engagement_number = c.voice_engagement_number
+        LEFT OUTER JOIN voice_engagement_disengage_s d ON v.voice_engagement_number = d.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_state mi ON v.voice_engagement_number = mi.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_personal_info_s pi ON mi.voice_engagement_number = pi.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_in_activation_state a ON mi.voice_engagement_number = a.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_out_state o ON v.voice_engagement_number = o.voice_engagement_number
+        LEFT OUTER JOIN voice_mnp_out_personal_info_s p ON o.voice_mnp_out_id = p.voice_mnp_out_id
+        LEFT OUTER JOIN voice_mnp_out_number_state n ON o.voice_mnp_out_id = n.voice_mnp_out_id
+        LEFT OUTER JOIN voice_mnp_out_complete_state co ON o.voice_mnp_out_id = co.voice_mnp_out_id
+        LEFT OUTER JOIN voice_eng_month_diseng_chrg_s e ON v.voice_engagement_number = e.voice_engagement_number
+        WHERE v.lte_three_g_engagement_number = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+    </select>
+
+
+    <resultMap id="VoiceEngagementDetailReferContainerMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.view.voiceengagementdetailcontainer.VoiceEngagementDetailContainer">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.voiceengagement.ValidVoiceEngagement"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.voiceengagement.db.VoiceEngagementMapper.ValidEngagementMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.ValidMnpIn"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpin.db.MnpInQueryMapper.ValidMnpInMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.ValidMnpOut"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpout.db.MnpOutQueryMapper.MnpOutMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.charge.engagementmonthdisengagementcharge.ValidEngagementMonthDisengagementCharge"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.charge.engagementmonthdisengagementcharge.db.EngagementMonthDisengagementChargeQueryMapper.ValidEngagementMonthDisengagementChargeMap"/>
+        </constructor>
+    </resultMap>
+
+</mapper>

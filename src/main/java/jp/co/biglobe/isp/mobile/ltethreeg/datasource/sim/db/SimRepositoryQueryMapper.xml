@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.ltethreeg.datasource.sim.db.SimRepositoryQueryMapper">
+
+    <!--
+
+    lte_contract_info：契約テーブル（親）
+        primary_key1：契約番号
+        index_free1：ユーザーID
+
+    lte_equip_info：機器マスタテーブル（子）
+        primary_key1：表品機種コード
+        item_free4：回線有無
+        item_free2：削除フラグ
+
+    lte_usable_equip：利用機器テーブル（孫）
+        item_free2：有効フラグ
+        item_free3：削除フラグ
+        item_free_date4：機器利用開始日時
+        item_free_date6：機器利用期限日時
+
+
+    -->
+
+
+    <select id="findByLteThreeGEngagementNumberUnderValid" resultMap="ValidSimEntity">
+        SELECT
+            EUC_TO_BINARY(lue.primary_key1) AS equipment_number,
+            EUC_TO_BINARY(lue.item_free21) AS msisdn
+        FROM lte_usable_equip lue
+        INNER JOIN lte_equip_info lei
+                ON lei.primary_key1 = lue.item_free11
+        WHERE lue.foreign_key1 = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+          AND ((lue.item_free2 = '1') OR (lue.item_free2 = '0' AND lue.item_free_date6 <![CDATA[ >= ]]> #{systemdate}))
+          AND lei.item_free4 = '1'
+          AND lue.item_free3 = '0'
+          AND lei.item_free2 = '0'
+        ORDER BY lue.primary_key1 ASC
+    </select>
+
+
+    <select id="findByUserIdAndTargetMonthUnderValid" resultMap="ValidSimEntity">
+        SELECT
+            EUC_TO_BINARY(lue.primary_key1) AS equipment_number,
+            EUC_TO_BINARY(lue.item_free21) AS msisdn
+        FROM lte_usable_equip lue
+            INNER JOIN lte_equip_info lei
+            ON lei.primary_key1 = lue.item_free11
+            INNER JOIN lte_contract_info lci
+            ON lci.primary_key1 = lue.foreign_key1
+        WHERE lci.index_free1 = BINARY_TO_EUC(#{userId.value})
+            AND lue.item_free21 is not null
+            AND lue.item_free_date4  <![CDATA[ <= ]]> #{targetMonth.getLastDate}))
+            AND (lue.item_free_date6 <![CDATA[ >= ]]> #{targetMonth.getFirstDate}))
+        ORDER BY msisdn ASC
+    </select>
+
+
+
+
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="ValidSimEntity" type="jp.co.biglobe.isp.mobile.ltethreeg.domain.sim.ValidSimEntity">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.sim.EquipmentNumber" resultMap="EquipmentNumber"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.sim.ValidMsisdn" resultMap="Msisdn"/>
+        </constructor>
+    </resultMap>
+
+    <!--  各ValueObjectのマッピング  -->
+    <resultMap id="EquipmentNumber" type="jp.co.biglobe.isp.mobile.ltethreeg.domain.sim.EquipmentNumber">
+        <constructor>
+            <arg column="equipment_number" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="Msisdn" type="jp.co.biglobe.isp.mobile.ltethreeg.domain.sim.ValidMsisdn">
+        <constructor>
+            <arg column="msisdn" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+</mapper>

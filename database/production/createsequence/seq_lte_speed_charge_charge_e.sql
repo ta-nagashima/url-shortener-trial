@@ -1,0 +1,1 @@
+CREATE SEQUENCE seq_lte_speed_charge_charge_e

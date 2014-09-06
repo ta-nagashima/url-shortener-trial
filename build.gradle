@@ -1,0 +1,336 @@
+// プラグイン定義 利用できるタスク(gradle tasks)が増える
+apply {
+    plugin 'groovy' // Viewテンプレートにgroovyを使用しているので、javaではなくgroovyを宣言
+    plugin 'war'
+    plugin 'tomcat'
+    plugin "idea"
+    plugin 'findbugs'
+}
+
+// 各環境にバージョンを揃えたうえでgradleをインストールするのは大変なので、
+// gradlewコマンドを利用する。
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.12'
+}
+
+findbugs {
+    toolVersion = "3.0.0"
+    sourceSets = [sourceSets.main]
+    ignoreFailures = true
+    reportsDir = file("$project.buildDir/findbugsReports")
+    effort = "max"
+    reportLevel = "low"
+//    excludeFilter = file("$rootProject.projectDir/gradle/findbugs/excludeFilter.xml")
+}
+
+// 環境ごとの設定を実施
+apply from: file('gradle/environment.gradle')
+
+
+// プロパティ設定
+ext{
+    defaultEncoding = 'UTF-8'
+    javaVersion = '1.7'
+    springframeworkVersion = '4.0.5.RELEASE'
+    springBatchVersion = '2.1.7.RELEASE'
+    jacksonVersion = '1.9.13'
+}
+
+// 環境ごとにデフォルト文字コードが違うので、コンパイル時の文字コードを指定する
+compileJava.options.encoding = defaultEncoding
+compileGroovy.options.encoding = defaultEncoding
+compileTestJava.options.encoding = defaultEncoding
+
+repositories {
+    mavenCentral()
+}
+
+// デフォルトのディレクトリ構成から以下の要素を追加する
+sourceSets{
+    main{
+        java.srcDirs = []
+        groovy.srcDirs = ['src/main/java']
+        resources{
+            srcDir 'src/main/java'
+        }
+        // TomcatがContextを自動リロードするために、クラスファイルの出力先を変更
+        output.classesDir = 'src/main/webapp/WEB-INF/classes'
+    }
+
+    test{
+        java.srcDirs = []
+        groovy.srcDirs = ['src/test/groovy', 'src/test/java' ]
+    }
+}
+
+// https://github.com/geb/geb-example-gradle
+// The drivers we want to use
+ext.drivers = ["firefox", "chrome"]
+
+drivers.each { driver ->
+    task "${driver}Test"(type: Test) {
+        testReportDir = reporting.file("$name/tests")
+        testResultsDir = file("$buildDir/test-results/$name")
+
+        systemProperty "geb.build.reportsDir", reporting.file("$name/geb")
+        systemProperty "geb.env", driver
+
+        // If you wanted to set the baseUrl in your build…
+        // systemProperty "geb.build.baseUrl", "http://myapp.com"
+
+        useJUnit{
+            includeCategories 'jp.co.biglobe.test.util.category.BrowserTestCategory'
+        }
+
+        // テストする環境で使用する設定ファイルが異なる
+        systemProperties 'environment': "${env}"
+    }
+}
+
+// gradlew test コマンド実行時の処理
+test {
+    // テストする環境で使用する設定ファイルが異なる
+    systemProperties 'environment': "${env}"
+
+    // テスト失敗時の情報を標準より多く出力する設定
+    testLogging.exceptionFormat = 'full'
+
+    // VM引数に下記の設定をしないとcoberturaの実行が失敗する
+    test.jvmArgs '-XX:-UseSplitVerifier'
+
+    useJUnit{
+        excludeCategories 'jp.co.biglobe.test.util.category.BrowserTestCategory'
+        excludeCategories 'jp.co.biglobe.test.util.category.ScenarioTestCategory'
+    }
+
+    if("${env}" == 'cloudHosting'){
+        useJUnit{
+            excludeCategories 'jp.co.biglobe.test.util.category.BrowserTestCategory'
+            excludeCategories 'jp.co.biglobe.test.util.category.ScenarioTestCategory'
+        }
+    }
+
+    // GradleでEnclosedテストが2回実行されることの対策（そのうちGradle側で対応してくれるようになるかも）
+    exclude '**/*$*'
+
+//    // Jenkinsのカバレッジ出力設定
+//    def testmodeList = ['all', 'isp', 'fw', 'sample']
+//    if (!hasProperty('testmode')) {
+//        testmode = testmodeList[0]
+//    }
+//
+//    if("${testmode}" == 'isp'){
+//        exclude '**/framework/*'
+//        exclude '**/plugin/*'
+//        exclude '**/sample/*'
+//    }
+
+}
+
+// gradlew war コマンド実行時の処理
+war {
+    baseName = 'mobile'
+    version = '1.0'
+}
+
+// gradlew clean コマンド実行時の処理
+clean {
+    // "gradle clean"を実行した際に、Tomcat用の出力先も削除対象とする
+    delete << 'src/main/webapp/WEB-INF/classes'
+}
+
+// gradlew tomcatRun コマンド実行時の処理
+if("${env}" == 'cloudHostingTomcat'){
+    ext{
+        tomcatContextPath = 'configs/cloudhosting/tomcat/context.xml'
+    }
+}else{
+    ext{
+        tomcatContextPath = 'configs/development/tomcat/context.xml'
+    }
+}
+tomcatRun {
+    httpPort = 7010
+    reloadable = true
+    contextPath = '/domain/mobile'
+    configFile = file(tomcatContextPath)
+    stopPort = 7011
+    stopKey = 'stopkey'
+}
+tomcatStop{
+    httpPort = 7010
+    stopPort = 7011
+    stopKey = 'stopkey'
+}
+
+// 依存ライブラリの設定
+dependencies {
+
+    // BOでのオフラインビルド時は内部管理しているライブラリを参照
+    if (file('repository').exists()) {
+        compile fileTree(dir: 'repository', include: '*.jar')
+    }else{
+
+        // BO用Sprign拡張ライブラリ
+        compile files("configs/production/library/isplibrary-1.1.0.jar")
+
+        // JAX-RS 関連
+        compile "org.codehaus.jackson:jackson-core-asl:${jacksonVersion}"
+        compile "org.codehaus.jackson:jackson-mapper-asl:${jacksonVersion}"
+
+        // Spring 関連
+        compile "org.springframework:spring-web:${springframeworkVersion}"
+        compile "org.springframework:spring-webmvc:${springframeworkVersion}"
+        compile "org.springframework:spring-tx:${springframeworkVersion}"
+        compile "org.springframework:spring-jdbc:${springframeworkVersion}"
+        compile "org.springframework.data:spring-data-commons:1.8.2.RELEASE"
+
+
+        // Spring AOP + AspectJ
+        compile "org.springframework:spring-aop:${springframeworkVersion}"
+        compile "org.aspectj:aspectjrt:1.8.0"
+        compile "org.aspectj:aspectjweaver:1.8.0"
+
+        // Spring Batch
+        compile "org.springframework.batch:spring-batch-core:${springBatchVersion}"
+        compile "org.springframework.batch:spring-batch-infrastructure:${springBatchVersion}"
+        compile "hsqldb:hsqldb:1.8.0.7"
+
+        // MD5ハッシュ化ライブラリ
+        compile "commons-codec:commons-codec:1.8"
+
+        // ロギング 関連
+        // compile "log4j:log4j:1.2.17"
+        compile "ch.qos.logback:logback-classic:1.1.2"
+        //compile "org.slf4j:slf4j-simple:1.6.1"
+        compile "org.slf4j:slf4j-api:1.7.7"
+        // @Todo しばらく使って問題なければ、削除
+        //compile "commons-logging:commons-logging:1.1.1"
+        //testCompile "org.slf4j:slf4j-api:1.6.1"
+
+
+        // Servlet 関連
+        testCompile "javax.servlet:servlet-api:3.0-alpha-1"
+        providedCompile "javax.servlet:servlet-api:2.5"
+        
+        //    Spring MVC Test FrameworkがServlet 3.0系に依存しているので、プロダクトコード側のServletのバージョンと差異あり。
+        //    http://docs.spring.io/spring/docs/4.0.x/spring-framework-reference/html/new-in-4.0.html#_general_web_improvements
+        testCompile "org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0"
+
+        // テスト 関連
+//        testCompile "junit:junit:4.11"
+        testCompile 'junit:junit-dep:4.10' // 参照 http://futurismo.biz/archives/1172
+        testCompile 'org.jmock:jmock-junit3:2.6.0'
+        testCompile "org.dbunit:dbunit:2.4.9"
+        testCompile "org.springframework:spring-test:${springframeworkVersion}"
+        testCompile "org.springframework.batch:spring-batch-test:${springBatchVersion}"
+        testCompile "com.jayway.jsonpath:json-path-assert:0.8.1"
+        // @Todo ローカルリボジとりから取得するほうがよいな
+        testCompile files("configs/development/library/h2storedprocedure-2.0.jar")
+        testCompile "org.mockito:mockito-all:1.9.5"
+        testCompile files("configs/development/library/ojdbc6-11.2.0.4.jar")
+
+        // バリデーション 関連
+        compile "org.hibernate:hibernate-validator:4.3.1.Final"
+
+        // データベース 関連
+        compile "cglib:cglib:3.1" // mybatisとspringが利用しているライブラリ
+        compile "org.mybatis:mybatis:3.2.7"
+        compile "org.mybatis:mybatis-spring:1.2.2"
+        compile "commons-dbcp:commons-dbcp:1.4"
+        "${localLibraryConfigrations}" "com.h2database:h2:1.4.177" // ローカルTomcatとテストで使用
+        "${localLibraryConfigrations}" files("configs/development/library/ojdbc6-11.2.0.4.jar") // ローカルTomcatとテストで使用
+
+        // Groovy 関連
+        compile "org.codehaus.groovy:groovy-all:2.3.1"
+
+        // EUCからUTF-8への変換ライブラリ
+        // @Todo ローカルリボジとりから取得するほうがよいな
+        compile files("configs/production/library/charset-2.0.jar")
+
+        // Getter/Setterアノテーション
+        compile "org.projectlombok:lombok:1.12.6"
+
+        // 日付関連
+        compile 'joda-time:joda-time:2.3'
+
+        // ファイルアップロード
+        compile 'commons-io:commons-io:2.4'
+        compile 'commons-fileupload:commons-fileupload:1.3.1'
+
+        // PGP 暗号化
+        compile files("configs/production/library/bcpg-jdk15on-150.jar")
+        compile files("configs/production/library/bcprov-jdk15on-150.jar")
+
+        // Google Guava関連（ImmutableListなど）
+        compile group: 'com.google.guava', name: 'guava', version: '12.0'
+
+        // List/Mapのディープクローンを行うライブラリ
+        testCompile "uk.com.robust-it:cloning:1.9.0"
+
+        // Tomcatの設定
+        def tomcatVersion = '7.0.53'
+        tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+                "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}",
+                "org.apache.tomcat:tomcat-dbcp:${tomcatVersion}"
+        tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+            exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+        }
+
+        // SFTP クライアント
+        compile 'com.jcraft:jsch:0.1.51'
+        compile 'com.jcraft:jsch.agentproxy.core:0.0.7'
+        compile 'com.jcraft:jsch.agentproxy.jsch:0.0.7'
+        compile 'com.jcraft:jsch.agentproxy.sshagent:0.0.7'
+        compile 'com.jcraft:jsch.agentproxy.usocket-jna:0.0.7'
+
+        def gebVersion = "0.9.0-RC-3"
+        def seleniumVersion = "2.30.0"
+
+        // If using Spock, need to depend on geb-spock
+        testCompile "org.gebish:geb-spock:$gebVersion"
+        testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
+
+        // If using JUnit, need to depend on geb-junit (3 or 4)
+        testCompile "org.gebish:geb-junit4:$gebVersion"
+
+        // Drivers
+        drivers.each { driver ->
+            testCompile "org.seleniumhq.selenium:selenium-$driver-driver:$seleniumVersion"
+        }
+    }
+
+}
+
+// Tomcatプラグインを利用するための定義
+// 参照 https://github.com/bmuschko/gradle-tomcat-plugin
+buildscript {
+    dependencies {
+        // オフラインビルドを実行するために、ローカルのjarを参照する
+        classpath files("configs/development/library/gradle-tomcat-plugin-1.0.jar")
+    }
+}
+
+// BOでのオフラインビルドで利用する媒体を集める
+task releaseSource(type: Zip) {
+    classifier = 'sources'
+    from(projectDir) {
+        exclude '.git'
+        exclude '.gradle'
+        exclude '.settings'
+        exclude 'build'
+    }
+    into('repository') {
+        from configurations.testCompile
+    }
+}
+
+if("${env}" == 'cloudHosting'){
+    // カバレッジ取得用
+    apply from: 'gradle/cobertura.gradle'
+    apply plugin: "jacoco" // カバレッジ取得用
+    apply from: 'gradle/jacoco.gradle'
+}
+
+
+

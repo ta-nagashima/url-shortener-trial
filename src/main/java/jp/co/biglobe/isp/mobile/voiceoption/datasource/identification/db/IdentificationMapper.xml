@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.identification.db.IdentificationMapper">
+
+    <insert id="insertEvent">
+        INSERT INTO voice_identification_event
+        ( event_id,
+          event_type,
+          event_date,
+          event_process,
+          identification_receipt_number,
+          identification_status,
+          user_id,
+          lte_three_g_engagement_number,
+          voice_clerk_request_status,
+          voice_engagement_number
+        )
+        VALUES
+        ( seq_voice_identification_e.NEXTVAL,
+          BINARY_TO_EUC(#{eventType.dbValue}),
+          #{eventDate},
+          BINARY_TO_EUC(#{eventProcess}),
+          BINARY_TO_EUC(#{validData.identificationReceiptNumber.value}),
+          BINARY_TO_EUC(#{validData.identificationStatus.dbValue}),
+          BINARY_TO_EUC(#{validData.identificationLinkage.userId.value}),
+          BINARY_TO_EUC(#{validData.identificationLinkage.lteThreeGEngagementNumber.value}),
+          BINARY_TO_EUC(#{validData.voiceClerkRequestStatus.dbValue}),
+          #{validData.identificationLinkage.voiceEngagementNumber.value}
+        )
+    </insert>
+
+    <insert id="insertState">
+        INSERT INTO voice_identification_state
+        ( identification_receipt_number,
+          identification_status,
+          user_id,
+          lte_three_g_engagement_number,
+          voice_clerk_request_status,
+          voice_engagement_number
+        )
+        VALUES
+        ( BINARY_TO_EUC(#{after.identificationReceiptNumber.value}),
+          BINARY_TO_EUC(#{after.identificationStatus.dbValue}),
+          BINARY_TO_EUC(#{after.identificationLinkage.userId.value}),
+          BINARY_TO_EUC(#{after.identificationLinkage.lteThreeGEngagementNumber.value}),
+          BINARY_TO_EUC(#{after.voiceClerkRequestStatus.dbValue}),
+          #{after.identificationLinkage.voiceEngagementNumber.value}
+        )
+    </insert>
+
+    <update id="updateState">
+        UPDATE voice_identification_state
+        SET
+        identification_receipt_number = BINARY_TO_EUC(#{after.identificationReceiptNumber.value}),
+        identification_status = BINARY_TO_EUC(#{after.identificationStatus.dbValue}),
+        user_id = BINARY_TO_EUC(#{after.identificationLinkage.userId.value}),
+        lte_three_g_engagement_number = BINARY_TO_EUC(#{after.identificationLinkage.lteThreeGEngagementNumber.value}),
+        voice_clerk_request_status = BINARY_TO_EUC(#{after.voiceClerkRequestStatus.dbValue}),
+        voice_engagement_number = #{after.identificationLinkage.voiceEngagementNumber.value}
+        WHERE identification_receipt_number = BINARY_TO_EUC(#{before.identificationReceiptNumber.value})
+    </update>
+
+    <delete id="deleteState">
+        DELETE FROM voice_identification_state
+        WHERE voice_engagement_number = #{before.voiceEngagementNumber.value}
+    </delete>
+
+    <select id="selectState" resultMap="ValidIdentificationMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_identification_state i
+        LEFT OUTER JOIN voice_identification_upload_s u
+        ON i.identification_receipt_number = u.identification_receipt_number
+        LEFT OUTER JOIN voice_identification_result_s rs
+        ON i.identification_receipt_number = rs.identification_receipt_number
+        LEFT OUTER JOIN voice_identification_ng_s ng
+        ON rs.identification_result_id = ng.identification_result_id
+        WHERE i.identification_receipt_number = BINARY_TO_EUC(#{before.identificationReceiptNumber.value})
+
+    </select>
+
+    <select id="findByIdentificationReceiptNumber" resultMap="ValidIdentificationMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_identification_state i
+        LEFT OUTER JOIN voice_identification_upload_s u
+        ON i.identification_receipt_number = u.identification_receipt_number
+        LEFT OUTER JOIN voice_identification_result_s rs
+        ON i.identification_receipt_number = rs.identification_receipt_number
+        LEFT OUTER JOIN voice_identification_ng_s ng
+        ON rs.identification_result_id = ng.identification_result_id
+        WHERE i.identification_receipt_number = BINARY_TO_EUC(#{identificationReceiptNumber.value})
+
+    </select>
+
+    <select id="findByUserId" resultMap="ValidIdentificationMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_identification_state i LEFT OUTER JOIN voice_identification_upload_s u
+        ON i.identification_receipt_number = u.identification_receipt_number
+        LEFT OUTER JOIN voice_identification_result_s rs
+        ON i.identification_receipt_number = rs.identification_receipt_number
+        LEFT OUTER JOIN voice_identification_ng_s ng
+        ON rs.identification_result_id = ng.identification_result_id
+        WHERE i.user_id = BINARY_TO_EUC(#{userId.value})
+
+    </select>
+
+    <select id="findByLteThreeGEngagementNumber" resultMap="ValidIdentificationMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_identification_state i LEFT OUTER JOIN voice_identification_upload_s u
+        ON i.identification_receipt_number = u.identification_receipt_number
+        LEFT OUTER JOIN voice_identification_result_s rs
+        ON i.identification_receipt_number = rs.identification_receipt_number
+        LEFT OUTER JOIN voice_identification_ng_s ng
+        ON rs.identification_result_id = ng.identification_result_id
+        WHERE i.lte_three_g_engagement_number = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+
+    </select>
+
+
+    <select id="findByVoiceEngagementNumber" resultMap="ValidIdentificationMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_identification_state i LEFT OUTER JOIN voice_identification_upload_s u
+        ON i.identification_receipt_number = u.identification_receipt_number
+        LEFT OUTER JOIN voice_identification_result_s rs
+        ON i.identification_receipt_number = rs.identification_receipt_number
+        LEFT OUTER JOIN voice_identification_ng_s ng
+        ON rs.identification_result_id = ng.identification_result_id
+        WHERE i.voice_engagement_number = #{voiceEngagementNumber.value}
+
+    </select>
+
+    <select id="lockByIdentificationReceiptNumber" resultMap="IdentificationReceiptNumberMap">
+        SELECT EUC_TO_BINARY(identification_receipt_number) AS identification_receipt_number
+        FROM voice_identification_state
+        WHERE identification_receipt_number = BINARY_TO_EUC(#{identificationReceiptNumber.value})
+        FOR UPDATE
+    </select>
+
+    <select id="lockByLteThreeGEngagementNumber" resultMap="IdentificationReceiptNumberMap">
+        SELECT EUC_TO_BINARY(identification_receipt_number) AS identification_receipt_number
+        FROM voice_identification_state
+        WHERE lte_three_g_engagement_number = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+        FOR UPDATE
+    </select>
+
+    <select id="lockByVoiceEngagementNumber" resultMap="IdentificationReceiptNumberMap">
+        SELECT EUC_TO_BINARY(identification_receipt_number) AS identification_receipt_number
+        FROM voice_identification_state
+        WHERE voice_engagement_number = #{voiceEngagementNumber.value}
+        FOR UPDATE
+    </select>
+
+    <!--  select文のカラム指定  -->
+    <sql id="selectColumnsDefine">
+        EUC_TO_BINARY(i.identification_receipt_number) AS identification_receipt_number,
+        EUC_TO_BINARY(i.identification_status) AS identification_status,
+        EUC_TO_BINARY(i.user_id) AS user_id,
+        EUC_TO_BINARY(i.lte_three_g_engagement_number) AS lte_three_g_engagement_number,
+        EUC_TO_BINARY(i.voice_clerk_request_status) AS voice_clerk_request_status,
+        EUC_TO_BINARY(u.identification_receipt_number) AS u_identification_receipt_num,
+        u.first_upload_date_time,
+        u.upload_count,
+        i.voice_engagement_number,
+        rs.identification_result_id AS rs_identification_result_id,
+        EUC_TO_BINARY(rs.identification_receipt_number) AS rs_identification_receipt_num,
+        EUC_TO_BINARY(rs.identification_receipt_number) AS identity_receipt_number_rs,
+        EUC_TO_BINARY(rs.operator_id) AS operator_id,
+        EUC_TO_BINARY(rs.execution_date) AS execution_date,
+        EUC_TO_BINARY(rs.document_acceptance_means) AS document_acceptance_means,
+        EUC_TO_BINARY(rs.identification_doc_type) AS identification_doc_type,
+        EUC_TO_BINARY(rs.identification_sub_doc_type) AS identification_sub_doc_type,
+        ng.identification_result_id AS ng_identification_result_id,
+        EUC_TO_BINARY(ng.ng_reason) AS ng_reason,
+        EUC_TO_BINARY(ng.ng_reason_detail) AS ng_reason_detail
+    </sql>
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="ValidIdentificationMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.ValidIdentification">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.IdentificationReceiptNumber" resultMap="IdentificationReceiptNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.IdentificationStatus" column="identification_status"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.IdentificationLinkage" resultMap="IdentificationLinkageMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.VoiceClerkRequestStatus" column="voice_clerk_request_status"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.upload.ValidIdentificationUpload"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.identification.db.IdentificationUploadMapper.UploadMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.ValidIdentificationResult"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.identification.db.IdentificationResultMapper.IdentificationResultMap"/>
+        </constructor>
+    </resultMap>
+
+    <!--  各ValueObjectのマッピング  -->
+    <resultMap id="IdentificationReceiptNumberMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.IdentificationReceiptNumber">
+        <constructor>
+            <arg column="identification_receipt_number" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="IdentificationLinkageMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.IdentificationLinkage">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.auth.domain.user.UserId" resultMap="UserIdMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.ltethreegengagement.LteThreeGEngagementNumber" resultMap="LteThreeGEngagementNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.voiceengagement.VoiceEngagementNumber" resultMap="VoiceEngagementNumberMap"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="UserIdMap" type="jp.co.biglobe.isp.auth.domain.user.UserId">
+        <constructor>
+            <arg column="user_id" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="LteThreeGEngagementNumberMap" type="jp.co.biglobe.isp.mobile.ltethreeg.domain.ltethreegengagement.LteThreeGEngagementNumber">
+        <constructor>
+            <arg column="lte_three_g_engagement_number" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="VoiceEngagementNumberMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.voiceengagement.VoiceEngagementNumber">
+        <constructor>
+            <arg column="voice_engagement_number" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+
+
+</mapper>

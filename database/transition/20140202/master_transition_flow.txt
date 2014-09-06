@@ -1,0 +1,570 @@
+初期状態
+　APIのプレリリースの段階で以下の状態になっている。
+
+1.以下のテーブルが作成済み
+    wifi_register_device_state
+    wifi_register_device_event
+    wifi_use_rights_state
+    wifi_use_rights_event
+    wifi_connection_state
+    isp_api_client_enum
+    isp_api_enum
+    isp_use_api_event
+
+2.以下のシーケンスが作成済み
+    seq_wifi_register_device_event
+    seq_wifi_use_rights_event
+    seq_wifi_use_rights_id
+
+3.wifi*テーブルに評価で使用したデータがインサートされている
+4.isp*テーブルにS-in後も必要なデータがインサートされている
+
+
+■０．ログイン
+
+作業マシン：運用サーバー（bgas501491）　　　　リハーサル：評価サーバー（bgas501089）
+
+ログイン
+------------------------------------------------------------------------
+SSHゲートウェイに接続
+% ssh bgas501491   （リハーサル：ssh bgas501089）
+------------------------------------------------------------------------
+
+ログイン後にホスト名を確認
+------------------------------------------------------------------------
+% hostname
+bgas501491       （リハーサル：bgas501089）
+------------------------------------------------------------------------
+
+blcusrへsudo後にユーザを確認
+------------------------------------------------------------------------
+% sudo su - blcusr
+% id
+uid=xxxxx(blcusr) gid=xxxxx(blcusr) groups=xxxxx(aspctl)
+------------------------------------------------------------------------
+
+作業ディレクトリへ移動
+------------------------------------------------------------------------
+% cd /var/log/blc/work.blcusr/wifi/20140202 （リハーサル：cd /var/log/blc/work.blcusr/wifi/20140129）
+------------------------------------------------------------------------
+
+スクリプトの確認
+------------------------------------------------------------------------
+% cat ./batch_update_exclusive_id/event/event_create_macaddress_list.sh
+% cat ./batch_update_exclusive_id/state/state_create_macaddress_list.sh
+
+Oracleのユーザー名、パスワードが正しいか確認
+
+------------------------------------------------------------------------
+
+SQL*Plusにログイン
+------------------------------------------------------------------------
+sqlplus [user]/[password]@NAS
+
+
+■１．データの確認
+
+概要
+---------
+    以下のテーブルのデータがすべて「Macアドレスが削除済み」の状態であることを確認
+        wifi_register_device_state
+        wifi_register_device_event
+        wifi_use_rights_state
+        wifi_use_rights_event
+
+確認
+---------
+
+--結果が返ってこないことを確認
+select * from wifi_use_rights_state where use_rights_status <> 'removed';
+select * from wifi_register_device_state;
+
+
+■２．退避テーブルの作成
+
+概要
+---------
+
+    以下のテーブルを退避する
+        wifi_register_device_state
+        wifi_register_device_event
+        wifi_use_rights_state
+        wifi_use_rights_event
+        scmg_ivt_contract_matl_hist
+
+
+実行
+---------
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/transition_before_backuptable_20140202.sql
+
+
+確認
+---------
+
+件数が一致することを確認。
+--A A'
+SELECT count(*) FROM scmg_ivt_contract_matl_hist_bk;
+SELECT count(*) FROM scmg_ivt_contract_matl_hist;
+
+--B B'
+SELECT count(*) FROM wifi_register_device_state_bk;
+SELECT count(*) FROM wifi_register_device_state;
+
+--C C'
+SELECT count(*) FROM wifi_register_device_event_bk;
+SELECT count(*) FROM wifi_register_device_event;
+
+--D D'
+SELECT count(*) FROM wifi_use_rights_state_bk;
+SELECT count(*) FROM wifi_use_rights_state;
+
+--E E'
+SELECT count(*) FROM wifi_use_rights_event_bk;
+SELECT count(*) FROM wifi_use_rights_event;
+
+
+■３．データのクレンジング（総合テストで使用したデータとゴミ履歴データの削除）
+
+実行
+---------
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/transition_before_delete_gomidata_20140202.sql
+
+
+■４．テーブルと索引の作成（temp_viewテーブルとPANDA用テーブル）
+
+実行
+---------
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/transition_ddl_20140202.sql
+
+確認
+---------
+SELECT table_name FROM user_tables WHERE table_name like 'WIFI%P';
+SELECT table_name FROM user_tables WHERE table_name = 'TEMP_VIEW';
+
+
+
+■５．データの移行
+
+実行
+---------
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/transition_dml_20140202.sql
+
+STATEテーブルの確認
+-------------------
+
+wifi_use_rights_stateの確認
+件数の確認
+-- A
+select count(*) from (
+    select
+	use_rights_id ||','||
+	biglobe_id ||','||
+	last_update_month ||','||
+	change_count ||','||
+	bundle_type ||','||
+	contract_no ||','||
+	use_rights_status
+	from wifi_use_rights_state
+	ORDER BY 1
+);
+
+-- A'
+select count(*) from (
+	select
+	PRIMARY_KEY2 ||','||
+	INDEX_FREE9 ||','||
+	CASE
+    	WHEN ITEM_FREE54 IS NULL THEN SUBSTR(ITEM_FREE52, 1, 6) 
+    	WHEN ITEM_FREE52 < ITEM_FREE54 THEN SUBSTR(ITEM_FREE54, 1, 6) 
+    	ELSE SUBSTR(ITEM_FREE52, 1, 6)
+	END ||','||
+	ITEM_FREE53 ||','||
+	DECODE(ITEM_FREE55, '3G', 'three_g', 'lte_three_g') ||','||
+	ITEM_FREE58
+	FROM SCMG_IVT_CONTRACT_MATL
+	WHERE INDEX_FREE7 = 'BWIFI'
+	ORDER BY 1
+);
+
+データの確認
+両方ともレコードなしを確認
+-- C 
+select
+    use_rights_id ||','||
+    use_rights_contract_end_day ||','||
+    biglobe_id ||','||
+    last_update_month ||','||
+    change_count ||','||
+	use_rights_plan ||','||
+    bundle_type ||','||
+    contract_no ||','||
+	use_rights_status
+from wifi_use_rights_state
+minus
+select
+    PRIMARY_KEY2 ||','||
+	CASE
+		WHEN INSTR(item_free59,'連動解約') > 0 THEN SUBSTR(ITEM_FREE54, 1, 8) 
+		ELSE '29991231'
+	END ||','||
+    INDEX_FREE9 ||','||
+    CASE
+        WHEN ITEM_FREE54 IS NULL THEN SUBSTR(ITEM_FREE52, 1, 6) 
+        WHEN ITEM_FREE52 < ITEM_FREE54 THEN SUBSTR(ITEM_FREE54, 1, 6) 
+        ELSE SUBSTR(ITEM_FREE52, 1, 6)
+    END ||','||
+    ITEM_FREE53 ||','||
+	'bundle' ||','||
+    DECODE(ITEM_FREE55, '3G', 'three_g', 'lte_three_g') ||','||
+    ITEM_FREE58 ||','||
+	DECODE(ITEM_FREE56, 'delete', 'removed', 'registered')
+FROM SCMG_IVT_CONTRACT_MATL
+WHERE INDEX_FREE7 = 'BWIFI'; 
+
+
+-- C'
+select
+    PRIMARY_KEY2 ||','||
+    CASE
+		WHEN INSTR(item_free59,'連動解約') > 0 THEN SUBSTR(ITEM_FREE54, 1, 8) 
+		ELSE '29991231'
+	END ||','||
+    INDEX_FREE9 ||','||
+    CASE
+        WHEN ITEM_FREE54 IS NULL THEN SUBSTR(ITEM_FREE52, 1, 6) 
+        WHEN ITEM_FREE52 < ITEM_FREE54 THEN SUBSTR(ITEM_FREE54, 1, 6) 
+        ELSE SUBSTR(ITEM_FREE52, 1, 6)
+    END ||','||
+    ITEM_FREE53 ||','||
+	'bundle' ||','||
+    DECODE(ITEM_FREE55, '3G', 'three_g', 'lte_three_g') ||','||
+    ITEM_FREE58 ||','||
+	DECODE(ITEM_FREE56, 'delete', 'removed', 'registered')
+FROM SCMG_IVT_CONTRACT_MATL
+WHERE INDEX_FREE7 = 'BWIFI'
+minus
+select
+    use_rights_id ||','||
+    use_rights_contract_end_day ||','||
+    biglobe_id ||','||
+    last_update_month ||','||
+    change_count ||','||
+    use_rights_plan ||','||
+    bundle_type ||','||
+    contract_no ||','||
+	use_rights_status
+from wifi_use_rights_state;
+
+
+
+wifi_register_device_stateの確認
+件数の確認
+-- A
+select count(*) from (
+	select
+    	use_rights_id ||','||
+    	macaddress ||','||
+    	TO_CHAR(macaddress_register_date, 'YYYYMM')
+	from wifi_register_device_state
+	ORDER BY 1
+);
+
+-- A'
+select count(*) from (
+	select
+    	PRIMARY_KEY2 ||','||
+    	ITEM_FREE51 ||','||
+        CASE
+        	WHEN ITEM_FREE54 IS NULL THEN SUBSTR(ITEM_FREE52, 1, 6) 
+        	WHEN ITEM_FREE52 < ITEM_FREE54 THEN SUBSTR(ITEM_FREE54, 1, 6) 
+        	ELSE SUBSTR(ITEM_FREE52, 1, 6)
+    	END 
+	FROM SCMG_IVT_CONTRACT_MATL
+	WHERE INDEX_FREE4 = '200'
+    	AND INDEX_FREE6 = '1'
+    	AND INDEX_FREE7 = 'BWIFI'
+	ORDER BY 1
+);
+
+データの確認
+両方ともレコードなしを確認
+-- C 
+select
+    use_rights_id ||','||
+    macaddress ||','||
+    TO_CHAR(macaddress_register_date, 'YYYYMM')
+from wifi_register_device_state
+minus
+select
+    PRIMARY_KEY2 ||','||
+    ITEM_FREE51 ||','||
+    CASE
+        WHEN ITEM_FREE54 IS NULL THEN SUBSTR(ITEM_FREE52, 1, 6) 
+        WHEN ITEM_FREE52 < ITEM_FREE54 THEN SUBSTR(ITEM_FREE54, 1, 6) 
+        ELSE SUBSTR(ITEM_FREE52, 1, 6)
+    END 
+FROM SCMG_IVT_CONTRACT_MATL
+WHERE INDEX_FREE4 = '200'
+    AND INDEX_FREE6 = '1'
+    AND INDEX_FREE7 = 'BWIFI'; 
+
+-- C'
+select
+    PRIMARY_KEY2 ||','||
+    ITEM_FREE51 ||','||
+    CASE
+        WHEN ITEM_FREE54 IS NULL THEN SUBSTR(ITEM_FREE52, 1, 6) 
+        WHEN ITEM_FREE52 < ITEM_FREE54 THEN SUBSTR(ITEM_FREE54, 1, 6) 
+        ELSE SUBSTR(ITEM_FREE52, 1, 6)
+    END 
+FROM SCMG_IVT_CONTRACT_MATL
+WHERE 
+INDEX_FREE4 = '200'
+AND INDEX_FREE6 = '1'
+AND INDEX_FREE7 = 'BWIFI'
+minus
+select
+    use_rights_id ||','||
+    macaddress ||','||
+    TO_CHAR(macaddress_register_date, 'YYYYMM')
+from wifi_register_device_state;
+
+
+
+
+EVENTテーブルの確認
+-------------------
+実行
+----------
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/new_macaddress_201308.sql
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/new_macaddress_201309.sql
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/new_macaddress_201310.sql
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/new_macaddress_201311.sql
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/new_macaddress_201312.sql
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/new_macaddress_201401.sql
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/old_macaddress_201308.sql
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/old_macaddress_201309.sql
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/old_macaddress_201310.sql
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/old_macaddress_201311.sql
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/old_macaddress_201312.sql
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/old_macaddress_201401.sql
+
+exit
+※SQL*Plusからログアウト
+
+cat new_macaddress_201308.log | grep -v '-' | grep -v MACADDRESS | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  new_macaddress_201308a.log
+cat new_macaddress_201309.log | grep -v '-' | grep -v MACADDRESS | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  new_macaddress_201309a.log
+cat new_macaddress_201310.log | grep -v '-' | grep -v MACADDRESS | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  new_macaddress_201310a.log
+cat new_macaddress_201311.log | grep -v '-' | grep -v MACADDRESS | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  new_macaddress_201311a.log
+cat new_macaddress_201312.log | grep -v '-' | grep -v MACADDRESS | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  new_macaddress_201312a.log
+cat new_macaddress_201401.log | grep -v '-' | grep -v MACADDRESS | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  new_macaddress_201401a.log
+
+cat old_macaddress_201308.log | grep -v '-' | grep -v MAC_LIST | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  old_macaddress_201308b.log
+cat old_macaddress_201309.log | grep -v '-' | grep -v MAC_LIST | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  old_macaddress_201309b.log
+cat old_macaddress_201310.log | grep -v '-' | grep -v MAC_LIST | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  old_macaddress_201310b.log
+cat old_macaddress_201311.log | grep -v '-' | grep -v MAC_LIST | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  old_macaddress_201311b.log
+cat old_macaddress_201312.log | grep -v '-' | grep -v MAC_LIST | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  old_macaddress_201312b.log
+cat old_macaddress_201401.log | grep -v '-' | grep -v MAC_LIST | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  old_macaddress_201401b.log
+
+diff new_macaddress_201308a.log old_macaddress_201308b.log | more
+diff new_macaddress_201309a.log old_macaddress_201309b.log | more
+diff new_macaddress_201310a.log old_macaddress_201310b.log | more
+diff new_macaddress_201311a.log old_macaddress_201311b.log | more
+diff new_macaddress_201312a.log old_macaddress_201312b.log | more
+diff new_macaddress_201401a.log old_macaddress_201401b.log | more
+
+※MacAddressに相違がないことを確認
+
+■６．temp_viewの削除
+
+SQL*Plusにログイン
+------------------------------------------------------------------------
+sqlplus [user]/[password]@NAS
+
+実行
+----------
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/transition_after_20140202.sql
+
+確認
+----------
+select table_name,tablespace_name from user_tables where table_name like 'TEMP_VIEW%';
+
+SQL*Plusからログアウト
+-----------
+exit
+
+
+########################################
+
+７−１と７−２はそれぞれ５０分ほどかかるため、
+パラレルで実行する
+
+########################################
+
+
+■７−１．登録端末EVENTの専用ID更新
+
+ディレクトリの移動
+--------------------
+cd ./batch_update_exclusive_id/
+
+スクリプトの実行
+--------------------
+./create_event_update_statement.sh
+
+※update_wifi_register_device_event.sqlが生成される
+
+確認
+---------
+head update_wifi_register_device_event.sql
+
+
+更新
+----------
+sqlplus [user]/[password]@NAS
+
+@update_wifi_register_device_event.sql
+
+exit
+
+
+■７−２．登録端末STATEの専用ID更新
+
+二台目の運用サーバーにログイン
+------------------------------------------------------------------------
+SSHゲートウェイに接続後以下のコマンドを実行
+% ssh bgas501492   （リハーサル：ssh bgas501089）
+------------------------------------------------------------------------
+
+ログイン後にホスト名を確認
+------------------------------------------------------------------------
+% hostname
+bgas501492       （リハーサル：bgas501089）
+------------------------------------------------------------------------
+
+blcusrへsudo後にユーザを確認
+------------------------------------------------------------------------
+% sudo su - blcusr
+% id
+uid=xxxxx(blcusr) gid=xxxxx(blcusr) groups=xxxxx(aspctl)
+------------------------------------------------------------------------
+
+作業ディレクトリへ移動
+------------------------------------------------------------------------
+% cd /var/log/blc/work.blcusr/wifi/20140202 （リハーサル：cd /var/log/blc/work.blcusr/wifi/20140129）
+------------------------------------------------------------------------
+
+スクリプトの確認
+------------------------------------------------------------------------
+% cat ./batch_update_exclusive_id/event/event_create_macaddress_list.sh
+% cat ./batch_update_exclusive_id/state/state_create_macaddress_list.sh
+
+Oracleのユーザー名、パスワードが正しいか確認
+------------------------------------------------------------------------
+
+ディレクトリの移動
+--------------------
+cd ./batch_update_exclusive_id/
+
+スクリプトの実行
+--------------------
+./create_state_update_statement.sh
+
+※update_wifi_register_device_state.sqlが生成される
+
+確認
+-----------
+head update_wifi_register_device_state.sql
+
+
+更新
+-----------
+sqlplus [user]/[password]@NAS
+
+@update_wifi_register_device_state.sql
+
+exit
+
+
+■８．STATEのMACアドレスを商契と比較
+
+作業ディレクトリへ移動
+------------------------------------------------------------------------
+% cd /var/log/blc/work.blcusr/wifi/20140202 （リハーサル：cd /var/log/blc/work.blcusr/wifi/20140129）
+
+SQL*Plusにログイン
+---------------------------------
+sqlplus [user]/[password]@NAS
+
+マスタからデータを抜き出す
+-----------------------------
+https://133.208.21.182/gitlab/tama/framework/blob/devel/database/transition/20140202/check_authentication_id_password_20140202.sql
+
+exit
+
+データの整形
+--------------------
+cat check_authentication_id_password_20140202.log | grep -v '-' | grep -v MACADDRESS | grep -v '^$' | grep -v 'SQL>' | grep -v '^...  '  >  check_authentication_id_password_20140202a.log
+
+SQL*Plusにログイン
+---------------------------------
+sqlplus [user]/[password]@NAS
+
+比較A パラレルで処理するためハッシュ値があっているかどうか確認
+-----------------------------------------------------------------------
+select * from wifi_register_device_state
+where not exists ( 
+    select 1 from wifi_register_device_event 
+	where wifi_register_device_event.macaddress = wifi_register_device_state.macaddress 
+	and wifi_register_device_event.authentication_id = wifi_register_device_state.authentication_id
+);
+
+exit
+
+比較B 商契移行データとの整合性比較　※商契の移行作業完了後に実施
+-----------------------------------------------------------------------
+cp -p /var/log/blc/work.blcusr/necst/3SW/WIFI/ikou/20140203-radius_master_list.csv .
+sed -e "s/BBMP//g" 20140203-radius_master_list.csv > 20140203-radius_master_lista.csv
+diff 20140203-radius_master_lista.csv check_authentication_id_password_20140202a.log
+
+
+
+
+
+
+#######################################################################################
+ここから下はとりあえず保留！！！！！
+#######################################################################################
+■９．退避テーブルの削除
+
+実行
+-----------
+sqlplus [user]/[password]@NAS
+
+DROP TABLE scmg_ivt_contract_matl_hist_bk;
+DROP TABLE wifi_register_device_state_bk;
+DROP TABLE wifi_register_device_state_bk;
+DROP TABLE wifi_use_rights_state_bk;
+DROP TABLE wifi_use_rights_event_bk;
+
+
+□確認
+-----------
+SELECT table_name FROM user_tables WHERE table_name like '%_BK';
+
+結果が返ってこないことを確認
+
+
+########################################
+
+１０はbgas501491とbgas501492の両方で実行すること！！
+
+########################################
+
+
+■１０．一時データの削除
+
+実行
+------------
+cd /var/log/blc/work.blcusr/wifi/
+rm -rf 20140202

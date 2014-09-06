@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.identification.identificationresultid.IdentificationResultIdQueryMapper">
+
+    <!-- ここからcreateメソッドの設定 -->
+    <select id="create" resultMap="IdentificationResultIdMap">
+        SELECT
+            seq_voice_identity_result_s.NEXTVAL AS identification_result_id
+        FROM DUAL
+    </select>
+
+    <resultMap id="IdentificationResultIdMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.IdentificationResultId">
+        <constructor>
+            <arg column="identification_result_id" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.datasource.charge.speedcharge.db.SpeedChargeChargeQueryMapper">
+
+    <insert id="insertEvent">
+        INSERT INTO lte_scharge_charge_event
+        ( event_id,
+          event_type,
+          event_date,
+          event_process,
+          scharge_engagement_number,
+          operator_id,
+          user_id,
+          item_code,
+          fee
+        )
+        VALUES
+        ( seq_lte_speed_charge_charge_e.NEXTVAL,
+          BINARY_TO_EUC(#{eventType.dbValue}),
+          #{eventDate},
+          BINARY_TO_EUC(#{eventProcess}),
+          BINARY_TO_EUC(#{speedChargeEngagementNumber.value}),
+          BINARY_TO_EUC(#{operatorId.value}),
+          BINARY_TO_EUC(#{userId.value}),
+          BINARY_TO_EUC(#{speedChargeItemCode.value}),
+          #{speedChargeFee.value}
+        )
+    </insert>
+
+</mapper>

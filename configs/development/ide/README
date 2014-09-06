@@ -1,0 +1,19 @@
+IntelliJの設定
+
+
+・Preferences... > Editor > Auto Import
+ 「optimize imports on the fly]」にチェックを追加
+
+
+・Preferences... > Editor > Auto Import
+　「Exclude from Import and Completion」に除外したいパッケージを追加
+　　ーcom.sun
+　　ーjava.awt
+　　ーjava.sql
+　　ーjavax.swing
+　　ーsun
+
+
+・Preferences... > Code Style > Java > Imports
+　[99] Class count to use import with '*': import hoge.* にしない
+　[1] Names count to use static import with '*': static import は速攻で * を使う

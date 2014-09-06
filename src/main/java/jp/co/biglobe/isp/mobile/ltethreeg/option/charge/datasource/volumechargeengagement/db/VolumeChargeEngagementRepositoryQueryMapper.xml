@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.datasource.volumechargeengagement.db.VolumeChargeEngagementRepositoryQueryMapper">
+
+    <insert id="insertVolumeState">
+        INSERT INTO lte_vcharge_state
+        ( vcharge_engagement_number,
+        lte_three_g_engagement_number,
+        completion_status,
+        update_date_time
+        )
+        VALUES
+        ( BINARY_TO_EUC(#{volumeChargeEngagementEntity.volumeChargeEngagementNumber.value}),
+        BINARY_TO_EUC(#{volumeChargeEngagementEntity.lteThreeGEngagementNumber.value}),
+        BINARY_TO_EUC(#{volumeChargeEngagementEntity.volumeChargeCompletionStatus.dbValue}),
+        #{eventDate}
+        )
+    </insert>
+
+    <insert id="insertPurchaseEvent">
+        INSERT INTO lte_vcharge_purchase_event
+        ( vcharge_engagement_number,
+        lte_three_g_engagement_number,
+        order_date_time,
+        purchased_volume,
+        event_date,
+        event_process
+        )
+        VALUES
+        ( BINARY_TO_EUC(#{volumeChargeEngagementEntity.volumeChargeEngagementNumber.value}),
+        BINARY_TO_EUC(#{volumeChargeEngagementEntity.lteThreeGEngagementNumber.value}),
+        #{volumeChargeEngagementEntity.volumeChargeOrderDateTime.value},
+        #{volumeChargeEngagementEntity.purchasedVolumeMB.value},
+        #{eventDate},
+        BINARY_TO_EUC(#{eventProcess})
+        )
+    </insert>
+
+    <insert id="insertCompleteEvent">
+        INSERT INTO lte_vcharge_complete_event
+        (
+        vcharge_engagement_number,
+        application_end_date_time,
+        event_date,
+        event_process
+        )
+        VALUES
+        (
+        BINARY_TO_EUC(#{volumeChargeEngagementEntity.volumeChargeEngagementNumber.value}),
+        #{volumeChargeEngagementEntity.volumeChargeApplicationEnd.volumeChargeApplicationEndDateTime.value},
+        #{eventDate},
+        BINARY_TO_EUC(#{eventProcess})
+        )
+    </insert>
+
+    <insert id="insertCompletePlanChangeEvent">
+        INSERT INTO lte_vcharge_complete_event
+        (
+        vcharge_engagement_number,
+        application_end_date_time,
+        event_date,
+        event_process
+        )
+        VALUES
+        (
+        BINARY_TO_EUC(#{volumeChargeEngagementEntity.volumeChargeEngagementNumber.value}),
+        #{volumeChargeEngagementEntity.volumeChargeApplicationEnd.volumeChargeApplicationEndDateTime.value},
+        #{eventDate},
+        BINARY_TO_EUC(#{eventProcess})
+        )
+    </insert>
+
+    <update id="updateCompleteState">
+        UPDATE lte_vcharge_state
+        SET
+        lte_three_g_engagement_number = BINARY_TO_EUC(#{volumeChargeEngagementEntity.lteThreeGEngagementNumber.value}),
+        completion_status = BINARY_TO_EUC(#{volumeChargeEngagementEntity.volumeChargeCompletionStatus.dbValue}),
+        update_date_time = #{eventDate}
+        WHERE vcharge_engagement_number = BINARY_TO_EUC(#{volumeChargeEngagementEntity.volumeChargeEngagementNumber.value})
+    </update>
+
+    <update id="updateStateForPurchase">
+        UPDATE lte_vcharge_state
+        SET
+        vcharge_engagement_number = BINARY_TO_EUC(#{volumeChargeEngagementEntity.volumeChargeEngagementNumber.value}),
+        completion_status = BINARY_TO_EUC(#{volumeChargeEngagementEntity.volumeChargeCompletionStatus.dbValue}),
+        update_date_time = #{eventDate}
+        WHERE lte_three_g_engagement_number = BINARY_TO_EUC(#{volumeChargeEngagementEntity.lteThreeGEngagementNumber.value})
+    </update>
+
+    <select id="findByLteThreeGEngagementNumber" resultMap="VolumeChargeEngagementEntityMap">
+        <include refid="selectAndFrom"/>
+        WHERE v.lte_three_g_engagement_number = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+    </select>
+
+    <sql id="selectAndFrom">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM lte_vcharge_state v LEFT OUTER JOIN lte_vcharge_purchase_event p
+        ON v.vcharge_engagement_number = p.vcharge_engagement_number
+        LEFT OUTER JOIN lte_vcharge_complete_event c
+        ON v.vcharge_engagement_number = c.vcharge_engagement_number
+    </sql>
+
+    <!--  select文のカラム指定  -->
+    <sql id="selectColumnsDefine">
+        EUC_TO_BINARY(v.vcharge_engagement_number) AS vcharge_engagement_number,
+        EUC_TO_BINARY(v.lte_three_g_engagement_number) AS lte_three_g_engagement_number,
+        EUC_TO_BINARY(v.completion_status) AS completion_status,
+        p.order_date_time AS order_date_time,
+        p.purchased_volume,
+        c.application_end_date_time
+    </sql>
+
+    <select id="findAllByLteThreeGEngagementNumber" resultMap="VolumeChargeEngagementEntityMap">
+        SELECT
+        EUC_TO_BINARY(p.vcharge_engagement_number) AS vcharge_engagement_number,
+        EUC_TO_BINARY(p.lte_three_g_engagement_number) AS lte_three_g_engagement_number,
+        CASE
+          WHEN c.vcharge_engagement_number IS NULL THEN #{remained.dbValue}
+          ELSE #{completion.dbValue}
+        END AS completion_status,
+        p.order_date_time AS order_date_time,
+        p.purchased_volume,
+        c.application_end_date_time
+        FROM lte_vcharge_purchase_event p LEFT OUTER JOIN lte_vcharge_complete_event c
+        ON p.vcharge_engagement_number = c.vcharge_engagement_number
+        WHERE p.lte_three_g_engagement_number = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+        ORDER BY order_date_time DESC
+    </select>
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="VolumeChargeEngagementEntityMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.ValidVolumeChargeEngagementEntity">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.VolumeChargeEngagementNumber"
+                 resultMap="VolumeChargeEngagementNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.ltethreegengagement.LteThreeGEngagementNumber"
+                 resultMap="LteThreeGEngagementNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.PurchasedVolumeMB"
+                 resultMap="PurchasedVolumeMBMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.VolumeChargeCompletionStatus"
+                 column="completion_status"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.VolumeChargeOrderDateTime"
+                 resultMap="VolumeChargeOrderDateTimeMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.end.ValidVolumeChargeApplicationEnd"
+                 resultMap="ValidVolumeChargeApplicationEndMap"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="VolumeChargeEngagementNumberMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.VolumeChargeEngagementNumber">
+        <constructor>
+            <arg column="vcharge_engagement_number" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="LteThreeGEngagementNumberMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.domain.ltethreegengagement.LteThreeGEngagementNumber">
+        <constructor>
+            <arg column="lte_three_g_engagement_number" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="PurchasedVolumeMBMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.PurchasedVolumeMB">
+        <constructor>
+            <arg column="purchased_volume" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="VolumeChargeOrderDateTimeMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.VolumeChargeOrderDateTime">
+        <constructor>
+            <arg column="order_date_time" javaType="Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="ValidVolumeChargeApplicationEndMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.end.ValidVolumeChargeApplicationEnd">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.end.VolumeChargeApplicationEndDateTime"
+                 resultMap="VolumeChargeApplicationEndDateTimeMap"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="VolumeChargeApplicationEndDateTimeMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.domain.volumechargeengagement.end.VolumeChargeApplicationEndDateTime">
+        <constructor>
+            <arg column="application_end_date_time" javaType="Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+
+</mapper>

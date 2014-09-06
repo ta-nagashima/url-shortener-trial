@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.ltethreeg.datasource.connectperformance.db.ConnectPerformanceMapper">
+
+
+    <insert id="insertPerformanceEvent">
+        INSERT INTO lte_connect_performance_event
+        ( event_id,
+        event_type,
+        event_date,
+        event_process,
+        lte_three_g_engagement_number,
+        limit_status_72hour,
+        limit_status_1month,
+        destination_status,
+        volume_charge_status,
+        speed_charge_status
+        )
+        VALUES
+        ( seq_lte_connect_performance_e.NEXTVAL,
+        BINARY_TO_EUC(#{eventType.dbValue}),
+        #{eventDate},
+        BINARY_TO_EUC(#{eventProcess}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.lteThreeGEngagementNumber.value}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.limitStatus72Hour.dbValue}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.limitStatus1Month.dbValue}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.destinationStatus.dbValue}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.volumeChargeStatus.dbValue}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.speedChargeStatus.dbValue})
+        )
+    </insert>
+
+    <insert id="insertPerformanceState">
+        INSERT INTO lte_connect_performance_state
+        (
+        lte_three_g_engagement_number,
+        limit_status_72hour,
+        limit_status_1month,
+        destination_status,
+        volume_charge_status,
+        speed_charge_status
+        )
+        VALUES
+        (
+        BINARY_TO_EUC(#{connectPerformanceEntity.lteThreeGEngagementNumber.value}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.limitStatus72Hour.dbValue}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.limitStatus1Month.dbValue}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.destinationStatus.dbValue}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.volumeChargeStatus.dbValue}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.speedChargeStatus.dbValue})
+        )
+    </insert>
+
+
+    <update id="updatePerformanceState">
+        UPDATE lte_connect_performance_state
+        SET
+        limit_status_72hour = BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.limitStatus72Hour.dbValue}),
+        limit_status_1month = BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.limitStatus1Month.dbValue}),
+        destination_status = BINARY_TO_EUC(#{connectPerformanceEntity.destinationStatus.dbValue}),
+        volume_charge_status = BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.volumeChargeStatus.dbValue}),
+        speed_charge_status = BINARY_TO_EUC(#{connectPerformanceEntity.speedStatus.speedChargeStatus.dbValue})
+        WHERE lte_three_g_engagement_number = BINARY_TO_EUC(#{connectPerformanceEntity.lteThreeGEngagementNumber.value})
+    </update>
+
+
+    <insert id="insertPolicyEvent">
+        INSERT INTO lte_connect_control_policy_e
+        ( event_id,
+        event_type,
+        event_date,
+        event_process,
+        lte_three_g_engagement_number,
+        connect_control_policy,
+        application_date_time
+        )
+        VALUES
+        ( seq_lte_connect_ctrl_policy_e.NEXTVAL,
+        BINARY_TO_EUC(#{eventType.dbValue}),
+        #{eventDate},
+        BINARY_TO_EUC(#{eventProcess}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.lteThreeGEngagementNumber.value}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.connectControlPolicyEntity.connectControlPolicy.dbValue}),
+        #{connectPerformanceEntity.connectControlPolicyEntity.applicationDateTime.value}
+        )
+    </insert>
+
+    <insert id="insertPolicyState">
+        INSERT INTO lte_connect_control_policy_s
+        ( lte_three_g_engagement_number,
+        connect_control_policy,
+        application_date_time
+        )
+        VALUES(
+        BINARY_TO_EUC(#{connectPerformanceEntity.lteThreeGEngagementNumber.value}),
+        BINARY_TO_EUC(#{connectPerformanceEntity.connectControlPolicyEntity.connectControlPolicy.dbValue}),
+        #{connectPerformanceEntity.connectControlPolicyEntity.applicationDateTime.value}
+        )
+    </insert>
+
+    <update id="updatePolicyState">
+        UPDATE lte_connect_control_policy_s
+        SET
+        connect_control_policy = BINARY_TO_EUC(#{connectPerformanceEntity.connectControlPolicyEntity.connectControlPolicy.dbValue}),
+        application_date_time = #{connectPerformanceEntity.connectControlPolicyEntity.applicationDateTime.value}
+        WHERE lte_three_g_engagement_number = BINARY_TO_EUC(#{connectPerformanceEntity.lteThreeGEngagementNumber.value})
+    </update>
+
+
+    <select id="findByLteThreeGEngagementNumber" resultMap="ConnectPerformanceEntityMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM lte_connect_performance_state p LEFT OUTER JOIN lte_connect_control_policy_s c
+        ON p.lte_three_g_engagement_number = c.lte_three_g_engagement_number
+        WHERE p.lte_three_g_engagement_number = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+    </select>
+
+    <!--  select文のカラム指定  -->
+    <sql id="selectColumnsDefine">
+        EUC_TO_BINARY(p.lte_three_g_engagement_number) AS lte_three_g_engagement_number,
+        EUC_TO_BINARY(connect_control_policy) AS connect_control_policy,
+        application_date_time,
+        EUC_TO_BINARY(limit_status_72hour) AS limit_status_72hour,
+        EUC_TO_BINARY(limit_status_1month) AS limit_status_1month,
+        EUC_TO_BINARY(volume_charge_status) AS volume_charge_status,
+        EUC_TO_BINARY(speed_charge_status) AS speed_charge_status,
+        EUC_TO_BINARY(destination_status) AS destination_status
+    </sql>
+
+
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="ConnectPerformanceEntityMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.ValidConnectPerformanceEntity">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.ltethreegengagement.LteThreeGEngagementNumber"
+                 resultMap="LteThreeGEngagementNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.speedstatus.SpeedStatus"
+                 resultMap="SpeedStatusMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.DestinationStatus"
+                 column="destination_status"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.connectcontrolpolicy.ConnectControlPolicyEntity"
+                 resultMap="ConnectControlPolicyEntityMap"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="LteThreeGEngagementNumberMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.domain.ltethreegengagement.LteThreeGEngagementNumber">
+        <constructor>
+            <arg column="lte_three_g_engagement_number" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="SpeedStatusMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.speedstatus.SpeedStatus">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.speedstatus.LimitStatus1Month"
+                 column="limit_status_1month"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.speedstatus.LimitStatus72Hour"
+                 column="limit_status_72hour"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.speedstatus.VolumeChargeStatus"
+                 column="volume_charge_status"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.speedstatus.SpeedChargeStatus"
+                 column="speed_charge_status"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="ConnectControlPolicyEntityMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.connectcontrolpolicy.ConnectControlPolicyEntity">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.connectcontrolpolicy.ConnectControlPolicy"
+                 column="connect_control_policy"
+                 typeHandler="jp.co.biglobe.isp.mobile.ltethreeg.datasource.connectperformance.db.typehandler.ConnectControlPolicyTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.connectcontrolpolicy.ApplicationDateTime"
+                 resultMap="ApplicationDateTimeMap"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="ApplicationDateTimeMap"
+               type="jp.co.biglobe.isp.mobile.ltethreeg.domain.connectperformance.connectcontrolpolicy.ApplicationDateTime">
+        <constructor>
+            <arg column="application_date_time" javaType="Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+</mapper>

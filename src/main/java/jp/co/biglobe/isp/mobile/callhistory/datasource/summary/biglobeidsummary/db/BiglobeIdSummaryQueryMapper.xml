@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.callhistory.datasource.summary.biglobeidsummary.db.BiglobeIdSummaryQueryMapper">
+
+    <select id="findByUserIdAndTargetMonth" resultMap="BiglobeIdSummaryMap">
+      SELECT
+        EUC_TO_BINARY (tab3.LTE_THREEG_ENGAGEMENT_NUMBER) AS LTE_THREEG_ENGAGEMENT_NUMBER,
+        tab3.CHARGE_ID AS CHARGE_ID,
+        EUC_TO_BINARY (tab3.CHARGE_CD) AS CHARGE_CD,
+        EUC_TO_BINARY (tab3.CHARGE_NAME) AS CHARGE_NAME,
+        EUC_TO_BINARY (tab3.call_kind) AS call_kind,
+        EUC_TO_BINARY (tab3.COMMUNICATION_METHOD) AS COMMUNICATION_METHOD,
+        EUC_TO_BINARY (tab3.TAX_STATUS) AS TAX_STATUS ,
+        EUC_TO_BINARY (tab3.UNIT_PRICE) AS UNIT_PRICE ,
+        tab4.SUM_AJT_CHARGE AS SUM_CHARGE_AMOUNT
+      FROM
+        (
+          SELECT
+            *
+          FROM
+            (
+              SELECT
+                DISTINCT lci.primary_key1 AS lte_threeg_engagement_number,
+                lci.index_free1 AS biglobe_id
+              FROM
+                lte_usable_equip lue
+                INNER JOIN
+                  lte_contract_info lci
+                ON	lci.primary_key1 = lue.foreign_key1
+              WHERE
+                lci.index_free1 = BINARY_TO_EUC(#{userId.value})
+              AND lue.item_free21 IS NOT NULL
+                    AND
+                        (
+                          lue.item_free_date7 <![CDATA[ >= ]]> #{firstDate}
+                          OR	lue.item_free_date7 IS NULL
+                        )
+            ) tab1 CROSS JOIN
+            (
+              SELECT
+                *
+              FROM
+                history_charge_item_master hcm
+              WHERE
+                hcm.charge_start_date <![CDATA[ <= ]]> #{lastDate}
+              AND	(
+                  hcm.charge_end_date  <![CDATA[ >= ]]> #{firstDate}
+                OR	hcm.charge_end_date  IS NULL
+                )
+            ) tab2
+        ) tab3
+        LEFT JOIN
+          (
+            SELECT
+              *
+            FROM
+              history_common_sum_bid hcsb
+            WHERE
+              biglobe_id = BINARY_TO_EUC(#{userId.value})
+            AND	use_month = BINARY_TO_EUC(#{targetMonth.value})
+          ) tab4
+        ON	tab3.LTE_THREEG_ENGAGEMENT_NUMBER = tab4.ENGAGEMENT_ID
+        AND	tab3.biglobe_id = tab4.biglobe_id
+        AND	tab3.CHARGE_ID = tab4.CHARGE_ID
+      ORDER BY LTE_THREEG_ENGAGEMENT_NUMBER, CHARGE_ID
+    </select>
+
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="BiglobeIdSummaryMap" type="jp.co.biglobe.isp.mobile.callhistory.domain.summary.single.BiglobeIdSummary">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.ChargeItem" resultMap="ChargeItemMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.ltethreegengagement.LteThreeGEngagementNumber"
+                 resultMap="LteThreeGEngagementNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.summary.single.SumChargeAmount" resultMap="SumChargeAmountMap"/>
+        </constructor>
+    </resultMap>
+
+        <!--  各ValueObjectのマッピング  -->
+        <resultMap id="LteThreeGEngagementNumberMap" type="jp.co.biglobe.isp.mobile.ltethreeg.domain.ltethreegengagement.LteThreeGEngagementNumber">
+            <constructor>
+                <arg column="LTE_THREEG_ENGAGEMENT_NUMBER" javaType="String" jdbcType="VARCHAR"/>
+            </constructor>
+        </resultMap>
+
+        <resultMap id="SumChargeAmountMap" type="jp.co.biglobe.isp.mobile.callhistory.domain.summary.single.SumChargeAmount">
+            <constructor>
+                <arg column="SUM_CHARGE_AMOUNT" javaType="int" jdbcType="INTEGER" />
+            </constructor>
+        </resultMap>
+
+        <!--    ChargeItemのマッピング       -->
+        <resultMap id="ChargeItemMap" type="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.ChargeItem">
+            <constructor>
+                <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.ChargeId" resultMap="ChargeIdMap"/>
+                <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.ChargeName" resultMap="ChargeNameMap"/>
+                <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.TaxStatus"
+                     column="TAX_STATUS"
+                     typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+                <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.CallKind"
+                     column="call_kind"
+                     typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+                <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.CommunicationMethod"
+                     column="COMMUNICATION_METHOD"
+                     typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+                <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.UnitPrice" resultMap="UnitPriceMap"/>
+            </constructor>
+        </resultMap>
+
+            <!--    ChargeItemのValueObjectのマッピング       -->
+            <resultMap id="ChargeIdMap" type="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.ChargeId">
+                <constructor>
+                    <arg column="CHARGE_CD" javaType="String" jdbcType="VARCHAR"/>
+                </constructor>
+            </resultMap>
+            <resultMap id="ChargeNameMap" type="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.ChargeName">
+                <constructor>
+                    <arg column="CHARGE_NAME" javaType="String" jdbcType="VARCHAR"/>
+                </constructor>
+            </resultMap>
+            <resultMap id="UnitPriceMap" type="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.UnitPrice">
+                <constructor>
+                    <arg column="UNIT_PRICE" javaType="String" jdbcType="VARCHAR"/>
+                </constructor>
+            </resultMap>
+
+
+</mapper>

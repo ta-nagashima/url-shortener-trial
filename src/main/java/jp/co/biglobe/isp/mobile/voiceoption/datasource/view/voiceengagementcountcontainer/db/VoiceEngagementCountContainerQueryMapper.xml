@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.view.voiceengagementcountcontainer.db.VoiceEngagementCountContainerQueryMapper">
+
+    <!-- Invoke 'Generate' action to add tags or functions -->
+
+    <select id="findByLteThreeGEngagementNumberForOrderedCount" resultMap="VoiceEngagementCountContainer">
+        select
+        <include refid="selectColumnsDefine"/>
+        FROM voice_engagement_state v
+        WHERE v.lte_three_g_engagement_number = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+        and v.voice_engagement_status = BINARY_TO_EUC(#{voiceEngagementStatus.dbValue})
+    </select>
+
+    <select id="findByLteThreeGEngagementNumberForEngagedCount" resultMap="VoiceEngagementCountContainer">
+        select
+        <include refid="selectColumnsDefine"/>
+        FROM voice_engagement_state v
+        WHERE v.lte_three_g_engagement_number = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+        and v.voice_engagement_status = BINARY_TO_EUC(#{voiceEngagementStatus.dbValue})
+    </select>
+
+    <select id="findByLteThreeGEngagementNumberForDisengagedReservedCount" resultMap="VoiceEngagementCountContainer">
+        select
+        <include refid="selectColumnsDefine"/>
+        FROM voice_engagement_state v
+        WHERE v.lte_three_g_engagement_number = BINARY_TO_EUC(#{lteThreeGEngagementNumber.value})
+        and v.voice_engagement_status = BINARY_TO_EUC(#{voiceEngagementStatus.dbValue})
+        and v.engagement_end_date_time <![CDATA[ >= ]]> #{eventDate.value}
+    </select>
+
+    <!--  select文のカラム指定  -->
+    <sql id="selectColumnsDefine">
+        count(v.voice_engagement_number) as voice_engagement_count
+    </sql>
+
+    <resultMap id="VoiceEngagementCountContainer" type="jp.co.biglobe.isp.mobile.voiceoption.domain.view.voiceengagementcountrefer.VoiceEngagementCount">
+        <constructor>
+            <arg column="voice_engagement_count" javaType="Integer" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+
+</mapper>

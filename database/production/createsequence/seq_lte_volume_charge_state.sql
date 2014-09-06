@@ -1,0 +1,1 @@
+CREATE SEQUENCE seq_lte_volume_charge_state

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.callhistory.datasource.detail.db.HistoryListQueryMapper">
+
+    <select id="findByUserIdAndMsisdnAndTargetMonth" resultMap="HistoryMap">
+        SELECT
+          *
+        FROM
+            (SELECT
+              history_id,
+              msisdn,
+              CHARGE_CD,
+              CHARGE_NAME,
+              call_kind,
+              COMMUNICATION_METHOD,
+              TAX_STATUS,
+              UNIT_PRICE,
+              START_DATE_TIME,
+              ADJUST_CHARGE_AMOUNT,
+              CONNECT_COUNTRY,
+              DURATION_SEC,
+              rownum AS row_number
+            FROM
+                (SELECT
+                history_id AS history_id,
+                EUC_TO_BINARY (hcd.number_dialed) AS msisdn,
+                EUC_TO_BINARY (hcim.CHARGE_CD) AS CHARGE_CD,
+                EUC_TO_BINARY (hcim.CHARGE_NAME) AS CHARGE_NAME,
+                EUC_TO_BINARY (hcim.call_kind) AS call_kind,
+                EUC_TO_BINARY (hcim.COMMUNICATION_METHOD) AS COMMUNICATION_METHOD,
+                EUC_TO_BINARY (hcim.TAX_STATUS) AS TAX_STATUS,
+                EUC_TO_BINARY (hcim.UNIT_PRICE) AS UNIT_PRICE,
+                (hcd.START_DATE_TIME) AS START_DATE_TIME,
+                EUC_TO_BINARY (TRIM(TO_CHAR(hcd.ADJUST_CHARGE_AMOUNT, '9999999'))) AS ADJUST_CHARGE_AMOUNT,
+                EUC_TO_BINARY (hcd.CONNECT_COUNTRY) AS CONNECT_COUNTRY,
+                hcd.DURATION_SEC AS DURATION_SEC
+                FROM history_common_detail hcd INNER JOIN history_charge_item_master hcim
+                  ON hcd.CHARGE_ID = hcim.CHARGE_ID
+                WHERE hcd.BIGLOBE_ID = BINARY_TO_EUC(#{userId.value}) AND hcd.MSISDN = BINARY_TO_EUC(#{msisdn.value})
+                        AND hcd.use_month = BINARY_TO_EUC(#{targetMonth.value}) AND hcim.call_kind = BINARY_TO_EUC(#{internationalCallKind.dbValue})
+                ORDER BY hcd.START_DATE_TIME) tab
+                 ) tab2
+        WHERE row_number <![CDATA[ >= ]]> #{low} AND row_number <![CDATA[ < ]]> #{high}
+    </select>
+
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="HistoryMap"
+               type="jp.co.biglobe.isp.mobile.callhistory.domain.detail.History">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.detail.HistoryId"
+                 resultMap="HistoryIdMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.ltethreeg.domain.sim.ValidMsisdn"
+                 resultMap="jp.co.biglobe.isp.mobile.ltethreeg.datasource.sim.db.SimRepositoryQueryMapper.Msisdn"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.chargeitem.ChargeItem"
+                 resultMap="jp.co.biglobe.isp.mobile.callhistory.datasource.summary.biglobeidsummary.db.BiglobeIdSummaryQueryMapper.ChargeItemMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.detail.StartDateTime"
+                 resultMap="StartDateTimeMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.detail.ChargeAmount"
+                 resultMap="ChargeAmountMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.detail.ConnectCountry"
+                 resultMap="ConnectCountryMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.callhistory.domain.detail.CallDuration"
+                 resultMap="CallDurationMap"/>
+        </constructor>
+    </resultMap>
+
+    <!--  各ValueObjectのマッピング  -->
+    <resultMap id="HistoryIdMap"
+               type="jp.co.biglobe.isp.mobile.callhistory.domain.detail.HistoryId">
+        <constructor>
+            <arg column="history_id" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+
+
+    <resultMap id="StartDateTimeMap"
+               type="jp.co.biglobe.isp.mobile.callhistory.domain.detail.StartDateTime">
+        <constructor>
+            <arg column="START_DATE_TIME" javaType="Date" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="ChargeAmountMap"
+               type="jp.co.biglobe.isp.mobile.callhistory.domain.detail.ChargeAmount">
+        <constructor>
+            <arg column="ADJUST_CHARGE_AMOUNT" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="ConnectCountryMap"
+               type="jp.co.biglobe.isp.mobile.callhistory.domain.detail.ConnectCountry">
+        <constructor>
+            <arg column="CONNECT_COUNTRY" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="CallDurationMap"
+               type="jp.co.biglobe.isp.mobile.callhistory.domain.detail.CallDuration">
+        <constructor>
+            <arg column="DURATION_SEC" javaType="BigDecimal" jdbcType="NUMERIC"/>
+        </constructor>
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpout.db.MnpOutQueryMapper">
+
+    <insert id="insertEvent">
+        INSERT INTO voice_mnp_out_event
+        ( event_id,
+          event_type,
+          event_date,
+          event_process,
+          voice_mnp_out_id,
+          voice_engagement_number,
+          mnp_out_status,
+          mnp_out_msisdn,
+          cancel_reason
+        )
+        VALUES
+        ( seq_voice_mnp_out_event.NEXTVAL,
+          BINARY_TO_EUC(#{eventType.dbValue}),
+          #{eventDate},
+          BINARY_TO_EUC(#{eventProcess}),
+          #{validData.voiceMnpOutId.value},
+          #{validData.voiceEngagementNumber.value},
+          BINARY_TO_EUC(#{validData.mnpOutStatus.dbValue}),
+          BINARY_TO_EUC(#{validData.mnpOutMsisdn.value}),
+          BINARY_TO_EUC(#{validData.mnpOutCancelReason.dbValue})
+        )
+    </insert>
+    <insert id="insertState">
+        INSERT INTO voice_mnp_out_state
+        ( voice_mnp_out_id,
+          voice_engagement_number,
+          mnp_out_status,
+          mnp_out_msisdn,
+          cancel_reason
+        )
+        VALUES
+        (
+          #{after.voiceMnpOutId.value},
+          #{after.voiceEngagementNumber.value},
+          BINARY_TO_EUC(#{after.mnpOutStatus.dbValue}),
+          BINARY_TO_EUC(#{after.mnpOutMsisdn.value}),
+          BINARY_TO_EUC(#{after.mnpOutCancelReason.dbValue})
+        )
+    </insert>
+
+    <update id="updateState">
+        UPDATE voice_mnp_out_state
+        SET
+          voice_mnp_out_id = #{after.voiceMnpOutId.value},
+          voice_engagement_number = #{after.voiceEngagementNumber.value},
+          mnp_out_status = BINARY_TO_EUC(#{after.mnpOutStatus.dbValue}),
+          mnp_out_msisdn = BINARY_TO_EUC(#{after.mnpOutMsisdn.value}),
+          cancel_reason = BINARY_TO_EUC(#{after.mnpOutCancelReason.dbValue})
+        WHERE voice_engagement_number = #{before.voiceEngagementNumber.value}
+    </update>
+
+    <delete id="deleteState">
+        DELETE FROM voice_mnp_out_state
+        WHERE voice_mnp_out_id = #{before.voiceMnpOutId.value}
+    </delete>
+
+    <select id="selectState" resultMap="MnpOutMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_mnp_out_state o LEFT OUTER JOIN voice_mnp_out_personal_info_s p
+        ON o.voice_mnp_out_id = p.voice_mnp_out_id
+        LEFT OUTER JOIN voice_mnp_out_number_state n
+        ON o.voice_mnp_out_id = n.voice_mnp_out_id
+        LEFT OUTER JOIN voice_mnp_out_complete_state co
+        ON o.voice_mnp_out_id = co.voice_mnp_out_id
+        WHERE o.voice_mnp_out_id = #{before.voiceMnpOutId.value}
+    </select>
+
+    <select id="findByVoiceEngagementNumber" resultMap="MnpOutMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_mnp_out_state o LEFT OUTER JOIN voice_mnp_out_personal_info_s p
+        ON o.voice_mnp_out_id = p.voice_mnp_out_id
+        LEFT OUTER JOIN voice_mnp_out_number_state n
+        ON o.voice_mnp_out_id = n.voice_mnp_out_id
+        LEFT OUTER JOIN voice_mnp_out_complete_state co
+        ON o.voice_mnp_out_id = co.voice_mnp_out_id
+        WHERE o.voice_engagement_number = #{voiceEngagementNumber.value}
+    </select>
+
+    <select id="lockByVoiceEngagementNumber" resultMap="VoiceEngagementNumberMap">
+        SELECT
+            voice_engagement_number AS o_voice_engagement_number
+        FROM voice_mnp_out_state
+        WHERE voice_engagement_number = #{voiceEngagementNumber.value}
+        FOR UPDATE
+    </select>
+
+    <!--  select文のカラム指定  -->
+    <sql id="selectColumnsDefine">
+        o.voice_mnp_out_id AS o_voice_mnp_out_id,
+        p.voice_mnp_out_id AS p_voice_mnp_out_id,
+        n.voice_mnp_out_id AS n_voice_mnp_out_id,
+        co.voice_mnp_out_id AS co_voice_mnp_out_id,
+        o.voice_engagement_number AS o_voice_engagement_number,
+        EUC_TO_BINARY(co.mnp_out_complete_confirm_date) AS mnp_out_complete_confirm_date,
+        EUC_TO_BINARY(o.mnp_out_status) AS mnp_out_status,
+        EUC_TO_BINARY(n.mnp_reservation_number) AS o_mnp_reservation_number,
+        EUC_TO_BINARY(n.expire_date) AS expire_date,
+        EUC_TO_BINARY(n.execution_date) AS execution_date,
+        EUC_TO_BINARY(n.operator_id) AS operator_id,
+        EUC_TO_BINARY(o.mnp_out_msisdn) AS mnp_out_msisdn,
+        EUC_TO_BINARY(o.cancel_reason) AS cancel_reason,
+        EUC_TO_BINARY(p.mnp_out_full_name) AS mnp_out_full_name,
+        EUC_TO_BINARY(p.mnp_out_full_name_kana) AS mnp_out_full_name_kana,
+        EUC_TO_BINARY(p.mnp_out_birthday) AS mnp_out_birthday,
+        EUC_TO_BINARY(p.mnp_out_gender) AS mnp_out_gender
+    </sql>
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="MnpOutMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.ValidMnpOut">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.VoiceMnpOutId"
+                 resultMap="VoiceMnpOutIdMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.voiceengagement.VoiceEngagementNumber"
+                 resultMap="VoiceEngagementNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.mnpoutcompletion.ValidMnpOutCompletion"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpout.db.MnpOutCompleteQueryMapper.MnpOutCompletionMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.MnpOutStatus" column="mnp_out_status"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.MnpOutMsisdn"
+                 resultMap="MnpOutMsisdnMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.MnpOutCancelReason" column="cancel_reason"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.mnpoutreservationnumber.ValidMnpOutReservationNumber"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpout.db.MnpOutNumberQueryMapper.MnpOutReservationNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.ValidMnpOutPersonalInfo"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpout.db.MnpOutPersonalInfoQueryMapper.MnpOutPersonalInfoMap"/>
+        </constructor>
+    </resultMap>
+
+    <!--  各ValueObjectのマッピング  -->
+    <resultMap id="VoiceMnpOutIdMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.VoiceMnpOutId">
+        <constructor>
+            <arg column="o_voice_mnp_out_id" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+
+
+    <resultMap id="VoiceEngagementNumberMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.voiceengagement.VoiceEngagementNumber">
+        <constructor>
+            <arg column="o_voice_engagement_number" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="MnpOutMsisdnMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout.MnpOutMsisdn">
+        <constructor>
+            <arg column="mnp_out_msisdn" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+</mapper>

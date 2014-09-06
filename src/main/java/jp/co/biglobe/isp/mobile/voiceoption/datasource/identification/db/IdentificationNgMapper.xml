@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.identification.db.IdentificationNgMapper">
+
+    <insert id="insertEvent">
+        INSERT INTO voice_identification_ng_e
+        ( event_id,
+          event_type,
+          event_date,
+          event_process,
+          identification_result_id,
+          ng_reason,
+          ng_reason_detail
+        )
+        VALUES
+        ( seq_voice_identification_ng_e.NEXTVAL,
+          BINARY_TO_EUC(#{eventType.dbValue}),
+          #{eventDate},
+          BINARY_TO_EUC(#{eventProcess}),
+          #{validData.identificationResultId.value},
+          BINARY_TO_EUC(#{validData.ngReason.dbValue}),
+          BINARY_TO_EUC(#{validData.ngReasonDetail.value})
+        )
+    </insert>
+
+    <insert id="insertState">
+        INSERT INTO voice_identification_ng_s
+        ( identification_result_id,
+          ng_reason,
+          ng_reason_detail
+        )
+        VALUES
+        ( #{after.identificationResultId.value},
+          BINARY_TO_EUC(#{after.ngReason.dbValue}),
+          BINARY_TO_EUC(#{after.ngReasonDetail.value})
+        )
+    </insert>
+
+    <delete id="deleteState">
+        DELETE FROM voice_identification_ng_s
+        WHERE identification_result_id = #{before.identificationResultId.value}
+    </delete>
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="ValidNgReasonsMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.ngreasons.ValidNgReasons">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.IdentificationResultId"
+                 resultMap="IdentificationResultIdMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.ngreasons.NgReason"
+                 column="ng_reason"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.ngreasons.NgReasonDetail"
+                 resultMap="NgReasonDetailMap"/>
+        </constructor>
+    </resultMap>
+
+    <!--  各ValueObjectのマッピング  -->
+    <resultMap id="IdentificationResultIdMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.IdentificationResultId">
+        <constructor>
+            <arg column="ng_identification_result_id" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+    <!--
+    <resultMap id="NgReasonMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.ngreasons.NgReason">
+        <constructor>
+            <arg column="ng_reason" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    -->
+    <resultMap id="NgReasonDetailMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.ngreasons.NgReasonDetail">
+        <constructor>
+            <arg column="ng_reason_detail" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+</mapper>

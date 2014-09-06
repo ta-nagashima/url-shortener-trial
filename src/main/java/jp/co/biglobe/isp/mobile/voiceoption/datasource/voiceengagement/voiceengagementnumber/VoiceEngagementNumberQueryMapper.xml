@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.voiceengagement.voiceengagementnumber.VoiceEngagementNumberQueryMapper">
+
+    <!-- ここからcreateメソッドの設定 -->
+
+    <select id="create" resultMap="VoiceEngagementNumberMap">
+        SELECT
+        seq_voice_engagement_state.NEXTVAL AS voice_engagement_number
+        FROM DUAL
+    </select>
+
+    <!--  ValueObjectのマッピング  -->
+    <resultMap id="VoiceEngagementNumberMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.voiceengagement.VoiceEngagementNumber">
+        <constructor>
+            <arg column="voice_engagement_number" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+
+</mapper>

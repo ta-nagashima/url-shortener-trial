@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.mobile.voiceoption.datasource.identification.db.IdentificationResultMapper">
+
+    <insert id="insertEvent">
+        INSERT INTO voice_identification_result_e
+        ( event_id,
+          event_type,
+          event_date,
+          event_process,
+          identification_result_id,
+          identification_receipt_number,
+          operator_id,
+          execution_date,
+          document_acceptance_means,
+          identification_doc_type,
+          identification_sub_doc_type
+        )
+        VALUES
+        ( seq_voice_identity_result_e.NEXTVAL,
+          BINARY_TO_EUC(#{eventType.dbValue}),
+          #{eventDate},
+          BINARY_TO_EUC(#{eventProcess}),
+          #{validData.identificationResultId.value},
+          BINARY_TO_EUC(#{validData.identificationReceiptNumber.value}),
+          BINARY_TO_EUC(#{validData.operatorId.value}),
+          BINARY_TO_EUC(#{validData.executionDate.value}),
+          BINARY_TO_EUC(#{validData.identificationDocuments.documentAcceptanceMeans.dbValue}),
+          BINARY_TO_EUC(#{validData.identificationDocuments.identificationDocumentType.dbValue}),
+          BINARY_TO_EUC(#{validData.identificationDocuments.identificationSubDocumentType.dbValue})
+        )
+    </insert>
+
+    <insert id="insertState">
+        INSERT INTO voice_identification_result_s
+        ( identification_result_id,
+          identification_receipt_number,
+          operator_id,
+          execution_date,
+          document_acceptance_means,
+          identification_doc_type,
+          identification_sub_doc_type
+        )
+        VALUES
+        ( #{after.identificationResultId.value},
+          BINARY_TO_EUC(#{after.identificationReceiptNumber.value}),
+          BINARY_TO_EUC(#{after.operatorId.value}),
+          BINARY_TO_EUC(#{after.executionDate.value}),
+          BINARY_TO_EUC(#{after.identificationDocuments.documentAcceptanceMeans.dbValue}),
+          BINARY_TO_EUC(#{after.identificationDocuments.identificationDocumentType.dbValue}),
+          BINARY_TO_EUC(#{after.identificationDocuments.identificationSubDocumentType.dbValue})
+        )
+    </insert>
+
+    <delete id="deleteState">
+        DELETE voice_identification_result_s
+        WHERE identification_receipt_number = BINARY_TO_EUC(#{before.identificationReceiptNumber.value})
+    </delete>
+
+    <select id="selectState" resultMap="IdentificationResultMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM voice_identification_result_s rs
+        LEFT OUTER JOIN voice_identification_ng_s ng
+        ON rs.identification_result_id = ng.identification_result_id
+        WHERE rs.identification_result_id = BINARY_TO_EUC(#{before.identificationResultId.value})
+    </select>
+
+    <!--  select文のカラム指定  -->
+    <sql id="selectColumnsDefine">
+        rs.identification_result_id AS rs_identification_result_id,
+        EUC_TO_BINARY(rs.identification_receipt_number) AS rs_identification_receipt_num,
+        EUC_TO_BINARY(rs.identification_receipt_number) AS identity_receipt_number_rs,
+        EUC_TO_BINARY(rs.operator_id) AS operator_id,
+        EUC_TO_BINARY(rs.execution_date) AS execution_date,
+        EUC_TO_BINARY(rs.document_acceptance_means) AS document_acceptance_means,
+        EUC_TO_BINARY(rs.identification_doc_type) AS identification_doc_type,
+        EUC_TO_BINARY(rs.identification_sub_doc_type) AS identification_sub_doc_type,
+        ng.identification_result_id AS ng_identification_result_id,
+        EUC_TO_BINARY(ng.ng_reason) AS ng_reason,
+        EUC_TO_BINARY(ng.ng_reason_detail) AS ng_reason_detail
+    </sql>
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="IdentificationResultMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.ValidIdentificationResult">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.IdentificationResultId"
+                 resultMap="IdentificationResultIdMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.IdentificationReceiptNumber"
+                 resultMap="IdentificationReceiptNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.auth.domain.operatornouser.OperatorId"
+                 resultMap="OperatorIdMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.executiondate.ExecutionDate"
+                     resultMap="ExecutionDateMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.identificationdocuments.IdentificationDocuments"
+                     resultMap="IdentificationDocumentsMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.ngreasons.ValidNgReasons"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.identification.db.IdentificationNgMapper.ValidNgReasonsMap"/>
+        </constructor>
+    </resultMap>
+
+
+    <!--  各ValueObjectのマッピング  -->
+    <resultMap id="IdentificationResultIdMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.IdentificationResultId">
+        <constructor>
+            <arg column="rs_identification_result_id" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="IdentificationReceiptNumberMap" type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.IdentificationReceiptNumber">
+        <constructor>
+            <arg column="rs_identification_receipt_num" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="OperatorIdMap" type="jp.co.biglobe.isp.auth.domain.operatornouser.OperatorId">
+        <constructor>
+            <arg column="operator_id" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="ExecutionDateMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.executiondate.ExecutionDate">
+        <constructor>
+            <arg column="execution_date" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="IdentificationDocumentsMap"
+               type="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.identificationdocuments.IdentificationDocuments">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.identificationdocuments.DocumentAcceptanceMeans"
+                 column="document_acceptance_means"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.identificationdocuments.IdentificationDocumentType"
+                 column="identification_doc_type"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.identificationdocuments.IdentificationSubDocumentType"
+                 column="identification_sub_doc_type"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
+        </constructor>
+    </resultMap>
+
+</mapper>
