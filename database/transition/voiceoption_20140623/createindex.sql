@@ -1,3 +1,0 @@
-create index i_vis_lte_3g_engagement_num on voice_identification_state(lte_three_g_engagement_number);
-create index i_ves_lte_3g_engagement_num on voice_engagement_state(lte_three_g_engagement_number);
-create index i_ves_user_id on voice_engagement_state(user_id);
