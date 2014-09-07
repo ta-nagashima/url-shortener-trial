@@ -4,7 +4,7 @@ def envList = ['localMac', 'localWindows', 'localTomcat', 'localOracle',
                'cloudHosting', 'cloudHostingTomcat', 'cloudHostingFromLocal',
                'development', 'testing', 'staging', 'production']
 
-if (!hasProperty('env')) {
+if (!hasProperty('env') || "".equals(env)) {
     def osMXBean = ManagementFactory.getOperatingSystemMXBean()
     if("${osMXBean.name}".contains("Mac")){
         env = envList[0]

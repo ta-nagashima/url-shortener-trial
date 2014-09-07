@@ -24,9 +24,6 @@ findbugs {
 //    excludeFilter = file("$rootProject.projectDir/gradle/findbugs/excludeFilter.xml")
 }
 
-// 環境ごとの設定を実施
-apply from: file('etc/gradle/environment.gradle')
-
 // プロパティ設定
 ext {
     defaultEncoding = 'UTF-8'
@@ -34,7 +31,11 @@ ext {
     springframeworkVersion = '4.0.5.RELEASE'
     springBatchVersion = '2.1.7.RELEASE'
     jacksonVersion = '1.9.13'
+    env = ''
 }
+
+// 環境ごとの設定を実施
+apply from: file('etc/gradle/environment.gradle')
 
 // 環境ごとにデフォルト文字コードが違うので、コンパイル時の文字コードを指定する
 compileJava.options.encoding = defaultEncoding
@@ -63,29 +64,6 @@ sourceSets {
     }
 }
 
-// https://github.com/geb/geb-example-gradle
-// The drivers we want to use
-ext.drivers = ["firefox", "chrome"]
-
-drivers.each { driver ->
-    task "${driver}Test"(type: Test) {
-        testReportDir = reporting.file("$name/tests")
-        testResultsDir = file("$buildDir/test-results/$name")
-
-        systemProperty "geb.build.reportsDir", reporting.file("$name/geb")
-        systemProperty "geb.env", driver
-
-        // If you wanted to set the baseUrl in your build…
-        // systemProperty "geb.build.baseUrl", "http://myapp.com"
-
-        useJUnit {
-            includeCategories 'jp.co.biglobe.test.util.category.BrowserTestCategory'
-        }
-
-        // テストする環境で使用する設定ファイルが異なる
-        systemProperties 'environment': "${env}"
-    }
-}
 
 // gradlew test コマンド実行時の処理
 test {
@@ -291,10 +269,6 @@ dependencies {
         // If using JUnit, need to depend on geb-junit (3 or 4)
         testCompile "org.gebish:geb-junit4:$gebVersion"
 
-        // Drivers
-        drivers.each { driver ->
-            testCompile "org.seleniumhq.selenium:selenium-$driver-driver:$seleniumVersion"
-        }
     }
 
 }
