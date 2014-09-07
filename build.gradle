@@ -167,22 +167,9 @@ dependencies {
         compile "org.aspectj:aspectjrt:1.8.0"
         compile "org.aspectj:aspectjweaver:1.8.0"
 
-        // Spring Batch
-        compile "org.springframework.batch:spring-batch-core:${springBatchVersion}"
-        compile "org.springframework.batch:spring-batch-infrastructure:${springBatchVersion}"
-        compile "hsqldb:hsqldb:1.8.0.7"
-
-        // MD5ハッシュ化ライブラリ
-        compile "commons-codec:commons-codec:1.8"
-
         // ロギング 関連
-        // compile "log4j:log4j:1.2.17"
         compile "ch.qos.logback:logback-classic:1.1.2"
-        //compile "org.slf4j:slf4j-simple:1.6.1"
         compile "org.slf4j:slf4j-api:1.7.7"
-        // @Todo しばらく使って問題なければ、削除
-        //compile "commons-logging:commons-logging:1.1.1"
-        //testCompile "org.slf4j:slf4j-api:1.6.1"
 
         // Servlet 関連
         testCompile "javax.servlet:servlet-api:3.0-alpha-1"
@@ -196,20 +183,20 @@ dependencies {
 //        testCompile "junit:junit:4.11"
         testCompile 'junit:junit-dep:4.10' // 参照 http://futurismo.biz/archives/1172
         testCompile 'org.jmock:jmock-junit3:2.6.0'
+        testCompile "org.mockito:mockito-all:1.9.5"
         testCompile "org.dbunit:dbunit:2.4.9"
+        testCompile "uk.com.robust-it:cloning:1.9.0" // List/Mapのディープクローンを行うライブラリ
         testCompile "org.springframework:spring-test:${springframeworkVersion}"
         testCompile "org.springframework.batch:spring-batch-test:${springBatchVersion}"
         testCompile "com.jayway.jsonpath:json-path-assert:0.8.1"
-        // @Todo ローカルリボジとりから取得するほうがよいな
         testCompile files("etc/library/development/h2storedprocedure-2.0.jar")
-        testCompile "org.mockito:mockito-all:1.9.5"
         testCompile files("etc/library/production/ojdbc6-11.2.0.4.jar")
 
         // バリデーション 関連
         compile "org.hibernate:hibernate-validator:4.3.1.Final"
 
         // データベース 関連
-        compile "cglib:cglib:3.1" // mybatisとspringが利用しているライブラリ
+//        compile "cglib:cglib:3.1" // mybatisとspringが利用しているライブラリ
         compile "org.mybatis:mybatis:3.2.7"
         compile "org.mybatis:mybatis-spring:1.2.2"
         compile "commons-dbcp:commons-dbcp:1.4"
@@ -232,12 +219,6 @@ dependencies {
         compile 'commons-io:commons-io:2.4'
         compile 'commons-fileupload:commons-fileupload:1.3.1'
 
-        // Google Guava関連（ImmutableListなど）
-        compile group: 'com.google.guava', name: 'guava', version: '12.0'
-
-        // List/Mapのディープクローンを行うライブラリ
-        testCompile "uk.com.robust-it:cloning:1.9.0"
-
         // Tomcatの設定
         def tomcatVersion = '7.0.53'
         tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
@@ -246,16 +227,6 @@ dependencies {
         tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
             exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
         }
-
-        def gebVersion = "0.9.0-RC-3"
-        def seleniumVersion = "2.30.0"
-
-        // If using Spock, need to depend on geb-spock
-        testCompile "org.gebish:geb-spock:$gebVersion"
-        testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
-
-        // If using JUnit, need to depend on geb-junit (3 or 4)
-        testCompile "org.gebish:geb-junit4:$gebVersion"
 
     }
 
