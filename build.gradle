@@ -64,7 +64,6 @@ sourceSets {
     }
 }
 
-
 // gradlew test コマンド実行時の処理
 test {
     // テストする環境で使用する設定ファイルが異なる
@@ -232,10 +231,6 @@ dependencies {
         // ファイルアップロード
         compile 'commons-io:commons-io:2.4'
         compile 'commons-fileupload:commons-fileupload:1.3.1'
-
-        // PGP 暗号化
-        compile files("configs/production/library/bcpg-jdk15on-150.jar")
-        compile files("configs/production/library/bcprov-jdk15on-150.jar")
 
         // Google Guava関連（ImmutableListなど）
         compile group: 'com.google.guava', name: 'guava', version: '12.0'

@@ -1,6 +1,5 @@
 package jp.co.biglobe.isp.mobile.voiceoption.domain.identificationfiles;
 
-import jp.co.biglobe.isp.mobile.extension.encrypt.PGPPublicKey;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,15 +9,16 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.regex.Pattern;
 
 /*
  * 本人確認書類オブジェクト
  */
-@ToString(includeFieldNames=false)
+@ToString(includeFieldNames = false)
 @EqualsAndHashCode
 public class ValidIdentificationFile implements IdentificationFile {
     @Getter
@@ -49,19 +49,6 @@ public class ValidIdentificationFile implements IdentificationFile {
         }
     }
 
-    /**
-     * 本人確認書類データ（PGP暗号化）
-     */
-    public byte[] getPGPEncryptedBytes(PGPPublicKey pgpPublicKey) {
-        try {
-            // グレースケールに変換した画像データを取得する
-            byte[] grayData = convertGrayScale(this.fileSuffix, value.getBytes());
-            // 画像データを PGP 暗号化する
-            return pgpPublicKey.encrypt(grayData, value.getOriginalFilename(), new Date());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * ファイル拡張子を指定して、画像をグレースケールに変換する

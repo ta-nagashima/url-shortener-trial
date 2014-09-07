@@ -1,7 +1,5 @@
 package jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.local;
 
-import jp.co.biglobe.isp.mobile.extension.encrypt.PGPPublicKey;
-import jp.co.biglobe.isp.mobile.extension.encrypt.PGPPublicKeyRing;
 import jp.co.biglobe.isp.mobile.voiceoption.domain.identificationfiles.IdentificationFiles;
 import jp.co.biglobe.isp.mobile.voiceoption.domain.identificationfiles.IdentificationFilesRepository;
 import jp.co.biglobe.isp.mobile.voiceoption.domain.identificationfiles.ValidIdentificationFile;
@@ -9,7 +7,7 @@ import jp.co.biglobe.lib.essential.property.PropertyAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.io.*;
+import java.io.File;
 import java.text.SimpleDateFormat;
 
 @Repository
@@ -58,21 +56,7 @@ public class IdentificationFilesRepositoryLocal implements IdentificationFilesRe
      * PGP 暗号化済ファイル書き込み（ローカル）
      */
     private void registerPGPEncryptedFile(String directoryName, IdentificationFiles identificationFiles, ValidIdentificationFile validIdentificationFile) {
-        try {
-            // 暗号化に使用する公開鍵を取得する
-            PGPPublicKey pgpPublicKey = getPgpPublicKey();
 
-            // ファイル名：本人確認受付番号_受信年月日_nn.拡張子.pgp（nn は受信ファイルの番号）
-            String fileName = getFileName(identificationFiles, validIdentificationFile);
-
-            FileOutputStream fos = new FileOutputStream(new File(directoryName + "/" + fileName));
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            bos.write(validIdentificationFile.getPGPEncryptedBytes(pgpPublicKey)); // 暗号化済データで書き込む
-            bos.flush();
-            bos.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -88,14 +72,4 @@ public class IdentificationFilesRepositoryLocal implements IdentificationFilesRe
         return fileName;
     }
 
-    /**
-     * PGP 公開鍵の鍵リングから、先頭に格納されている PGP 公開鍵を取得する
-     */
-    private PGPPublicKey getPgpPublicKey() {
-        try {
-            return new PGPPublicKeyRing(propertyAccessor.getProperty("openpgp.publickeyring")).getPublicKey();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
