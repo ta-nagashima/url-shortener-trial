@@ -11,6 +11,7 @@ apply {
 // gradlewコマンドを利用する。
 task wrapper(type: Wrapper) {
     gradleVersion = '1.12'
+    jarFile = "${project.projectDir}/etc/gradle/wrapper/gradle-wrapper.jar"
 }
 
 findbugs {
@@ -24,11 +25,10 @@ findbugs {
 }
 
 // 環境ごとの設定を実施
-apply from: file('gradle/environment.gradle')
-
+apply from: file('etc/gradle/environment.gradle')
 
 // プロパティ設定
-ext{
+ext {
     defaultEncoding = 'UTF-8'
     javaVersion = '1.7'
     springframeworkVersion = '4.0.5.RELEASE'
@@ -46,20 +46,20 @@ repositories {
 }
 
 // デフォルトのディレクトリ構成から以下の要素を追加する
-sourceSets{
-    main{
+sourceSets {
+    main {
         java.srcDirs = []
         groovy.srcDirs = ['src/main/java']
-        resources{
+        resources {
             srcDir 'src/main/java'
         }
         // TomcatがContextを自動リロードするために、クラスファイルの出力先を変更
         output.classesDir = 'src/main/webapp/WEB-INF/classes'
     }
 
-    test{
+    test {
         java.srcDirs = []
-        groovy.srcDirs = ['src/test/groovy', 'src/test/java' ]
+        groovy.srcDirs = ['src/test/groovy', 'src/test/java']
     }
 }
 
@@ -78,7 +78,7 @@ drivers.each { driver ->
         // If you wanted to set the baseUrl in your build…
         // systemProperty "geb.build.baseUrl", "http://myapp.com"
 
-        useJUnit{
+        useJUnit {
             includeCategories 'jp.co.biglobe.test.util.category.BrowserTestCategory'
         }
 
@@ -98,13 +98,13 @@ test {
     // VM引数に下記の設定をしないとcoberturaの実行が失敗する
     test.jvmArgs '-XX:-UseSplitVerifier'
 
-    useJUnit{
+    useJUnit {
         excludeCategories 'jp.co.biglobe.test.util.category.BrowserTestCategory'
         excludeCategories 'jp.co.biglobe.test.util.category.ScenarioTestCategory'
     }
 
-    if("${env}" == 'cloudHosting'){
-        useJUnit{
+    if ("${env}" == 'cloudHosting') {
+        useJUnit {
             excludeCategories 'jp.co.biglobe.test.util.category.BrowserTestCategory'
             excludeCategories 'jp.co.biglobe.test.util.category.ScenarioTestCategory'
         }
@@ -140,12 +140,12 @@ clean {
 }
 
 // gradlew tomcatRun コマンド実行時の処理
-if("${env}" == 'cloudHostingTomcat'){
-    ext{
+if ("${env}" == 'cloudHostingTomcat') {
+    ext {
         tomcatContextPath = 'configs/cloudhosting/tomcat/context.xml'
     }
-}else{
-    ext{
+} else {
+    ext {
         tomcatContextPath = 'configs/development/tomcat/context.xml'
     }
 }
@@ -157,7 +157,7 @@ tomcatRun {
     stopPort = 7011
     stopKey = 'stopkey'
 }
-tomcatStop{
+tomcatStop {
     httpPort = 7010
     stopPort = 7011
     stopKey = 'stopkey'
@@ -169,7 +169,7 @@ dependencies {
     // BOでのオフラインビルド時は内部管理しているライブラリを参照
     if (file('repository').exists()) {
         compile fileTree(dir: 'repository', include: '*.jar')
-    }else{
+    } else {
 
         // BO用Sprign拡張ライブラリ
         compile files("configs/production/library/isplibrary-1.1.0.jar")
@@ -184,7 +184,6 @@ dependencies {
         compile "org.springframework:spring-tx:${springframeworkVersion}"
         compile "org.springframework:spring-jdbc:${springframeworkVersion}"
         compile "org.springframework.data:spring-data-commons:1.8.2.RELEASE"
-
 
         // Spring AOP + AspectJ
         compile "org.springframework:spring-aop:${springframeworkVersion}"
@@ -208,11 +207,10 @@ dependencies {
         //compile "commons-logging:commons-logging:1.1.1"
         //testCompile "org.slf4j:slf4j-api:1.6.1"
 
-
         // Servlet 関連
         testCompile "javax.servlet:servlet-api:3.0-alpha-1"
         providedCompile "javax.servlet:servlet-api:2.5"
-        
+
         //    Spring MVC Test FrameworkがServlet 3.0系に依存しているので、プロダクトコード側のServletのバージョンと差異あり。
         //    http://docs.spring.io/spring/docs/4.0.x/spring-framework-reference/html/new-in-4.0.html#_general_web_improvements
         testCompile "org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0"
@@ -325,11 +323,11 @@ task releaseSource(type: Zip) {
     }
 }
 
-if("${env}" == 'cloudHosting'){
+if ("${env}" == 'cloudHosting') {
     // カバレッジ取得用
-    apply from: 'gradle/cobertura.gradle'
+    apply from: 'etc/gradle/cobertura.gradle'
     apply plugin: "jacoco" // カバレッジ取得用
-    apply from: 'gradle/jacoco.gradle'
+    apply from: 'etc/gradle/jacoco.gradle'
 }
 
 
