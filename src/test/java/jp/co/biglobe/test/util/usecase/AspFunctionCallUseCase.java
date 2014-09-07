@@ -12,7 +12,7 @@ import java.nio.channels.FileChannel;
 
 public class AspFunctionCallUseCase {
 
-    private String BOBIO_SNR_BASE = System.getProperty("user.dir") + "/bin/development/";
+    private String BOBIO_SNR_BASE = System.getProperty("user.dir") + "/etc/script/development/";
     private final String ASP_FUNCTION_CALL_MEM_LEGM = "AspFunctionCall_mem_legm";
 
     public void set() throws IOException {
