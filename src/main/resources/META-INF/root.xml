@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:jee="http://www.springframework.org/schema/jee"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
-    <!-- 環境ごとに読み込むプロパティファイルを切り替える -->
-    <import resource="classpath:META-INF/core/environment-property.xml"/>
+    <!-- 全プロジェクト共通の設定を読み込む（原則的にcoreディレクトリ配下は弄る必要なし） -->
+    <import resource="classpath:META-INF/core/core-root.xml"/>
 
-    <bean class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer"/>
-    <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/>
-
-    <jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jndi/database"/>
-
-    <!-- Bean定義 -->
+    <!-- プロジェクト固有の設定を読み込む -->
     <import resource="classpath:META-INF/mobile.xml"/>
 
 </beans>
