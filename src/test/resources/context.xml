@@ -34,7 +34,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
     </bean>
         
     <!-- Sales Proto Bean定義 -->
-    <import resource="classpath:META-INF/mobile.xml" />
+    <import resource="classpath:META-INF/project-root.xml" />
 
     <!-- DBUnitをAutowiredで呼び出す -->
     <context:component-scan base-package="jp.co.biglobe.test.util.dbunit" />

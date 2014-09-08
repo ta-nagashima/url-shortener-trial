@@ -6,6 +6,11 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd">
 
+    <!--
+        全プロジェクト共通の設定を記述（META-INF/root.xmlから読み込まれる）
+        ============================================================
+    -->
+
     <!-- 環境ごとに読み込むプロパティファイルを切り替える -->
     <import resource="classpath:META-INF/core/environment-property.xml"/>
 
