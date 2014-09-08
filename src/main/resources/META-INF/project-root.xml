@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
-http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
-http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd"
         >
 
     <!--
@@ -16,17 +12,6 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
         ==========================================================
     -->
 
-    <!-- BobioTemplateの定義 -->
-    <!--
-    <bean class="jp.co.biglobe.frameworkrk.scenario.bobio.BobioTemplateImpl" />
-    -->
-
-    <!-- Beanコンテナの終了時にシナリオ実行コマンドのスレッドプールをシャットダウンする -->
-    <!--bean id="threadPoolSingleton" class="jp.co.biglobe.framework.scenariocommand.threadpool.ThreadPoolSingleton" factory-method="valueOf" destroy-method="shutdown">
-        <constructor-arg>
-            <value>INSTANCE</value>
-        </constructor-arg>
-    </bean-->
 
     <!-- メッセージファイルの読込 -->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -50,28 +35,8 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
     <!-- MyBatis設定の読込 -->
     <import resource="classpath:META-INF/core/database.xml"/>
 
-    <!-- SpringMVCの有効化 -->
-    <mvc:annotation-driven validator="validator">
-        <mvc:argument-resolvers>
-            <bean class="org.springframework.data.web.PageableHandlerMethodArgumentResolver"/>
-        </mvc:argument-resolvers>
-    </mvc:annotation-driven>
-
-    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-        <property name="validationMessageSource" ref="messageSource"/>
-    </bean>
-
-    <!-- Controller実行時に呼び出され、メソッド処理前と処理後の共通処理を担う -->
-    <mvc:interceptors>
-        <bean class="jp.co.biglobe.lib.essential.controller.ApiInterceptor"/>
-    </mvc:interceptors>
-
-    <!-- グローバルなExceptionHandlerの定義
-    　　　このパッケージのコンポーネントスキャンは原則必須とし、振る舞いを変更したい場合は
-    　　　ExceptionHandlerの内部でAutowiredされるクラス（jp.co.biglobe.lib.component.exceptionhandler内のクラス）を
-    　　　差し替えることにより実現すること
-     -->
-    <context:component-scan base-package="jp.co.biglobe.lib.essential.exceptionhandler"/>
+    <!-- コントローラ設定の読込 -->
+    <import resource="classpath:META-INF/core/controller.xml"/>
 
     <!-- 全プロジェクト共通のcomponent-scanの設定（Autowiredに必要） -->
     <import resource="classpath:META-INF/core/core-component-scan.xml"/>
