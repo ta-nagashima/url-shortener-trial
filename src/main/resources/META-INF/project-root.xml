@@ -17,7 +17,7 @@
 
 
     <!-- プロジェクト固有のcomponent-scanの設定（Autowiredに必要） -->
-    <import resource="classpath:META-INF/project-component-scan.xml"/>
+    <import resource="classpath:META-INF/component-scan.xml"/>
 
 
 </beans>
