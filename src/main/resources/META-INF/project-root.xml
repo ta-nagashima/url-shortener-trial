@@ -39,7 +39,7 @@
     <import resource="classpath:META-INF/core/scope/scope.xml"/>
 
     <!-- 全プロジェクト共通のcomponent-scanの設定（Autowiredに必要） -->
-    <import resource="classpath:META-INF/core/core-component-scan.xml"/>
+    <import resource="classpath:META-INF/core/component-scan.xml"/>
 
     <!-- プロジェクト固有のcomponent-scanの設定（Autowiredに必要） -->
     <import resource="classpath:META-INF/project-component-scan.xml"/>

@@ -94,7 +94,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
     <import resource="classpath:META-INF/core/scope/scope.xml"/>
 
     <!-- Framework層設定の読込 -->
-    <import resource="classpath:META-INF/core/core-component-scan.xml"/>
+    <import resource="classpath:META-INF/core/component-scan.xml"/>
 
     <!-- ここからAutowiredを行うためのClassの読み込み。パッケージを追加した場合、ここに追加が必要な場合がある。
     読み込むパッケージが増えてきたら、ファイルを分ける。-->
