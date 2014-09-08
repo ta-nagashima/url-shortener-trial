@@ -90,6 +90,9 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
      -->
     <context:component-scan base-package="jp.co.biglobe.lib.essential.exceptionhandler"/>
 
+    <!-- リクエストスコープの設定の読込 -->
+    <import resource="classpath:META-INF/core/scope/scope.xml"/>
+
     <!-- Framework層設定の読込 -->
     <import resource="classpath:META-INF/core/core-component-scan.xml"/>
 
