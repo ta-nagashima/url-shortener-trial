@@ -16,7 +16,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         </property>
     </bean>
     <!-- <context:converter-placeholder location="${locations}" /> -->
-    <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/>
+    <!--bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/-->
 
     <!-- DATA SOURCE（TODO:JNDIに変える） ←テストコードからはJNDIは使えないのでこのままでいいと思う（やすにし）-->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">

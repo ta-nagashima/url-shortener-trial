@@ -5,6 +5,9 @@
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
     <!-- TODO 環境ごとのpropertiesファイルを作成し、本ファイルを弄る必要がないようにする -->
+    <!--bean class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer"/-->
+    <!--bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/-->
+
 
     <!-- 環境ごとに読み込むプロパティファイルを切り替える -->
 

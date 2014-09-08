@@ -14,9 +14,6 @@
     <!-- 環境ごとに読み込むプロパティファイルを切り替える -->
     <import resource="classpath:META-INF/core/environment/property.xml"/>
 
-    <bean class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer"/>
-    <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/>
-
     <jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jndi/database"/>
 
 
