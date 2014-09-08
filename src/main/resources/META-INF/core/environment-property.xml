@@ -4,6 +4,8 @@
   xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
+    <!-- 環境ごとに読み込むプロパティファイルを切り替える -->
+
     <beans profile="local">
         <bean id="propertyConfigurerLocal"
               class="jp.co.biglobe.lib.essential.property.PropertyAccessor">

@@ -6,8 +6,8 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd">
 
-    <!-- 設定ファイルの読み込み。環境によって読み込むファイルを分割する。 -->
-    <import resource="classpath:META-INF/mobile-property.xml"/>
+    <!-- 環境ごとに読み込むプロパティファイルを切り替える -->
+    <import resource="classpath:META-INF/core/environment-property.xml"/>
 
     <bean class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer"/>
     <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/>
