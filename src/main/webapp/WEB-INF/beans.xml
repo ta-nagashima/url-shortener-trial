@@ -3,7 +3,15 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
-    <!-- resource配下のMETA-INFの設定を読み込む -->
-    <import resource="classpath:META-INF/root.xml"/>
+    <!--
+        設定ファイルのルート（WEB-INF/beans.xmlから読み込まれる）
+        ===================================================
+    -->
+
+    <!-- 全プロジェクト共通の設定を読み込む（原則的にcoreディレクトリ配下は弄る必要なし） -->
+    <import resource="classpath:META-INF/core/core-root.xml"/>
+
+    <!-- プロジェクト固有の設定を読み込む -->
+    <import resource="classpath:META-INF/project-root.xml"/>
 
 </beans>
