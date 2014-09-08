@@ -33,7 +33,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
     <aop:aspectj-autoproxy/>
 
     <!-- MyBatis設定の読込 -->
-    <import resource="classpath:META-INF/core/database.xml"/>
+    <import resource="classpath:META-INF/core/database/database.xml"/>
 
     <!-- コントローラ設定の読込 -->
     <import resource="classpath:META-INF/core/controller/controller.xml"/>
