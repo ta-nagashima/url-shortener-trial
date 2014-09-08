@@ -56,11 +56,6 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
 
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <!-- one of the properties available; the maximum file size in bytes -->
-        <property name="maxUploadSize" value="9447424"/>
-    </bean>
-
     <!-- AOP設定の読込 -->
     <import resource="classpath:META-INF/core/aop/aop.xml"/>
 
@@ -75,6 +70,12 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
     <!-- Framework層設定の読込 -->
     <import resource="classpath:META-INF/core/component-scan.xml"/>
+
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="9447424"/>
+    </bean>
 
     <!-- ここからAutowiredを行うためのClassの読み込み。パッケージを追加した場合、ここに追加が必要な場合がある。
     読み込むパッケージが増えてきたら、ファイルを分ける。-->

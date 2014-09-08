@@ -10,36 +10,11 @@
     -->
 
 
-    <!-- メッセージファイルの読込 -->
-    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basenames">
-            <list>
-                <!-- 複数ファイルで同じkeyが定義されている場合は、最初に読み込んだファイルのkeyが有効になる -->
-                <value>classpath:/META-INF/properties/message</value>
-            </list>
-        </property>
-        <property name="defaultEncoding" value="UTF-8"/>
-    </bean>
-
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <!-- one of the properties available; the maximum file size in bytes -->
         <property name="maxUploadSize" value="9447424"/>
     </bean>
 
-    <!-- AOP設定の読込 -->
-    <import resource="classpath:META-INF/core/aop/aop.xml"/>
-
-    <!-- MyBatis設定の読込 -->
-    <import resource="classpath:META-INF/core/database/database.xml"/>
-
-    <!-- コントローラ設定の読込 -->
-    <import resource="classpath:META-INF/core/controller/controller.xml"/>
-
-    <!-- リクエストスコープの設定の読込 -->
-    <import resource="classpath:META-INF/core/scope/scope.xml"/>
-
-    <!-- 全プロジェクト共通のcomponent-scanの設定（Autowiredに必要） -->
-    <import resource="classpath:META-INF/core/component-scan.xml"/>
 
     <!-- プロジェクト固有のcomponent-scanの設定（Autowiredに必要） -->
     <import resource="classpath:META-INF/project-component-scan.xml"/>
