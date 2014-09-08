@@ -36,7 +36,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
     <import resource="classpath:META-INF/core/database.xml"/>
 
     <!-- コントローラ設定の読込 -->
-    <import resource="classpath:META-INF/core/controller.xml"/>
+    <import resource="classpath:META-INF/core/controller/controller.xml"/>
 
     <!-- 全プロジェクト共通のcomponent-scanの設定（Autowiredに必要） -->
     <import resource="classpath:META-INF/core/core-component-scan.xml"/>
