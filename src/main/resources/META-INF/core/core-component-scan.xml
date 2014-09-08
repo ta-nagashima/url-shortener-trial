@@ -50,13 +50,6 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
      -->
     <context:component-scan base-package="jp.co.biglobe.lib.component.log"/>
 
-    <!-- AOPでRepositoryのログの自動出力を実行するコンポーネント
-
-    【Autowiredコンポーネント】
-    ・jp.co.biglobe.lib.plugin.log.LoggerWrapper
-     -->
-    <context:component-scan base-package="jp.co.biglobe.lib.aop.repository"/>
-
 
     <!-- AOPでコントローラのログの自動出力＆APIアクセスログDBへの記録を実行するコンポーネント
 

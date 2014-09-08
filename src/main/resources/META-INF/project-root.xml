@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-
-http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
         >
 
     <!--
@@ -29,8 +26,8 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
         <property name="maxUploadSize" value="9447424"/>
     </bean>
 
-    <!-- AOPを有効化 -->
-    <aop:aspectj-autoproxy/>
+    <!-- AOP設定の読込 -->
+    <import resource="classpath:META-INF/core/aop/aop.xml"/>
 
     <!-- MyBatis設定の読込 -->
     <import resource="classpath:META-INF/core/database/database.xml"/>
