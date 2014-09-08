@@ -16,31 +16,14 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     ************************************************************************ -->
 
 
-    <!-- コンテキスト -->
-    <bean id="propertyConfigurer"
-          class="jp.co.biglobe.lib.essential.property.PropertyAccessor">
-        <property name="locations">
-            <list>
-                <value>classpath:properties/environment/${environment}.properties</value>
-            </list>
-        </property>
-    </bean>
-    <!-- <context:converter-placeholder location="${locations}" /> -->
-    <!--bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/-->
+    <!-- 環境ごとに読み込むプロパティファイルを切り替える -->
+    <import resource="core/property.xml"/>
 
-    <!-- DATA SOURCE（TODO:JNDIに変える） ←テストコードからはJNDIは使えないのでこのままでいいと思う（やすにし）-->
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="driverClassName" value="${jdbc.driverClassName}"></property>
-        <property name="url" value="${jdbc.url}"></property>
-        <property name="username" value="${jdbc.username}"></property>
-        <property name="password" value="${jdbc.password}"></property>
-        <property name="defaultAutoCommit" value="true"></property>
-        <property name="removeAbandoned" value="true"></property>
-    </bean>
+    <!-- DATA SOURCE -->
+    <import resource="core/data-source.xml"/>
 
-
-    <!-- DBUnitをAutowiredで呼び出す -->
-    <context:component-scan base-package="jp.co.biglobe.test.util.dbunit"/>
+    <!-- テストコード用のcomponent-scanの設定の読込 -->
+    <import resource="core/component-scan.xml"/>
 
     <context:component-scan base-package="jp.co.biglobe.isp.auth.api"/>
     <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.testdata"/>

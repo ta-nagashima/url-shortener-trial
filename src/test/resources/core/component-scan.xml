@@ -8,18 +8,11 @@
        ">
 
     <!--
-        テスト用の設定ファイル
-        ===================
+        全プロジェクト共通のテストのcomponent-scanの設定を記述（core-root.xmlから読み込まれる）
+        ==============================================================================
     -->
 
-
-    <!-- 全プロジェクトで共通のテストコードの設定ファイルの読込 -->
-    <import resource="core/core-root.xml"/>
-
-
-    <!-- ================== プロジェクト固有の設定の記述ココから ================== -->
-
-    <context:component-scan base-package="jp.co.biglobe.isp.auth.api"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.testdata"/>
+    <!-- DBUnitをAutowiredで呼び出す -->
+    <context:component-scan base-package="jp.co.biglobe.test.util.dbunit"/>
 
 </beans>
