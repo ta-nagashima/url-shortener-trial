@@ -45,7 +45,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
     </bean>
 
     <!-- AOPを有効化 -->
-    <aop:aspectj-autoproxy />
+    <aop:aspectj-autoproxy/>
 
     <!-- MyBatis設定の読込 -->
     <import resource="classpath:META-INF/core/database.xml"/>
@@ -53,17 +53,17 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
     <!-- SpringMVCの有効化 -->
     <mvc:annotation-driven validator="validator">
         <mvc:argument-resolvers>
-            <bean class="org.springframework.data.web.PageableHandlerMethodArgumentResolver" />
+            <bean class="org.springframework.data.web.PageableHandlerMethodArgumentResolver"/>
         </mvc:argument-resolvers>
     </mvc:annotation-driven>
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-        <property name="validationMessageSource" ref="messageSource" />
+        <property name="validationMessageSource" ref="messageSource"/>
     </bean>
 
     <!-- Controller実行時に呼び出され、メソッド処理前と処理後の共通処理を担う -->
     <mvc:interceptors>
-        <bean class="jp.co.biglobe.lib.essential.controller.ApiInterceptor" />
+        <bean class="jp.co.biglobe.lib.essential.controller.ApiInterceptor"/>
     </mvc:interceptors>
 
     <!-- グローバルなExceptionHandlerの定義
@@ -71,64 +71,13 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
     　　　ExceptionHandlerの内部でAutowiredされるクラス（jp.co.biglobe.lib.component.exceptionhandler内のクラス）を
     　　　差し替えることにより実現すること
      -->
-    <context:component-scan base-package="jp.co.biglobe.lib.essential.exceptionhandler" />
+    <context:component-scan base-package="jp.co.biglobe.lib.essential.exceptionhandler"/>
 
-    <!-- Framework層設定の読込 -->
+    <!-- 全プロジェクト共通のcomponent-scanの設定（Autowiredに必要） -->
     <import resource="classpath:META-INF/core/core-component-scan.xml"/>
 
-    <!-- ここからAutowiredを行うためのClassの読み込み。パッケージを追加した場合、ここに追加が必要な場合がある。
-    読み込むパッケージが増えてきたら、ファイルを分ける。-->
+    <!-- プロジェクト固有のcomponent-scanの設定（Autowiredに必要） -->
+    <import resource="classpath:META-INF/project-component-scan.xml"/>
 
 
-    <!-- Controller層 -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.api" />
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.api" />
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.biglobedenwa.api" />
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.callhistory.api" />
-
-    <!-- Service層 -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.service" />
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.service" />
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.biglobedenwa.service" />
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.callhistory.service" />
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.service" />
-    <context:component-scan base-package="jp.co.biglobe.isp.auth.service" />
-
-    <!-- DataSource層 -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.datasource">
-        <context:exclude-filter type="regex" expression="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.local.*"/>
-        <context:exclude-filter type="regex" expression="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.sftp.*"/>
-    </context:component-scan>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.biglobedenwa.datasource"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.callhistory.datasource"/>
-
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.datasource" />
-    <context:component-scan base-package="jp.co.biglobe.isp.auth.datasource" />
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.biglobemember.datasource" />
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.option.vpn.datasource" />
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.datasource" />
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.biglobedenwa.datasource" />
-
-    <!-- 監視 -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.monitoring.api" />
-
-    <!-- extension -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.extension" />
-
-
-    <!-- サンプル（こっから下は消してください） -->
-    <context:component-scan base-package="jp.co.biglobe.isp.sample.api"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.sample.service"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.sample.datasource"/>
-
-
-    <beans profile="local,development,testing">
-        <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.testdata" />
-    </beans>
-    <beans profile="development,staging,testing,production">
-        <bean id="identificationFilesRepository" class="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.sftp.IdentificationFilesRepositorySftp" />
-    </beans>
-    <beans profile="local">
-        <bean id="identificationFilesRepository" class="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.local.IdentificationFilesRepositoryLocal" />
-    </beans>
 </beans>

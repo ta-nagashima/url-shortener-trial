@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd"
+        >
+
+    <!--
+        プロジェクト固有のcomponent-scanの設定を記述（META-INF/project-root.xmlから読み込まれる）
+        ==================================================================================
+    -->
+
+
+    <!-- Controller層 -->
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.api"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.api"/>
+
+    <!-- Service層 -->
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.service"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.service"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.service"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.auth.service"/>
+
+    <!-- DataSource層 -->
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.datasource">
+        <context:exclude-filter type="regex"
+                                expression="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.local.*"/>
+        <context:exclude-filter type="regex"
+                                expression="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.sftp.*"/>
+    </context:component-scan>
+
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.datasource"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.auth.datasource"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.biglobemember.datasource"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.option.vpn.datasource"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.datasource"/>
+
+    <!-- 監視 -->
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.monitoring.api"/>
+
+    <!-- extension -->
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.extension"/>
+
+
+    <!-- サンプル（こっから下は消してください） -->
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.api"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.service"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.datasource"/>
+
+
+    <beans profile="local,development,testing">
+        <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.testdata"/>
+    </beans>
+    <beans profile="development,staging,testing,production">
+        <bean id="identificationFilesRepository"
+              class="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.sftp.IdentificationFilesRepositorySftp"/>
+    </beans>
+    <beans profile="local">
+        <bean id="identificationFilesRepository"
+              class="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.local.IdentificationFilesRepositoryLocal"/>
+    </beans>
+</beans>
