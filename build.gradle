@@ -152,7 +152,7 @@ ext {
     mybatisVersion = '3.2.7'
     mybatisSpringVersion = '1.2.2'
     commonsDbcpVersion = '1.4'
-    groovyVersion = '2.3.1'
+    groovyVersion = '2.3.6'
     lombokVersion = '1.12.6'
     jodaTimeVersion = '2.3'
 }
