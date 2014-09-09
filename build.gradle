@@ -141,6 +141,7 @@ ext {
     isplibraryVersion = '1.1.0'
     charsetVersion = '2.0'
     springframeworkVersion = '4.1.0.RELEASE'
+    springDataCommonsVersion = '1.9.0.RELEASE'
     jacksonVersion = '2.4.2'
     aspectjVersion = '1.8.0'
     logbackVersion = '1.1.2'
@@ -174,7 +175,7 @@ dependencies {
         compile "org.springframework:spring-webmvc:${springframeworkVersion}"
         compile "org.springframework:spring-tx:${springframeworkVersion}"
         compile "org.springframework:spring-jdbc:${springframeworkVersion}"
-        compile "org.springframework.data:spring-data-commons:1.8.2.RELEASE"
+        compile "org.springframework.data:spring-data-commons:${springDataCommonsVersion}" // Pageableが依存してる
 
         // Spring AOP + AspectJ
         compile "org.springframework:spring-aop:${springframeworkVersion}"
