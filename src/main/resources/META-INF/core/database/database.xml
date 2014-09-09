@@ -13,11 +13,11 @@
     -->
 
     <!-- NamedParameterJdbcTemplate -->
-    <!-- TODO コイツは昔の名残な気がする -->
-    <bean class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+    <!-- TODO コイツは昔の名残な気がする／しばらくコメントアウトの状態で問題なければ削除 -->
+    <!--bean class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
         <constructor-arg ref="dataSource"/>
-    </bean>
-    
+    </bean-->
+
     <!-- Transaction Manager -->
     <tx:annotation-driven />
         
