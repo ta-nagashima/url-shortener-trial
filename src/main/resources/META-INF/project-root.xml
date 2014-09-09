@@ -16,10 +16,9 @@
 
     <!-- ================== プロジェクト固有の設定の記述ココから ================== -->
 
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <!-- one of the properties available; the maximum file size in bytes -->
+    <!--bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="9447424"/>
-    </bean>
+    </bean-->
 
 
 </beans>
