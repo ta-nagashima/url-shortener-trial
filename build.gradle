@@ -218,7 +218,7 @@ dependencies {
 //        compile "cglib:cglib:3.1" // mybatisとspringが利用しているライブラリ
         compile "org.mybatis:mybatis:${mybatisVersion}"
         compile "org.mybatis:mybatis-spring:${mybatisSpringVersion}"
-        compile "commons-dbcp:commons-dbcp:${commonsDbcpVersion}"
+        compile "commons-dbcp:commons-dbcp:${commonsDbcpVersion}" // コネクションプール用のライブラリ
         "${localLibraryConfigrations}" "com.h2database:h2:1.4.177" // ローカルTomcatとテストで使用
         "${localLibraryConfigrations}" files("etc/library/production/ojdbc6-11.2.0.4.jar") // ローカルTomcatとテストで使用
 
