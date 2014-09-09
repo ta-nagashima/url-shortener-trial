@@ -143,7 +143,7 @@ ext {
     springframeworkVersion = '4.1.0.RELEASE'
     springDataCommonsVersion = '1.9.0.RELEASE'
     jacksonVersion = '2.4.2'
-    aspectjVersion = '1.8.0'
+    aspectjVersion = '1.8.2'
     logbackVersion = '1.1.2'
     slf4jVersion = '1.7.7'
     hibernateValidatorVersion = '4.3.1.Final'
