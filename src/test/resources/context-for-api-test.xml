@@ -56,16 +56,9 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
     <!-- Controller層 -->
     <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.api"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.biglobedenwa.api"/>
 
     <!-- DataSource層 -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.datasource">
-        <context:exclude-filter type="regex"
-                                expression="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.local.*"/>
-        <context:exclude-filter type="regex"
-                                expression="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.sftp.*"/>
-    </context:component-scan>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.biglobedenwa.datasource"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.datasource"/>
 
     <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.datasource"/>
     <context:component-scan base-package="jp.co.biglobe.isp.auth.datasource"/>
@@ -78,7 +71,6 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <context:exclude-filter type="regex"
                                 expression="jp.co.biglobe.isp.mobile.voiceoption.service.mnpout.MnpOutConfirmReferService"/>
     </context:component-scan>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.biglobedenwa.service"/>
 
     <context:component-scan base-package="jp.co.biglobe.isp.auth.service"/>
 
@@ -90,14 +82,6 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
     <beans profile="local,development,testing">
         <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.testdata"/>
-    </beans>
-    <beans profile="development,staging,testing,production">
-        <bean id="identificationFilesRepository"
-              class="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.sftp.IdentificationFilesRepositorySftp"/>
-    </beans>
-    <beans profile="local">
-        <bean id="identificationFilesRepository"
-              class="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.local.IdentificationFilesRepositoryLocal"/>
     </beans>
 
     <!--　ここにMock化対象のサービスクラスのbean定義を記述　-->

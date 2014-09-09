@@ -24,12 +24,7 @@
     <context:component-scan base-package="jp.co.biglobe.isp.auth.service"/>
 
     <!-- DataSource層 -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.datasource">
-        <context:exclude-filter type="regex"
-                                expression="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.local.*"/>
-        <context:exclude-filter type="regex"
-                                expression="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.sftp.*"/>
-    </context:component-scan>
+    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.datasource"/>
 
     <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.datasource"/>
     <context:component-scan base-package="jp.co.biglobe.isp.auth.datasource"/>
@@ -52,13 +47,5 @@
 
     <beans profile="local,development,testing">
         <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.testdata"/>
-    </beans>
-    <beans profile="development,staging,testing,production">
-        <bean id="identificationFilesRepository"
-              class="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.sftp.IdentificationFilesRepositorySftp"/>
-    </beans>
-    <beans profile="local">
-        <bean id="identificationFilesRepository"
-              class="jp.co.biglobe.isp.mobile.voiceoption.datasource.identificationfiles.local.IdentificationFilesRepositoryLocal"/>
     </beans>
 </beans>
