@@ -140,9 +140,9 @@ tomcatStop {
 ext {
     isplibraryVersion = '1.1.0'
     charsetVersion = '2.0'
-    springframeworkVersion = '4.0.5.RELEASE'
+    springframeworkVersion = '4.1.0.RELEASE'
     springBatchVersion = '2.1.7.RELEASE'
-    jacksonVersion = '1.9.13'
+    jacksonVersion = '2.4.2'
     aspectjVersion = '1.8.0'
     logbackVersion = '1.1.2'
     slf4jVersion = '1.7.7'
@@ -167,8 +167,8 @@ dependencies {
         compile files("etc/library/production/isplibrary-${isplibraryVersion}.jar")
 
         // JAX-RS 関連
-        compile "org.codehaus.jackson:jackson-core-asl:${jacksonVersion}"
-        compile "org.codehaus.jackson:jackson-mapper-asl:${jacksonVersion}"
+        compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+        compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 
         // Spring 関連
         compile "org.springframework:spring-web:${springframeworkVersion}"
