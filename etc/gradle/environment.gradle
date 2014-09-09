@@ -9,7 +9,7 @@ if (!hasProperty('env') || "".equals(env)) {
     if("${osMXBean.name}".contains("Mac")){
         env = envList[0]
     }else{
-        env = envList[1]
+        env = envList[4]
     }
 }
 
