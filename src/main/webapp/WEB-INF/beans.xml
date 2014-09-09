@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       ">
 
     <!--
-        設定ファイルのルート（WEB-INF/beans.xmlから読み込まれる）
-        ===================================================
+        アプリケーションコンテキストの設定ファイル（WEB-INF/web.xmlから読み込まれる）
+        =====================================================================
     -->
 
     <!-- 全プロジェクト共通の設定を読み込む（原則的にcoreディレクトリ配下は弄る必要なし） -->
