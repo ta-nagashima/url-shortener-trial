@@ -119,7 +119,7 @@ clean {
 // gradlew tomcatRun コマンド実行時の処理
 if ("${env}" == 'cloudHostingTomcat') {
     ext {
-        tomcatContextPath = 'etc/tomcat/cloudhosting/context.xml'
+        tomcatContextPath = 'etc/tomcat/testing/context.xml'
     }
 } else {
     ext {
