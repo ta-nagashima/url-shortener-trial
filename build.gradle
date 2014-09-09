@@ -146,7 +146,9 @@ ext {
     aspectjVersion = '1.8.2'
     logbackVersion = '1.1.2'
     slf4jVersion = '1.7.7'
-    hibernateValidatorVersion = '4.3.1.Final'
+    hibernateValidatorVersion = '5.1.2.Final'
+    elApiVersion = '3.0.0'
+    elVersion = '2.2.6'
     mybatisVersion = '3.2.7'
     mybatisSpringVersion = '1.2.2'
     commonsDbcpVersion = '1.4'
@@ -209,6 +211,8 @@ dependencies {
 
         // バリデーション 関連
         compile "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
+        compile "javax.el:javax.el-api:${elApiVersion}" // hibernate-validatorが依存
+        compile "org.glassfish.web:javax.el:${elVersion}" // hibernate-validatorが依存
 
         // データベース 関連
 //        compile "cglib:cglib:3.1" // mybatisとspringが利用しているライブラリ
