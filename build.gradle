@@ -141,7 +141,6 @@ ext {
     isplibraryVersion = '1.1.0'
     charsetVersion = '2.0'
     springframeworkVersion = '4.1.0.RELEASE'
-    springBatchVersion = '2.1.7.RELEASE'
     jacksonVersion = '2.4.2'
     aspectjVersion = '1.8.0'
     logbackVersion = '1.1.2'
@@ -202,7 +201,7 @@ dependencies {
         testCompile "org.dbunit:dbunit:2.4.9"
         testCompile "uk.com.robust-it:cloning:1.9.0" // List/Mapのディープクローンを行うライブラリ
         testCompile "org.springframework:spring-test:${springframeworkVersion}"
-        testCompile "org.springframework.batch:spring-batch-test:${springBatchVersion}"
+        testCompile "org.springframework.batch:spring-batch-test:2.1.7.RELEASE"
         testCompile "com.jayway.jsonpath:json-path-assert:0.8.1"
         testCompile files("etc/library/development/h2storedprocedure-2.0.jar")
         testCompile files("etc/library/production/ojdbc6-11.2.0.4.jar")
