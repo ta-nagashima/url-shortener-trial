@@ -1,0 +1,103 @@
+repositories {
+    mavenCentral()
+}
+
+ext {
+    isplibraryVersion = '1.1.0'
+    charsetVersion = '2.0'
+    springframeworkVersion = '4.1.0.RELEASE'
+    springDataCommonsVersion = '1.9.0.RELEASE'
+    jacksonVersion = '2.4.2'
+    aspectjVersion = '1.8.2'
+    logbackVersion = '1.1.2'
+    slf4jVersion = '1.7.7'
+    hibernateValidatorVersion = '5.1.2.Final'
+    elApiVersion = '3.0.0'
+    elVersion = '2.2.6'
+    mybatisVersion = '3.2.7'
+    mybatisSpringVersion = '1.2.2'
+    commonsDbcpVersion = '1.4'
+    groovyVersion = '2.3.6'
+    lombokVersion = '1.14.6'
+}
+
+// 依存ライブラリの設定
+dependencies {
+
+    // BOでのオフラインビルド時は内部管理しているライブラリを参照
+//    if (file('repository').exists()) {
+//        compile fileTree(dir: 'repository', include: '*.jar')
+//    } else {
+
+        // BO用Sprign拡張ライブラリ
+        compile files("etc/library/production/isplibrary-${isplibraryVersion}.jar")
+
+        // JAX-RS 関連
+        compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+        compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+
+        // Spring 関連
+        compile "org.springframework:spring-web:${springframeworkVersion}"
+        compile "org.springframework:spring-webmvc:${springframeworkVersion}"
+        compile "org.springframework:spring-tx:${springframeworkVersion}"
+        compile "org.springframework:spring-jdbc:${springframeworkVersion}"
+        compile "org.springframework.data:spring-data-commons:${springDataCommonsVersion}" // Pageableが依存してる
+
+        // Spring AOP + AspectJ
+        compile "org.springframework:spring-aop:${springframeworkVersion}"
+        compile "org.aspectj:aspectjrt:${aspectjVersion}"
+        compile "org.aspectj:aspectjweaver:${aspectjVersion}"
+
+        // ロギング 関連
+        compile "ch.qos.logback:logback-classic:${logbackVersion}"
+        compile "org.slf4j:slf4j-api:${slf4jVersion}"
+
+        // Servlet 関連
+        testCompile "javax.servlet:servlet-api:3.0-alpha-1"
+        providedCompile "javax.servlet:servlet-api:2.5"
+
+        //    Spring MVC Test FrameworkがServlet 3.0系に依存しているので、プロダクトコード側のServletのバージョンと差異あり。
+        //    http://docs.spring.io/spring/docs/4.0.x/spring-framework-reference/html/new-in-4.0.html#_general_web_improvements
+        testCompile "org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0"
+
+        // テスト 関連
+//        testCompile "junit:junit:4.11"
+        testCompile 'junit:junit-dep:4.10' // 参照 http://futurismo.biz/archives/1172
+        testCompile 'org.jmock:jmock-junit3:2.6.0'
+        testCompile "org.mockito:mockito-all:1.9.5"
+        testCompile "org.dbunit:dbunit:2.4.9"
+        testCompile "uk.com.robust-it:cloning:1.9.0" // List/Mapのディープクローンを行うライブラリ
+        testCompile "org.springframework:spring-test:${springframeworkVersion}"
+        testCompile "org.springframework.batch:spring-batch-test:2.1.7.RELEASE"
+        testCompile "com.jayway.jsonpath:json-path-assert:0.8.1"
+        testCompile files("etc/library/development/h2storedprocedure-2.0.jar")
+        testCompile files("etc/library/production/ojdbc6-11.2.0.4.jar")
+
+        // バリデーション 関連
+        compile "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
+        compile "javax.el:javax.el-api:${elApiVersion}" // hibernate-validatorが依存
+        compile "org.glassfish.web:javax.el:${elVersion}" // hibernate-validatorが依存
+
+        // データベース 関連
+//        compile "cglib:cglib:3.1" // mybatisとspringが利用しているライブラリ
+        compile "org.mybatis:mybatis:${mybatisVersion}"
+        compile "org.mybatis:mybatis-spring:${mybatisSpringVersion}"
+        compile "commons-dbcp:commons-dbcp:${commonsDbcpVersion}" // コネクションプール用のライブラリ
+        "${localLibraryConfigrations}" "com.h2database:h2:1.4.177" // ローカルTomcatとテストで使用
+        "${localLibraryConfigrations}" files("etc/library/production/ojdbc6-11.2.0.4.jar") // ローカルTomcatとテストで使用
+
+        // Groovy 関連
+        compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+
+        // EUCからUTF-8への変換ライブラリ
+        compile files("etc/library/production/charset-${charsetVersion}.jar")
+
+        // Getter/Setterアノテーション
+        compile "org.projectlombok:lombok:${lombokVersion}"
+
+
+
+
+//    }
+
+}
