@@ -9,10 +9,6 @@ repositories {
  * プロダクトコードで使用する依存ライブラリの設定
  */
 ext {
-    // 自作ライブラリ
-    isplibraryVersion = '1.1.0'
-    charsetVersion = '2.0'
-
     // 外部ライブラリ
     springframeworkVersion = '4.1.0.RELEASE'
     springDataCommonsVersion = '1.9.0.RELEASE'
@@ -28,6 +24,11 @@ ext {
     commonsDbcpVersion = '1.4'
     groovyVersion = '2.3.6'
     lombokVersion = '1.14.6'
+
+    // 自作ライブラリ
+    isplibraryVersion = '1.1.0'
+    charsetVersion = '2.0'
+
 }
 
 dependencies {
@@ -63,29 +64,6 @@ dependencies {
     // Servlet 関連：tomcatに内蔵されているのでwarファイルには含めない
     providedCompile "javax.servlet:javax.servlet-api:3.0.1" // warに含めたくないが、コンパイル時には必要なのでprovidedCompileとしている
 
-    ext {
-        junitDepVersion = '4.10'
-        dbunitVersion = '2.4.9'
-        cloningVersion = '1.9.0'
-        jsonpathVersion = '0.8.1'
-        ojdbcVersion = '11.2.0.4'
-        h2storedprocedureVersion = '2.0'
-        h2Version = '1.4.177'
-    }
-
-    // テスト 関連
-//        testCompile "junit:junit:4.11"
-    testCompile "junit:junit-dep:${junitDepVersion}" // 参照 http://futurismo.biz/archives/1172
-    testCompile "org.dbunit:dbunit:${dbunitVersion}"
-    testCompile "uk.com.robust-it:cloning:${cloningVersion}" // List/Mapのディープクローンを行うライブラリ
-    testCompile "org.springframework:spring-test:${springframeworkVersion}"
-    testCompile "org.springframework.batch:spring-batch-test:2.1.7.RELEASE"
-// TODO Enclosedの依存先をorg.junit.experimental.runners.Encloseに変更する
-    testCompile "com.jayway.jsonpath:json-path-assert:${jsonpathVersion}"
-
-    // BOではクラスパスにあるらしいので testCompile にしている
-    testCompile files("etc/library/production/ojdbc6-${ojdbcVersion}.jar")
-
     // バリデーション 関連
     compile "org.hibernate:hibernate-validator:${hibernateValidatorVersion}" // バリデータの本体
     runtime "javax.el:javax.el-api:${elApiVersion}" // hibernate-validatorが依存
@@ -96,12 +74,6 @@ dependencies {
     compile "org.mybatis:mybatis-spring:${mybatisSpringVersion}" // Spring-MyBatis連携
     compile "commons-dbcp:commons-dbcp:${commonsDbcpVersion}" // コネクションプール用のライブラリ
 
-    // ローカル環境でのみ、h2のライブラリを使用する
-    if (isLocal()) {
-        compile "com.h2database:h2:${h2Version}"
-        testCompile files("etc/library/development/h2storedprocedure-${h2storedprocedureVersion}.jar")
-    }
-
     // Groovy 関連
     compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
 
@@ -111,6 +83,54 @@ dependencies {
 
     // Getter/Setterアノテーション／lombokはprovidedが推奨されてる（参考URL　http://www.coppermine.jp/docs/programming/2014/01/lombok.html）
     providedCompile "org.projectlombok:lombok:${lombokVersion}"
+}
+
+/**
+ * テストコードで使用する依存ライブラリの設定
+ */
+ext {
+    // 外部ライブラリ
+    junitDepVersion = '4.10'
+    dbunitVersion = '2.4.9'
+    cloningVersion = '1.9.0'
+    jsonpathVersion = '0.8.1'
+    ojdbcVersion = '11.2.0.4'
+}
+
+dependencies {
+
+    // テスト 関連
+//        testCompile "junit:junit:4.11"
+    testCompile "junit:junit-dep:${junitDepVersion}" // 参照 http://futurismo.biz/archives/1172
+    testCompile "org.dbunit:dbunit:${dbunitVersion}" // DBテストで必要
+    testCompile "uk.com.robust-it:cloning:${cloningVersion}" // List/Mapのディープクローンを行うライブラリ／Fixtureの作成で必要
+    testCompile "org.springframework:spring-test:${springframeworkVersion}" // Springのコントローラテストで必要
+    testCompile "com.jayway.jsonpath:json-path-assert:${jsonpathVersion}" // コントローラのJSONのテストで必要
+
+    // TODO Enclosedの依存先をorg.junit.experimental.runners.Encloseに変更する
+    testCompile "org.springframework.batch:spring-batch-test:2.1.7.RELEASE"
+
+    // Oracle接続用ライブラリ／BOではクラスパスにあるらしいので testCompile にしている
+    testCompile files("etc/library/production/ojdbc6-${ojdbcVersion}.jar")
+}
+
+/**
+ * ローカル環境でのみ使用する依存ライブラリの設定
+ */
+ext {
+    // 外部ライブラリ
+    h2Version = '1.4.177'
+
+    // 自作ライブラリ
+    h2storedprocedureVersion = '2.0'
+}
+
+dependencies {
+    // ローカル環境でのみ、h2のライブラリを使用する
+    if (isLocal()) {
+        compile "com.h2database:h2:${h2Version}"
+        testCompile files("etc/library/development/h2storedprocedure-${h2storedprocedureVersion}.jar")
+    }
 }
 
 // TODO やっつけにも程があるので要リファクタ（さすがにヒドイｗ）
