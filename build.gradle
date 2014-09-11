@@ -45,7 +45,7 @@ buildscript {
 //    }
 //} else {
 //    ext {
-//        tomcatContextPath = 'etc/tomcat/development/context.xml'
+//        tomcatContextPath = 'etc/tomcat/local/context.xml'
 //    }
 //}
 
