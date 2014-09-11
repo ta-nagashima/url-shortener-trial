@@ -37,7 +37,7 @@ dependencies {
      */
     // Spring 関連
     compile "org.springframework:spring-webmvc:${springframeworkVersion}"
-    //compile "org.springframework:spring-tx:${springframeworkVersion}" // spring-jdbcの指定でOK／ロールバックの確認だけして、削除しよう
+    //compile "org.springframework:spring-tx:${springframeworkVersion}" // TODO spring-jdbcの指定でOK／ロールバックの確認だけして、削除しよう
     compile "org.springframework:spring-jdbc:${springframeworkVersion}" // 記述しないと古いバージョンを使用してしまうようだ
     compile "org.springframework.data:spring-data-commons:${springDataCommonsVersion}" // Pageableが依存してる
 
@@ -81,7 +81,7 @@ dependencies {
     /**
      * 自作ライブラリ（コンパイル時に必要）
      */
-    // BO用Sprign拡張ライブラリ
+    // ISP領域向けJava共通ライブラリ
     compile files("etc/library/production/isplibrary-${isplibraryVersion}.jar")
 
     /**
@@ -141,36 +141,29 @@ ext {
 
 dependencies {
     // ローカル環境でのみ、h2のライブラリを使用する
-    if (isLocal()) {
+    if (LocalChecker.isLocal()) {
         compile "com.h2database:h2:${h2Version}"
         testCompile files("etc/library/development/h2storedprocedure-${h2storedprocedureVersion}.jar")
     }
 }
 
-// TODO やっつけにも程があるので要リファクタ（さすがにヒドイｗ）
 /**
- * ローカル環境かどうか判定（MacかWindowsだったらローカル環境と判定する）
+ * ローカル環境かどうか判定
+ *
+ * OS判定のロジックは、apache-commonsのSystemUtilsから拝借
+ * 参考　https://github.com/apache/commons-lang
  */
-private static boolean isLocal() {
-    String osName = getSystemProperty("os.name");
-    return isOSNameMatch(osName, "Mac") || isOSNameMatch(osName, "Windows");
-}
+final class LocalChecker {
 
-// apache-commonsのSystemUtilsから拝借 （参考 https://github.com/apache/commons-lang）
-private static boolean isOSNameMatch(final String osName, final String osNamePrefix) {
-    if (osName == null) {
-        return false;
+    public static final boolean isLocal() {
+        String osName = System.getProperty("os.name");
+        return isOSNameMatch(osName, "Mac") || isOSNameMatch(osName, "Windows");
     }
-    return osName.startsWith(osNamePrefix);
-}
 
-private static String getSystemProperty(final String property) {
-    try {
-        return System.getProperty(property);
-    } catch (final SecurityException ex) {
-        // we are not allowed to look at this property
-        System.err.println("Caught a SecurityException reading the system property '" + property
-                + "'; the SystemUtils property value will default to null.");
-        return null;
+    private static final boolean isOSNameMatch(final String osName, final String osNamePrefix) {
+        if (osName == null) {
+            return false;
+        }
+        return osName.startsWith(osNamePrefix);
     }
 }
