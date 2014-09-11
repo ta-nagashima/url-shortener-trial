@@ -28,7 +28,6 @@ ext {
     // 自作ライブラリ
     isplibraryVersion = '1.1.0'
     charsetVersion = '2.0'
-
 }
 
 dependencies {
@@ -122,7 +121,7 @@ dependencies {
     testCompile "com.jayway.jsonpath:json-path-assert:${jsonpathVersion}" // コントローラのJSONのテストで必要
 
     // Oracle接続用ライブラリ／BOではクラスパスに置いてあるらしいので testCompile にしている
-    testCompile files("etc/library/production/ojdbc6-${ojdbcVersion}.jar")
+    testCompile files("etc/library/development/ojdbc6-${ojdbcVersion}.jar")
 }
 
 /**
