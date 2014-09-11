@@ -3,7 +3,7 @@ package jp.co.biglobe.isp.mobile.voiceoption.domain.identification.upload;
 import jp.co.biglobe.isp.mobile.voiceoption.domain.identification.IdentificationReceiptNumber;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Enclosed;
+import org.junit.experimental.runners.Enclosed;
 
 import java.util.Date;
 

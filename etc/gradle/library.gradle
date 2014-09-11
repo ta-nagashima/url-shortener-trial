@@ -121,9 +121,6 @@ dependencies {
     testCompile "org.springframework:spring-test:${springframeworkVersion}" // Springのコントローラテストで必要
     testCompile "com.jayway.jsonpath:json-path-assert:${jsonpathVersion}" // コントローラのJSONのテストで必要
 
-    // TODO Enclosedの依存先をorg.junit.experimental.runners.Encloseに変更する
-    testCompile "org.springframework.batch:spring-batch-test:2.1.7.RELEASE"
-
     // Oracle接続用ライブラリ／BOではクラスパスに置いてあるらしいので testCompile にしている
     testCompile files("etc/library/production/ojdbc6-${ojdbcVersion}.jar")
 }

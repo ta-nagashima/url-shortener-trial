@@ -2,7 +2,7 @@ package jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpout.scenario;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Enclosed;
+import org.junit.experimental.runners.Enclosed;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
