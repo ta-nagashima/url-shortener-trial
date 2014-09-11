@@ -3,7 +3,7 @@ package jp.co.biglobe.isp.mobile.voiceoption.domain.mnpout;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Enclosed;
+import org.junit.experimental.runners.Enclosed;
 
 import static org.junit.Assert.*;
 

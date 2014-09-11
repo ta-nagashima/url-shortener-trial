@@ -70,13 +70,6 @@
      -->
     <context:component-scan base-package="jp.co.biglobe.lib.component.db"/>
 
-    <!-- RequestEventを扱うコンポーネント
-
-    【Autowiredコンポーネント】
-    ・なし
-     -->
-    <context:component-scan base-package="jp.co.biglobe.lib.scope.event"/>
-
     <!-- ExceptionHandlerを扱うコンポーネント
 
     【Autowiredコンポーネント】

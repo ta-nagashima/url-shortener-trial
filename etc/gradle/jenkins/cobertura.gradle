@@ -6,16 +6,16 @@ dependencies {
     cobertura "net.sourceforge.cobertura:cobertura:2.0.3",'log4j:log4j:1.2.16','xml-apis:xml-apis:2.0.2'
 }
 
-tmpDir = new File(buildDir, "tmp")
+def tmpDir = new File(buildDir, "tmp")
 
-coberturaReportDirName    = "cobertura"
-coberturaReportDir        = new File(reportsDir, coberturaReportDirName)
-coberturaTmpDirName       = "cobertura"
-coberturaTmpDir           = new File(tmpDir, coberturaTmpDirName)
-coberturaInstrDirName     = "instr"
-coberturaInstrDir         = new File(coberturaTmpDir, coberturaInstrDirName)
-coberturaMetaDataFileName = "cobertura.ser"
-coberturaMetaDataFile     = new File(coberturaTmpDir, coberturaMetaDataFileName)
+def coberturaReportDirName    = "cobertura"
+def coberturaReportDir        = new File(reportsDir, coberturaReportDirName)
+def coberturaTmpDirName       = "cobertura"
+def coberturaTmpDir           = new File(tmpDir, coberturaTmpDirName)
+def coberturaInstrDirName     = "instr"
+def coberturaInstrDir         = new File(coberturaTmpDir, coberturaInstrDirName)
+def coberturaMetaDataFileName = "cobertura.ser"
+def coberturaMetaDataFile     = new File(coberturaTmpDir, coberturaMetaDataFileName)
 
 test {
 

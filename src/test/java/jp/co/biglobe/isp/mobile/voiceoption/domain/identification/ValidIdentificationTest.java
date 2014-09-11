@@ -5,7 +5,7 @@ import jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identification
 import jp.co.biglobe.isp.mobile.voiceoption.domain.identification.identificationresult.ValidIdentificationResultBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Enclosed;
+import org.junit.experimental.runners.Enclosed;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
