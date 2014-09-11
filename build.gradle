@@ -20,7 +20,7 @@ apply from: file('etc/gradle/jenkins.gradle')
 // 参照 https://github.com/bmuschko/gradle-tomcat-plugin
 buildscript {
     dependencies {
-        classpath files("etc/library/development/gradle-tomcat-plugin-1.0.jar")
+        classpath files("etc/library/local/gradle-tomcat-plugin-1.0.jar")
     }
 }
 
