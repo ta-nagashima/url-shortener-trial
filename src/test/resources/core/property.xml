@@ -15,13 +15,11 @@
         <property name="locations">
             <list>
                 <value>classpath:properties/environment/${environment}.properties</value>
-                <value>classpath:properties/ddl-path.properties</value>
-                <value>classpath:properties/scenario.properties</value>
-                <value>classpath:properties/identifier.properties</value>
+                <value>classpath:properties/base/ddl-path.properties</value>
+                <value>classpath:properties/base/scenario.properties</value>
+                <value>classpath:properties/base/identifier.properties</value>
             </list>
         </property>
     </bean>
-    <!-- <context:converter-placeholder location="${locations}" /> -->
-    <!--bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/-->
 
 </beans>
