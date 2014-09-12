@@ -1,7 +1,7 @@
 import java.lang.management.ManagementFactory
 
-def envList = ['localMac', 'localWindows', 'localTomcat', 'localOracle',
-               'cloudHosting', 'cloudHostingTomcat', 'cloudHostingFromLocal',
+def envList = ['localMac', 'localWindows',
+               'cloudHosting',
                'development', 'testing', 'staging', 'production']
 
 if (!hasProperty('env') || "".equals(env)) {
