@@ -25,7 +25,7 @@
             <property name="locations">
                 <list>
                     <value>classpath:META-INF/properties/sharedlibrary/scenario.properties</value>
-                    <value>classpath:META-INF/properties/mobile.properties</value>
+                    <value>classpath:META-INF/properties/project.properties</value>
                     <value>classpath:META-INF/properties/environment/local.properties</value>
                 </list>
             </property>
@@ -38,7 +38,7 @@
             <property name="locations">
                 <list>
                     <value>classpath:scenario.properties</value>
-                    <value>classpath:META-INF/properties/mobile.properties</value>
+                    <value>classpath:META-INF/properties/project.properties</value>
                     <value>classpath:META-INF/properties/environment/testing.properties</value>
                 </list>
             </property>
@@ -51,7 +51,7 @@
             <property name="locations">
                 <list>
                     <value>classpath:scenario.properties</value>
-                    <value>classpath:META-INF/properties/mobile.properties</value>
+                    <value>classpath:META-INF/properties/project.properties</value>
                     <value>classpath:META-INF/properties/environment/production.properties</value>
                 </list>
             </property>
