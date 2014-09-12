@@ -4,10 +4,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
        ">
 
-    <!--
-        環境ごとに切り替える設定を記述（base-root.xmlから読み込まれる）
-        ========================================================
-    -->
+
+    <!-- ======================================================================
+    |
+    |    環境ごとに切り替える設定を記述（base-root.xmlから読み込まれる）
+    |
+    =========================================================================== -->
 
 
     <bean id="propertyConfigurer"

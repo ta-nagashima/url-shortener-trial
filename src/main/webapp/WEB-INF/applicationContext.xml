@@ -4,10 +4,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
        ">
 
-    <!--
-        アプリケーションコンテキストの設定ファイル（WEB-INF/web.xmlから読み込まれる）
-        =====================================================================
-    -->
+
+    <!-- ======================================================================
+    |
+    |    アプリケーションコンテキストの設定ファイル（WEB-INF/web.xmlから読み込まれる）
+    |
+    =========================================================================== -->
+
 
     <!-- META-INF配下のアプリケーションコンテキストの設定を読み込む -->
     <import resource="classpath:META-INF/root.xml"/>

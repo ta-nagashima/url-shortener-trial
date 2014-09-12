@@ -4,10 +4,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
        ">
 
-    <!--
-        リクエストスコープの設定を記述（META-INF/base/base-root.xmlから読み込まれる）
-        =====================================================================
-    -->
+
+    <!-- ======================================================================
+    |
+    |    リクエストスコープの設定を記述（META-INF/base/base-root.xmlから読み込まれる）
+    |
+    =========================================================================== -->
 
 
     <!-- リクエストスコープのcomponent-scanの設定（Autowiredに必要） -->
