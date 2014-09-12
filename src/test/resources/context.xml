@@ -14,7 +14,7 @@
 
 
     <!-- 全プロジェクトで共通のテストコードの設定ファイルの読込 -->
-    <import resource="core/core-root.xml"/>
+    <import resource="base/base-root.xml"/>
 
 
     <!-- ================== プロジェクト固有の設定の記述ココから ================== -->
