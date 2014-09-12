@@ -9,25 +9,25 @@ if (!hasProperty('env') || "".equals(env)) {
     if("${osMXBean.name}".contains("Mac")){
         ext.env = envList[0]
     }else{
-        ext.env = envList[4]
+        ext.env = envList[2]
     }
 }
 
-if(!envList.find{it == env}){
-    throw new Exception("There is no environment named '$env'")
-}
-
-if("${env}" != envList[0] && "${env}" != envList[1] && "${env}" != envList[2] && "${env}" != envList[4]){
-    // warファイルからローカル専用のファイルを削除
-    processResources{
-        exclude '**/wifi-spot-development.properties'
-    }
-
-    ext{
-        localLibraryConfigrations = 'testCompile'
-    }
-}else{
-    ext{
-        localLibraryConfigrations = 'compile'
-    }
-}
+//if(!envList.find{it == env}){
+//    throw new Exception("There is no environment named '$env'")
+//}
+//
+//if("${env}" != envList[0] && "${env}" != envList[1] && "${env}" != envList[2] && "${env}" != envList[4]){
+//    // warファイルからローカル専用のファイルを削除
+//    processResources{
+//        exclude '**/wifi-spot-development.properties'
+//    }
+//
+//    ext{
+//        localLibraryConfigrations = 'testCompile'
+//    }
+//}else{
+//    ext{
+//        localLibraryConfigrations = 'compile'
+//    }
+//}
