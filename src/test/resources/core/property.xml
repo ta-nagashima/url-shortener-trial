@@ -17,6 +17,7 @@
                 <value>classpath:properties/environment/${environment}.properties</value>
                 <value>classpath:properties/ddl-path.properties</value>
                 <value>classpath:properties/scenario.properties</value>
+                <value>classpath:properties/identifier.properties</value>
             </list>
         </property>
     </bean>
