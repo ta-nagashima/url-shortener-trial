@@ -4,9 +4,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
        ">
 
+
     <!--
-        全プロジェクト共通のテストのDB接続の設定を記述（base-root.xmlから読み込まれる）
-        ======================================================================
+        全プロジェクト共通のテストのデータベースの接続設定を記述（base-root.xmlから読み込まれる）
+        ==============================================================================
     -->
 
 
