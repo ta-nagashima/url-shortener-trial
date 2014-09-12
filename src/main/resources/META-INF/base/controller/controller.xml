@@ -8,7 +8,7 @@
        ">
 
     <!--
-        コントローラの設定を記述（META-INF/core/core-root.xmlから読み込まれる）
+        コントローラの設定を記述（META-INF/base/base-root.xmlから読み込まれる）
         ===============================================================
     -->
 
@@ -40,9 +40,9 @@
 
 
     <!-- コントローラインターセプターの設定（Controllerのメソッド処理前後に共通処理を挿入する） -->
-    <import resource="classpath:META-INF/core/controller/interceptor.xml"/>
+    <import resource="classpath:META-INF/base/controller/interceptor.xml"/>
 
     <!-- コントローラのcomponent-scanの設定（ExceptionHandlerの定義） -->
-    <import resource="classpath:META-INF/core/controller/component-scan.xml"/>
+    <import resource="classpath:META-INF/base/controller/component-scan.xml"/>
 
 </beans>

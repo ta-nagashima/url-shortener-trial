@@ -13,23 +13,23 @@
     -->
 
     <!-- 環境ごとに読み込むプロパティファイルを切り替える -->
-    <import resource="classpath:META-INF/core/environment/property.xml"/>
+    <import resource="classpath:META-INF/base/environment/property.xml"/>
 
     <jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jndi/database"/>
 
 
     <!-- AOP設定の読込 -->
-    <import resource="classpath:META-INF/core/aop/aop.xml"/>
+    <import resource="classpath:META-INF/base/aop/aop.xml"/>
 
     <!-- MyBatis設定の読込 -->
-    <import resource="classpath:META-INF/core/database/database.xml"/>
+    <import resource="classpath:META-INF/base/database/database.xml"/>
 
     <!-- コントローラ設定の読込 -->
-    <import resource="classpath:META-INF/core/controller/controller.xml"/>
+    <import resource="classpath:META-INF/base/controller/controller.xml"/>
 
     <!-- リクエストスコープの設定の読込 -->
-    <import resource="classpath:META-INF/core/scope/scope.xml"/>
+    <import resource="classpath:META-INF/base/scope/scope.xml"/>
 
     <!-- 全プロジェクト共通のcomponent-scanの設定（Autowiredに必要） -->
-    <import resource="classpath:META-INF/core/component-scan.xml"/>
+    <import resource="classpath:META-INF/base/component-scan.xml"/>
 </beans>

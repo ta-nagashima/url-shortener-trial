@@ -8,16 +8,16 @@
        ">
 
     <!--
-        リクエストスコープのcomponent-scanの設定を記述（META-INF/core/scope/scope.xmlから読み込まれる）
-        =======================================================================================
+        AOPのcomponent-scanの設定を記述（META-INF/base/aop/aop.xmlから読み込まれる）
+        =======================================================================
     -->
 
 
-    <!-- RequestEventを扱うコンポーネント
+    <!-- AOPでRepositoryのログの自動出力を実行するコンポーネント
 
     【Autowiredコンポーネント】
-    ・なし
+    ・jp.co.biglobe.lib.plugin.log.LoggerWrapper
      -->
-    <context:component-scan base-package="jp.co.biglobe.lib.scope.event"/>
+    <context:component-scan base-package="jp.co.biglobe.lib.aop.repository"/>
 
 </beans>
