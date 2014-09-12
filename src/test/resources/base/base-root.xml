@@ -10,8 +10,8 @@
     -->
 
 
-    <!-- 環境ごとに読み込むプロパティファイルを切り替える -->
-    <import resource="property.xml"/>
+    <!-- 環境ごとに切り替える設定 -->
+    <import resource="environment.xml"/>
 
     <!-- DB接続の設定の読込 -->
     <import resource="data-source.xml"/>

@@ -12,8 +12,8 @@
         ============================================================
     -->
 
-    <!-- 環境ごとに読み込むプロパティファイルを切り替える -->
-    <import resource="classpath:META-INF/base/environment/property.xml"/>
+    <!-- 環境ごとに切り替える設定 -->
+    <import resource="classpath:META-INF/base/environment/environment.xml"/>
 
     <jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jndi/database"/>
 
