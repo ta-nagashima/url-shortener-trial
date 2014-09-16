@@ -1,10 +1,7 @@
 // プラグイン定義 利用できるタスク(gradle tasks)が増える
 apply {
     plugin 'war'
-    plugin "idea"
 }
-
-
 
 // 各環境にバージョンを揃えたうえでgradleをインストールするのは大変なので、
 // gradlewコマンドを利用する。
@@ -62,7 +59,6 @@ clean {
     // "gradle clean"を実行した際に、Tomcat用の出力先も削除対象とする
     delete << 'src/main/webapp/WEB-INF/classes'
 }
-
 
 // gradlew war コマンド実行時の処理
 war {
