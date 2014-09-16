@@ -1,15 +1,3 @@
-// プラグイン定義 利用できるタスク(gradle tasks)が増える
-apply {
-    plugin 'war'
-}
-
-// 各環境にバージョンを揃えたうえでgradleをインストールするのは大変なので、
-// gradlewコマンドを利用する。
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
-    jarFile = "${project.projectDir}/etc/gradle/wrapper/gradle-wrapper.jar"
-}
-
 // プロパティ設定
 ext {
     defaultEncoding = 'UTF-8'
@@ -52,16 +40,4 @@ test {
     // GradleでEnclosedテストが2回実行されることの対策（そのうちGradle側で対応してくれるようになるかも）
     exclude '**/*$*'
 
-}
-
-// gradlew clean コマンド実行時の処理
-clean {
-    // "gradle clean"を実行した際に、Tomcat用の出力先も削除対象とする
-    delete << 'src/main/webapp/WEB-INF/classes'
-}
-
-// gradlew war コマンド実行時の処理
-war {
-    baseName = "${warFileName}"
-    version = "${warVersion}"
 }
