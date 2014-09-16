@@ -1,9 +1,7 @@
 // アプリケーション固有の設定を記述
 
 ext {
-    warFileName = 'mobile'
-    warVersion = '1.0'
-    tomcatContextPath = '/domain/mobile'
+    projectName = 'sample-project'
 }
 
 // アプリケーション固有で利用したい外部ライブラリを指定

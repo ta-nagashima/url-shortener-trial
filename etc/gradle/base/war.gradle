@@ -5,7 +5,12 @@ apply {
     plugin 'war'
 }
 
+// 倉庫番のリリーススクリプト等の関係上、現状は固定
+ext {
+    warVersion = '1.0'
+}
+
 war {
-    baseName = "${warFileName}"
+    baseName = "${projectName}"
     version = "${warVersion}"
 }
