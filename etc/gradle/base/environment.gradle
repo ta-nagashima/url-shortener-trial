@@ -1,12 +1,10 @@
-import java.lang.management.ManagementFactory
-
 def envList = ['localMac', 'localWindows',
                'cloudHosting',
                'development', 'testing', 'staging', 'production']
 
 if (!hasProperty('env') || "".equals(env)) {
-    def osMXBean = ManagementFactory.getOperatingSystemMXBean()
-    if("${osMXBean.name}".contains("Mac")){
+    String osName = System.getProperty("os.name");
+    if ("${osName}".contains("Mac")) {
         ext.env = envList[0]
     }else{
         ext.env = envList[2]

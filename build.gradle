@@ -4,7 +4,7 @@ apply {
 }
 
 // 環境ごとの設定を実施
-apply from: file('etc/gradle/environment.gradle')
+apply from: file('etc/gradle/base/environment.gradle')
 
 apply from: file('etc/gradle/application.gradle')
 
