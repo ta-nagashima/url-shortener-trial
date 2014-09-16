@@ -1,6 +1,8 @@
 /**
- * Mavenリポジトリの設定
+ * ISP領域向けJava共通ライブラリの設定
  */
+
+// Mavenリポジトリの設定
 repositories {
     mavenCentral()
 }

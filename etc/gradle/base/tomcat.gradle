@@ -1,4 +1,6 @@
-
+/**
+ * Tomcatの設定
+ */
 
 apply plugin: 'tomcat'
 

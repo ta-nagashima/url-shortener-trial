@@ -1,6 +1,7 @@
 /**
  * gradlew war コマンド実行時の処理の設定
  */
+
 apply {
     plugin 'war'
 }
