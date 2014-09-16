@@ -139,29 +139,8 @@ ext {
 
 dependencies {
     // ローカル環境でのみ、h2のライブラリを使用する
-    if (LocalChecker.isLocal()) {
+    if (environmentChecker.isLocal()) {
         compile "com.h2database:h2:${h2Version}"
         testCompile files("etc/library/local/h2storedprocedure-${h2storedprocedureVersion}.jar")
-    }
-}
-
-/**
- * ローカル環境かどうか判定
- *
- * OS判定のロジックは、apache-commonsのSystemUtilsから拝借
- * 参考　https://github.com/apache/commons-lang
- */
-final class LocalChecker {
-
-    public static final boolean isLocal() {
-        String osName = System.getProperty("os.name");
-        return isOSNameMatch(osName, "Mac") || isOSNameMatch(osName, "Windows");
-    }
-
-    private static final boolean isOSNameMatch(final String osName, final String osNamePrefix) {
-        if (osName == null) {
-            return false;
-        }
-        return osName.startsWith(osNamePrefix);
     }
 }
