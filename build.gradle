@@ -13,7 +13,8 @@ apply from: file('etc/gradle/application.gradle')
 // cleanタスクの設定
 apply from: file('etc/gradle/base/clean.gradle')
 
-apply from: file('etc/gradle/system.gradle')
+// Javaのコンパイル＆テストの設定
+apply from: file('etc/gradle/base/java.gradle')
 
 // warタスクの設定
 apply from: file('etc/gradle/base/war.gradle')

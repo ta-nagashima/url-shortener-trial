@@ -1,4 +1,8 @@
-// プロパティ設定
+/**
+ * Javaのコンパイル＆テストの設定
+ */
+
+// 文字コードの設定
 ext {
     defaultEncoding = 'UTF-8'
 }
@@ -7,8 +11,9 @@ ext {
 compileJava.options.encoding = defaultEncoding
 compileGroovy.options.encoding = defaultEncoding
 compileTestJava.options.encoding = defaultEncoding
+compileTestGroovy.options.encoding = defaultEncoding
 
-// デフォルトのディレクトリ構成から以下の要素を追加する
+// Javaコードの中にGroovyのコードが混じるので、それに対応させる
 sourceSets {
     main {
         java.srcDirs = []
@@ -26,7 +31,7 @@ sourceSets {
     }
 }
 
-// gradlew test コマンド実行時の処理
+// gradlew test コマンド実行時の処理の設定
 test {
     // テストする環境で使用する設定ファイルが異なる
     systemProperties 'environment': "${env}"
