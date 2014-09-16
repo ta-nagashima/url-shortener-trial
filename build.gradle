@@ -10,7 +10,7 @@ apply from: file('etc/gradle/application.gradle')
 
 apply from: file('etc/gradle/system.gradle')
 
-apply from: file('etc/gradle/tomcat.gradle')
+apply from: file('etc/gradle/base/tomcat.gradle')
 
 apply from: file('etc/gradle/library.gradle')
 
