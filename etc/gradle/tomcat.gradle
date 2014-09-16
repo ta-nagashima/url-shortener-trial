@@ -7,7 +7,7 @@ tomcatRun {
     httpPort = 7010
     reloadable = true
     contextPath = "${tomcatContextPath}"
-    configFile = file('etc/tomcat/development/context.xml')
+    configFile = file('etc/tomcat/local/context.xml')
     stopPort = 7011
     stopKey = 'stopkey'
 }

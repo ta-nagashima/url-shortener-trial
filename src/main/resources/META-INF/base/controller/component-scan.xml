@@ -10,18 +10,17 @@
 
     <!-- ======================================================================
     |
-    |    テストコード用のアプリケーションコンテキストの設定ファイル
+    |    コントローラのcomponent-scanの設定を記述
+    |    （META-INF/base/controller/controller.xmlから読み込まれる）
     |
     =========================================================================== -->
 
+    <!--
+         ExceptionHandlerの定義
 
-    <!-- 全プロジェクトで共通のテストコードの設定ファイルの読込 -->
-    <import resource="base/base-root.xml"/>
-
-
-    <!-- ================== プロジェクト固有の設定の記述ココから ================== -->
-
-    <context:component-scan base-package="jp.co.biglobe.isp.auth.api"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.testdata"/>
+         ExceptionHandlerの振る舞いを変更したい場合は、このcomponent-scanの
+         base-packageを差し替えることによって実現する
+     -->
+    <context:component-scan base-package="jp.co.biglobe.lib.essential.exceptionhandler"/>
 
 </beans>
