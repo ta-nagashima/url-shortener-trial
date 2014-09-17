@@ -1,9 +1,13 @@
+/**
+ * Jenkinsの設定：カバレッジ取得＆メトリクス計測
+ */
+
 if ("${env}" == 'cloudHosting') {
     apply plugin:'findbugs'
     apply plugin: "jacoco"
 
-    apply from: 'etc/gradle/jenkins/cobertura.gradle'
-    apply from: 'etc/gradle/jenkins/jacoco.gradle'
+    apply from: 'etc/gradle/base/jenkins/cobertura.gradle'
+    apply from: 'etc/gradle/base/jenkins/jacoco.gradle'
 
 
     findbugs {

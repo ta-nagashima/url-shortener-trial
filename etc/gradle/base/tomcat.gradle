@@ -1,7 +1,17 @@
-
+/**
+ * Tomcatの設定
+ */
 
 apply plugin: 'tomcat'
 
+ext {
+    // TODO BOの何かの制約で固定値にしたはず（理由は失念。。）
+    // コンテキストパスの接頭辞（ココは固定）
+    prefixTomcatContextPath = '/domain'
+
+    // Tomcatのコンテキストパス（アプリケーションのルート）
+    tomcatContextPath = "${prefixTomcatContextPath}/${projectName}"
+}
 
 tomcatRun {
     httpPort = 7010

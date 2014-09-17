@@ -1,19 +1,8 @@
-// プラグイン定義 利用できるタスク(gradle tasks)が増える
-apply {
-    plugin 'war'
-    plugin "idea"
-}
+/**
+ * Javaのコンパイル＆テストの設定
+ */
 
-
-
-// 各環境にバージョンを揃えたうえでgradleをインストールするのは大変なので、
-// gradlewコマンドを利用する。
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
-    jarFile = "${project.projectDir}/etc/gradle/wrapper/gradle-wrapper.jar"
-}
-
-// プロパティ設定
+// 文字コードの設定
 ext {
     defaultEncoding = 'UTF-8'
 }
@@ -22,8 +11,9 @@ ext {
 compileJava.options.encoding = defaultEncoding
 compileGroovy.options.encoding = defaultEncoding
 compileTestJava.options.encoding = defaultEncoding
+compileTestGroovy.options.encoding = defaultEncoding
 
-// デフォルトのディレクトリ構成から以下の要素を追加する
+// Javaコードの中にGroovyのコードが混じるので、それに対応させる
 sourceSets {
     main {
         java.srcDirs = []
@@ -41,7 +31,7 @@ sourceSets {
     }
 }
 
-// gradlew test コマンド実行時の処理
+// gradlew test コマンド実行時の処理の設定
 test {
     // テストする環境で使用する設定ファイルが異なる
     systemProperties 'environment': "${env}"
@@ -55,17 +45,4 @@ test {
     // GradleでEnclosedテストが2回実行されることの対策（そのうちGradle側で対応してくれるようになるかも）
     exclude '**/*$*'
 
-}
-
-// gradlew clean コマンド実行時の処理
-clean {
-    // "gradle clean"を実行した際に、Tomcat用の出力先も削除対象とする
-    delete << 'src/main/webapp/WEB-INF/classes'
-}
-
-
-// gradlew war コマンド実行時の処理
-war {
-    baseName = "${warFileName}"
-    version = "${warVersion}"
 }

@@ -1,0 +1,17 @@
+/**
+ * gradlew war コマンド実行時の処理の設定
+ */
+
+apply {
+    plugin 'war'
+}
+
+// 倉庫番のリリーススクリプト等の関係上、現状は固定
+ext {
+    warVersion = '1.0'
+}
+
+war {
+    baseName = "${projectName}"
+    version = "${warVersion}"
+}
