@@ -5,7 +5,7 @@
 apply plugin: 'tomcat'
 
 ext {
-    // TODO BOの何かの制約で固定値にしたはず（理由は失念。。）
+    // TODO 要確認：BOの何かの制約で固定値にしたはず（理由は失念。。）
     // コンテキストパスの接頭辞（ココは固定）
     prefixTomcatContextPath = '/domain'
 

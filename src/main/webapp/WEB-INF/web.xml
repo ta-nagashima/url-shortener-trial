@@ -53,6 +53,7 @@
         <!-- アプリケーションコンテキストの設定ファイルの場所を指定 -->
         <init-param>
             <param-name>contextConfigLocation</param-name>
+            <!-- TODO BOの環境も合わせて変更しなければいけないことに注意！ -->
             <param-value>WEB-INF/applicationContext.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
