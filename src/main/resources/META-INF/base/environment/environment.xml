@@ -14,6 +14,8 @@
 
 
     <!-- TODO 環境ごとのpropertiesファイルを作成し、本ファイルを弄る必要がないようにする -->
+
+    <!-- TODO コイツは昔の名残な気がする／しばらくコメントアウトの状態で問題なければ削除 -->
     <!--bean class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer"/-->
     <!--bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/-->
 
