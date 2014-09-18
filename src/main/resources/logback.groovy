@@ -3,44 +3,51 @@ import ch.qos.logback.core.ConsoleAppender
 import ch.qos.logback.core.rolling.RollingFileAppender
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy
 
-import java.lang.management.ManagementFactory
-
 import static ch.qos.logback.classic.Level.DEBUG
 import static ch.qos.logback.classic.Level.TRACE
 
-// TODO:encodingをつけるとエラーになる
 
+// TODO project.gradleと共通化したほうがよさそう
+/**
+ * プロジェクトごとにユニークな名前
+ */
+def LOG_DIR_NAME = "mobile"
 
+// ログ出力先ファイルパス
+def logFile = "/var/log/blc/tomcat/BIG0116_01/${LOG_DIR_NAME}/logs/application.log"
 
-def logFile = "/var/log/blc/tomcat/BIG0116_01/mobile/logs/mobile.log"
+// ログレベル
 def logLevel = DEBUG
 
+// ログの出力フォーマット
+def LOG_FORMAT = "%d{yyyy/MM/dd HH:mm:ss.SSS} [%level] [%thread] [%logger{0}] %message [%logger] %n"
 
-def osMXBean = ManagementFactory.getOperatingSystemMXBean()
-if("${osMXBean.name}".contains("Mac")){
-    logFile = "build/tomcat/logs/mobile.log"
+// ローカルだけ設定を変更
+if (System.getProperty("os.name").startsWith("Mac")) {
+    logFile = "build/tomcat/logs/${LOG_DIR_NAME}-application.log"
     logLevel = TRACE
 }
 
+// ログファイルへのログ出力設定
 appender("FILE", RollingFileAppender) {
-    //encoding = "UTF-8"
+    //encoding = "UTF-8" // encodingをつけるとエラーになる
     file = logFile
 
     encoder(PatternLayoutEncoder) {
-        pattern = "%d{yyyy/MM/dd HH:mm:ss.SSS} [%level] [%thread] [%logger{0}] %message [%logger] %n"
-//        pattern = "%d{yyyy/MM/dd HH:mm:ss.SSS} %-5p [%t] %c:%M\\(%F:%L\\) %p %m%n"
+        pattern = LOG_FORMAT
     }
     rollingPolicy(TimeBasedRollingPolicy) {
         fileNamePattern = logFile + ".%d{yyyy-MM-dd}"
     }
 }
 
+// 標準出力へのログ出力設定
 appender("STDOUT", ConsoleAppender) {
     //encoding = "UTF-8"
     encoder(PatternLayoutEncoder) {
-        pattern = "%d{yyyy/MM/dd HH:mm:ss.SSS} [%level] [%thread] [%logger{0}] %message [%logger] %n"
-//        pattern = "%d{yyyy/MM/dd HH:mm:ss.SSS} %-5p [%t] %c:%M\\(%F:%L\\) %p %m%n"
+        pattern = LOG_FORMAT
     }
 }
 
+// ログレベル設定
 root(logLevel, ["FILE", "STDOUT"])
