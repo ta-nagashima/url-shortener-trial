@@ -43,9 +43,9 @@
 
 
     <!-- サンプル（こっから下は消してください） -->
-    <context:component-scan base-package="jp.co.biglobe.isp.sample.api"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.sample.service"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.sample.datasource"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.user.api"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.user.service"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.user.datasource"/>
 
 
     <beans profile="local,development,testing">
