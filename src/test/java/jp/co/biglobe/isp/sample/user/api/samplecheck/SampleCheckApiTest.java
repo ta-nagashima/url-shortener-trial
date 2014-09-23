@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -85,24 +84,6 @@ public class SampleCheckApiTest {
             resultActions.andExpect(jsonPath("$.header.requestId").exists());
             resultActions.andExpect(jsonPath("$.header.hostName").exists());
             resultActions.andExpect(jsonPath("$.error").doesNotExist());
-        }
-
-        @Test
-        public void _value() throws Exception {
-            // 実行
-            ResultActions resultActions = mockMvc.perform(post("/sample/value"));
-
-            // 確認
-            resultActions.andExpect(content().string("value/junit"));
-        }
-
-        @Test
-        public void _property() throws Exception {
-            // 実行
-            ResultActions resultActions = mockMvc.perform(post("/sample/property"));
-
-            // 確認
-            resultActions.andExpect(content().string("property_accessor/junit"));
         }
     }
 
