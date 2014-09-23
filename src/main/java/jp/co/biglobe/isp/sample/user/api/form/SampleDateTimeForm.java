@@ -2,7 +2,6 @@ package jp.co.biglobe.isp.sample.user.api.form;
 
 import jp.co.biglobe.isp.sample.user.domain.sample.SampleDateTime;
 import jp.co.biglobe.lib.publication.form.FormToValueObject;
-import jp.co.biglobe.lib.publication.validation.DateTimeFormat;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +15,7 @@ public class SampleDateTimeForm implements FormToValueObject<SampleDateTime> {
 
     @Getter
     @NotBlank
-    @DateTimeFormat
+    //@DateTimeFormat
     private String value;
 
     @Override

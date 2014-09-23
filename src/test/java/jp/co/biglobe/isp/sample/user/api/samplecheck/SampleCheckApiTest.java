@@ -1,13 +1,12 @@
 package jp.co.biglobe.isp.sample.user.api.samplecheck;
 
-import jp.co.biglobe.isp.mobile.ltethreeg.datasource.SIM_INFO;
 import jp.co.biglobe.test.util.dbunit.DbUnitTester;
 import jp.co.biglobe.test.util.usecase.BobioUseCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -26,7 +25,7 @@ public class SampleCheckApiTest {
 
     private static final String URI = "/sample/check";
 
-    private static final String SCENARIO_NAME = "C_iyakukin_mo_ref";
+    private static final String SCENARIO_NAME = "C_authexp";
 
     private static BobioUseCase testcase = new BobioUseCase(SCENARIO_NAME);
 
@@ -69,8 +68,6 @@ public class SampleCheckApiTest {
         public void _check() throws Exception {
 
             // 事前準備
-            tester.cleanInsertQuery(SIM_INFO.lte);
-            testcase.set("NOTEXIST");
 
             // 実行
             ResultActions resultActions = mockMvc.perform(post(URI)
@@ -109,7 +106,7 @@ public class SampleCheckApiTest {
         }
     }
 
-    @RunWith(Enclosed.class)
+/*    @RunWith(Enclosed.class)
     public static class _バリデーションエラー {
 
         @RunWith(SpringJUnit4ClassRunner.class)
@@ -160,6 +157,6 @@ public class SampleCheckApiTest {
                 resultActions.andExpect(jsonPath("$.detail").exists());
             }
         }
-    }
+    }*/
 
 }
