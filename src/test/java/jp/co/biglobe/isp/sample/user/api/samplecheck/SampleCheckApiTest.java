@@ -1,6 +1,7 @@
 package jp.co.biglobe.isp.sample.user.api.samplecheck;
 
 import jp.co.biglobe.test.util.dbunit.DbUnitTester;
+import jp.co.biglobe.test.util.response.NormalApiResponseAssert;
 import jp.co.biglobe.test.util.usecase.BobioUseCase;
 import org.junit.After;
 import org.junit.Before;
@@ -80,10 +81,7 @@ public class SampleCheckApiTest {
             resultActions.andExpect(jsonPath("$.detail.message").value("登録済"));
 
             // 確認：JSON（API共通部分）
-            resultActions.andExpect(jsonPath("$.header.statusCode").value("ok"));
-            resultActions.andExpect(jsonPath("$.header.requestId").exists());
-            resultActions.andExpect(jsonPath("$.header.hostName").exists());
-            resultActions.andExpect(jsonPath("$.error").doesNotExist());
+            NormalApiResponseAssert.assertJsonPath(resultActions);
         }
     }
 
