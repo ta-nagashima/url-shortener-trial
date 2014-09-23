@@ -45,10 +45,4 @@
             <arg column="sample_user_name" javaType="String" jdbcType="VARCHAR"/>
         </constructor>
     </resultMap>
-    <resultMap id="MnpReservationNumberMap"
-               type="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.MnpReservationNumber">
-        <constructor>
-            <arg column="mi_mnp_reservation_number" javaType="String" jdbcType="VARCHAR"/>
-        </constructor>
-    </resultMap>
 </mapper>

@@ -1,13 +1,18 @@
-#!/bin/sh
+#!/bin/bash
+#
+# @(#) シナリオのスタブを読み込むスクリプト。
+#
+#######################################################################################
 
-BIN_DIR=`dirname $0`
-RESOURCE_DIR=$BIN_DIR/../../../src/test/resources/scenario
 
-# Sleep
-if [ $1 = "Sleep" ]; then
-	sleep 30
-else
-	DATA_FILE=$RESOURCE_DIR/$1/$1
-	cat $DATA_FILE
-fi
+# 本スクリプトのディレクトリのフルパス取得
+CURRENT_SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
+# プロジェクトルートのフルパス取得
+PROJECT_ROOT_DIR="${CURRENT_SCRIPT_DIR}/../../.."
+
+# シナリオのスタブのフルパス取得
+SCENARIO_STUB_DIR=${PROJECT_ROOT_DIR}/src/test/resources/scenario
+
+# スタブの読み込み
+cat ${SCENARIO_STUB_DIR}/$1/$1

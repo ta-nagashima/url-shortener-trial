@@ -17,38 +17,15 @@
 
 
     <!-- Controller層 -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.api"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.api"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.user.api"/>
 
     <!-- Service層 -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.service"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.service"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.service"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.auth.service"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.user.service"/>
 
     <!-- DataSource層 -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.datasource"/>
-
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.datasource"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.auth.datasource"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.biglobemember.datasource"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.option.vpn.datasource"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.ltethreeg.option.charge.datasource"/>
-
-    <!-- 監視 -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.monitoring.api"/>
-
-    <!-- extension -->
-    <context:component-scan base-package="jp.co.biglobe.isp.mobile.extension"/>
-
-
-    <!-- サンプル（こっから下は消してください） -->
-    <context:component-scan base-package="jp.co.biglobe.isp.sample.user.api"/>
-    <context:component-scan base-package="jp.co.biglobe.isp.sample.user.service"/>
     <context:component-scan base-package="jp.co.biglobe.isp.sample.user.datasource"/>
 
+    <!-- 監視 -->
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.monitoring"/>
 
-    <beans profile="local,development,testing">
-        <context:component-scan base-package="jp.co.biglobe.isp.mobile.voiceoption.testdata"/>
-    </beans>
 </beans>

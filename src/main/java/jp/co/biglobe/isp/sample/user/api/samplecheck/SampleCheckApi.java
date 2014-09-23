@@ -1,10 +1,8 @@
 package jp.co.biglobe.isp.sample.user.api.samplecheck;
 
 import jp.co.biglobe.isp.sample.user.domain.samplecheckstatus.SampleCheckStatus;
-import jp.co.biglobe.lib.essential.property.PropertyAccessor;
 import jp.co.biglobe.lib.plugin.validationverifier.AlarmValidationVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,30 +30,6 @@ public class SampleCheckApi {
 
         alarmValidationVerifier.verify(errors);
 
-        System.out.println("ほげほげぇええええええええええええ");
-        System.out.println(sampleCheckRequest.getSampleDateTimeForm().getValueObject().getValue());
-
         return sampleCheckResponse.build(SampleCheckStatus.REGISTERED);
     }
-
-
-    @RequestMapping(value = "/sample/value", method = RequestMethod.POST)
-    @ResponseBody
-    public String value(@Valid SampleCheckRequest sampleCheckRequest,
-                        Errors errors) {
-        return operatorId;
-    }
-
-    @Value("${sample.key.value}")
-    private String operatorId;
-
-    @RequestMapping(value = "/sample/property", method = RequestMethod.POST)
-    @ResponseBody
-    public String property(@Valid SampleCheckRequest sampleCheckRequest,
-                           Errors errors) {
-        return propertyAccessor.getProperty("sample.key.property.accessor");
-    }
-
-    @Autowired
-    private PropertyAccessor propertyAccessor;
 }
