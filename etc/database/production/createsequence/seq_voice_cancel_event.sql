@@ -1,0 +1,1 @@
+CREATE SEQUENCE seq_voice_cancel_event

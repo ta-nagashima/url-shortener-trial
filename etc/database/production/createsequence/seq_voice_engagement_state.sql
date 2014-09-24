@@ -1,0 +1,1 @@
+CREATE SEQUENCE seq_voice_engagement_state

@@ -1,0 +1,1 @@
+CREATE SEQUENCE seq_voice_identity_result_e

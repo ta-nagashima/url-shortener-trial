@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.biglobe.isp.sample.user.datasource.sampleuser.db.SampleQueryMapper">
+
+    <select id="findSampleUserId" resultMap="SampleUserMap">
+        SELECT
+        <include refid="selectColumnsDefine"/>
+        FROM sample_user
+        WHERE sample_user_id = #{sampleUserId.value}
+    </select>
+
+
+    <!--  select文のカラム指定  -->
+    <sql id="selectColumnsDefine">
+        sample_user_id,
+        EUC_TO_BINARY(sample_user_name) AS sample_user_name
+    </sql>
+
+    <!--  エンティティのマッピング  -->
+    <resultMap id="SampleUserMap" type="jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUser">
+        <constructor>
+            <arg javaType="jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserId"
+                 resultMap="SampleUserIdMap"/>
+            <arg javaType="jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserName"
+                 resultMap="SampleUserNameMap"/>
+            <!--arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.MnpReservationNumber"
+                 resultMap="MnpReservationNumberMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.ValidMnpInPersonalInfo"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpin.db.MnpInPersonalInfoQueryMapper.ValidMnpInputItemsMap"/>
+            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.mnpinactivationduedate.ValidMnpInActivation"
+                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpin.db.MnpInActivationDateMapper.ValidMnpInActivationMap"/-->
+        </constructor>
+    </resultMap>
+
+    <!--  各ValueObjectのマッピング  -->
+    <resultMap id="SampleUserIdMap"
+               type="jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserId">
+        <constructor>
+            <arg column="sample_user_id" javaType="int" jdbcType="INTEGER"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="SampleUserNameMap" type="jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserName">
+        <constructor>
+            <arg column="sample_user_name" javaType="String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+</mapper>
