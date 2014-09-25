@@ -1,21 +1,24 @@
 package jp.co.biglobe.isp.sample.user.datasource.sampleuser;
 
+import jp.co.biglobe.isp.sample.user.domain.sampleuser.*;
 import jp.co.biglobe.isp.sample.user.fixture.FixtureSampleUser;
-import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUser;
-import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserId;
-import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserName;
 import jp.co.biglobe.test.util.dbunit.DbUnitTester;
+import jp.co.biglobe.test.util.dbunit.assertion.DatabaseAssert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.Map;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -23,7 +26,7 @@ import static org.junit.Assert.assertThat;
 public class SampleRepositoryDbTest {
 
     @Autowired
-    private SampleRepositoryDb sut;
+    private SampleRepository sut;
 
     @Autowired
     private DbUnitTester tester;
@@ -45,7 +48,8 @@ public class SampleRepositoryDbTest {
         // 準備
         SampleUser expected = new SampleUser(
                 new SampleUserId(1),
-                new SampleUserName("小池直樹")
+                new SampleUserName("小池直樹"),
+                SampleGender.MALE
         );
 
         // 実行
@@ -53,5 +57,61 @@ public class SampleRepositoryDbTest {
 
         // 評価
         assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void _update() throws Exception {
+        // テストデータの準備
+        tester.cleanInsertQuery(FixtureSampleUser.One.getDefaultData());
+
+        // 準備
+        SampleUser sampleUser = new SampleUser(
+                new SampleUserId(1),
+                new SampleUserName("小池直子"),
+                SampleGender.FEMALE
+        );
+
+        // 実行
+        sut.change(sampleUser);
+
+        // 評価
+        SampleUser expected = new SampleUser(
+                new SampleUserId(1),
+                new SampleUserName("小池直子"),
+                SampleGender.FEMALE
+        );
+        SampleUserAssert sampleUserAssert = new SampleUserAssert(tester);
+        sampleUserAssert.assertTableWithAllColumns(FixtureSampleUser.One.getExpected(expected));
+    }
+
+    @Test
+    public void _BOMyBatisExceptionTranslatorが正常に動作しているか確認() throws Exception {
+        // テストデータの準備
+        tester.cleanInsertQuery(FixtureSampleUser.One.getDefaultData());
+
+        // 実行
+        try {
+            sut.checkBOMyBatisExceptionTranslator(new SampleUserId(1));
+        } catch (UncategorizedSQLException e) {
+            assertThat(e.getMessage(), is(containsString("EUC-UTF8の文字コード変換に失敗している可能性があります。EUC_TO_BINARY関数またはBINARY_TO_EUC関数を正しく使っているか確認して下さい。")));
+        }
+    }
+
+    public class SampleUserAssert {
+
+        private static final String TABLE_NAME = "sample_user";
+
+        private DbUnitTester dbUnitTester;
+
+        public SampleUserAssert(DbUnitTester dbUnitTester) {
+            this.dbUnitTester = dbUnitTester;
+        }
+
+
+        public void assertTableWithAllColumns(Map expectedData) throws Exception {
+            String[] sortColumns = new String[]{"sample_user_id"};
+            DatabaseAssert databaseAssert = new DatabaseAssert(dbUnitTester.getConnection());
+            databaseAssert.assertTableWithAllColumns(expectedData, TABLE_NAME, sortColumns);
+        }
     }
 }

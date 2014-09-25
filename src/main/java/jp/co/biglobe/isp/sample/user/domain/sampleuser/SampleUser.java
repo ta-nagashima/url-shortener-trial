@@ -14,4 +14,7 @@ public final class SampleUser {
 
     @Getter
     private final SampleUserName sampleUserName;
+
+    @Getter
+    private final SampleGender sampleGender;
 }
