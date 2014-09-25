@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -82,6 +84,18 @@ public class SampleRepositoryDbTest {
         sampleUserAssert.assertTableWithAllColumns(FixtureSampleUser.One.getExpected(expected));
     }
 
+    @Test
+    public void _BOMyBatisExceptionTranslatorが正常に動作しているか確認() throws Exception {
+        // テストデータの準備
+        tester.cleanInsertQuery(FixtureSampleUser.One.getDefaultData());
+
+        // 実行
+        try {
+            sut.checkBOMyBatisExceptionTranslator(new SampleUserId(1));
+        } catch (UncategorizedSQLException e) {
+            assertThat(e.getMessage(), is(containsString("EUC-UTF8の文字コード変換に失敗している可能性があります。EUC_TO_BINARY関数またはBINARY_TO_EUC関数を正しく使っているか確認して下さい。")));
+        }
+    }
 
     public class SampleUserAssert {
 

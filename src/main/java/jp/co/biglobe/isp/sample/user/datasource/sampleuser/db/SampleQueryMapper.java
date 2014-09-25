@@ -15,4 +15,8 @@ public interface SampleQueryMapper {
             @Param("sampleUser") SampleUser sampleUser
     );
 
+    public SampleUser invalid(
+            @Param("sampleUserId") SampleUserId sampleUserId
+    );
+
 }

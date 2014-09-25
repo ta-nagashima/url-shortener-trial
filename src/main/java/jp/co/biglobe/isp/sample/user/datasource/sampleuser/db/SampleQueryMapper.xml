@@ -10,6 +10,13 @@
         WHERE sample_user_id = #{sampleUserId.value}
     </select>
 
+    <!--  select文のカラム指定  -->
+    <sql id="selectColumnsDefine">
+        sample_user_id,
+        EUC_TO_BINARY(sample_user_name) AS sample_user_name,
+        EUC_TO_BINARY(sample_gender) AS sample_gender
+    </sql>
+
     <update id="update">
         UPDATE sample_user
         SET
@@ -18,11 +25,18 @@
         WHERE sample_user_id = #{sampleUser.sampleUserId.value}
     </update>
 
-    <!--  select文のカラム指定  -->
-    <sql id="selectColumnsDefine">
+    <select id="invalid" resultMap="SampleUserMap">
+        SELECT
+        <include refid="invalidDefine"/>
+        FROM sample_user
+        WHERE sample_user_id = #{sampleUserId.value}
+    </select>
+
+    <!--  select文のカラム指定(EUC_TO_BINARYがない不正なSQL文)  -->
+    <sql id="invalidDefine">
         sample_user_id,
-        EUC_TO_BINARY(sample_user_name) AS sample_user_name,
-        EUC_TO_BINARY(sample_gender) AS sample_gender
+        sample_user_name,
+        sample_gender
     </sql>
 
     <!--  エンティティのマッピング  -->

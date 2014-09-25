@@ -30,4 +30,8 @@ public class SampleRepositoryDb implements SampleRepository {
         sampleQueryMapper.update(sampleUser);
     }
 
+    @Override
+    public SampleUser checkBOMyBatisExceptionTranslator(SampleUserId sampleUserId) {
+        return sampleQueryMapper.invalid(sampleUserId);
+    }
 }
