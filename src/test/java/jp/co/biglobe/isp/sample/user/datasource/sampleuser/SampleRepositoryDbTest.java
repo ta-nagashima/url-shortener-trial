@@ -1,9 +1,10 @@
 package jp.co.biglobe.isp.sample.user.datasource.sampleuser;
 
-import jp.co.biglobe.isp.sample.user.fixture.FixtureSampleUser;
+import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleGender;
 import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUser;
 import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserId;
 import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserName;
+import jp.co.biglobe.isp.sample.user.fixture.FixtureSampleUser;
 import jp.co.biglobe.test.util.dbunit.DbUnitTester;
 import org.junit.After;
 import org.junit.Before;
@@ -45,7 +46,8 @@ public class SampleRepositoryDbTest {
         // 準備
         SampleUser expected = new SampleUser(
                 new SampleUserId(1),
-                new SampleUserName("小池直樹")
+                new SampleUserName("小池直樹"),
+                SampleGender.MALE
         );
 
         // 実行

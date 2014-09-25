@@ -14,7 +14,8 @@
     <!--  select文のカラム指定  -->
     <sql id="selectColumnsDefine">
         sample_user_id,
-        EUC_TO_BINARY(sample_user_name) AS sample_user_name
+        EUC_TO_BINARY(sample_user_name) AS sample_user_name,
+        EUC_TO_BINARY(sample_gender) AS sample_gender
     </sql>
 
     <!--  エンティティのマッピング  -->
@@ -24,12 +25,8 @@
                  resultMap="SampleUserIdMap"/>
             <arg javaType="jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserName"
                  resultMap="SampleUserNameMap"/>
-            <!--arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.MnpReservationNumber"
-                 resultMap="MnpReservationNumberMap"/>
-            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.ValidMnpInPersonalInfo"
-                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpin.db.MnpInPersonalInfoQueryMapper.ValidMnpInputItemsMap"/>
-            <arg javaType="jp.co.biglobe.isp.mobile.voiceoption.domain.mnpin.mnpinactivationduedate.ValidMnpInActivation"
-                 resultMap="jp.co.biglobe.isp.mobile.voiceoption.datasource.mnpin.db.MnpInActivationDateMapper.ValidMnpInActivationMap"/-->
+            <arg javaType="jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleGender" column="sample_gender"
+                 typeHandler="jp.co.biglobe.lib.publication.typehandler.EnumTypeHandler"/>
         </constructor>
     </resultMap>
 
