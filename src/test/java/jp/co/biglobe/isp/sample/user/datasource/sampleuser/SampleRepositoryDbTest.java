@@ -6,6 +6,7 @@ import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserId;
 import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserName;
 import jp.co.biglobe.isp.sample.user.fixture.FixtureSampleUser;
 import jp.co.biglobe.test.util.dbunit.DbUnitTester;
+import jp.co.biglobe.test.util.dbunit.assertion.DatabaseAssert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+
+import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -55,5 +58,49 @@ public class SampleRepositoryDbTest {
 
         // 評価
         assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void _update() throws Exception {
+        // テストデータの準備
+        tester.cleanInsertQuery(FixtureSampleUser.One.getDefaultData());
+
+        // 準備
+        SampleUser sampleUser = new SampleUser(
+                new SampleUserId(1),
+                new SampleUserName("小池直子"),
+                SampleGender.FEMALE
+        );
+
+        // 実行
+        sut.change(sampleUser);
+
+        // 評価
+        SampleUser expected = new SampleUser(
+                new SampleUserId(1),
+                new SampleUserName("小池直子"),
+                SampleGender.FEMALE
+        );
+        SampleUserAssert sampleUserAssert = new SampleUserAssert(tester);
+        sampleUserAssert.assertTableWithAllColumns(FixtureSampleUser.One.getExpected(expected));
+    }
+
+
+    public class SampleUserAssert {
+
+        private static final String TABLE_NAME = "sample_user";
+
+        private DbUnitTester dbUnitTester;
+
+        public SampleUserAssert(DbUnitTester dbUnitTester) {
+            this.dbUnitTester = dbUnitTester;
+        }
+
+
+        public void assertTableWithAllColumns(Map expectedData) throws Exception {
+            String[] sortColumns = new String[]{"sample_user_id"};
+            DatabaseAssert databaseAssert = new DatabaseAssert(dbUnitTester.getConnection());
+            databaseAssert.assertTableWithAllColumns(expectedData, TABLE_NAME, sortColumns);
+        }
     }
 }

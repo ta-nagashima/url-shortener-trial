@@ -10,6 +10,13 @@
         WHERE sample_user_id = #{sampleUserId.value}
     </select>
 
+    <update id="update">
+        UPDATE sample_user
+        SET
+        sample_user_name = BINARY_TO_EUC(#{sampleUser.sampleUserName.value}),
+        sample_gender = BINARY_TO_EUC(#{sampleUser.sampleGender.dbValue})
+        WHERE sample_user_id = #{sampleUser.sampleUserId.value}
+    </update>
 
     <!--  select文のカラム指定  -->
     <sql id="selectColumnsDefine">

@@ -11,4 +11,8 @@ public interface SampleQueryMapper {
             @Param("sampleUserId") SampleUserId sampleUserId
     );
 
+    public void update(
+            @Param("sampleUser") SampleUser sampleUser
+    );
+
 }

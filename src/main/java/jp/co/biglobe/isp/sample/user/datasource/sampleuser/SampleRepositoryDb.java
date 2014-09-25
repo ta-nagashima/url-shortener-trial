@@ -24,4 +24,8 @@ public class SampleRepositoryDb {
         return sampleUser;
     }
 
+    public void change(SampleUser sampleUser) {
+        sampleQueryMapper.update(sampleUser);
+    }
+
 }
