@@ -1,7 +1,7 @@
 package jp.co.biglobe.isp.sample.user.api.samplerefer;
 
-import jp.co.biglobe.isp.sample.user.datasource.sampleuser.SampleRepositoryDb;
 import jp.co.biglobe.isp.sample.user.domain.samplecheckstatus.SampleCheckStatus;
+import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleRepository;
 import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUser;
 import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUserId;
 import jp.co.biglobe.lib.plugin.validationverifier.AlarmValidationVerifier;
@@ -21,7 +21,7 @@ public class SampleReferApi {
     private AlarmValidationVerifier alarmValidationVerifier;
 
     @Autowired
-    private SampleRepositoryDb sampleRepositoryDb;
+    private SampleRepository sampleRepository;
 
     @Autowired
     private SampleReferResponse sampleReferResponse;
@@ -33,7 +33,7 @@ public class SampleReferApi {
 
         alarmValidationVerifier.verify(errors);
 
-        SampleUser sampleUser = sampleRepositoryDb.findBySampleUserId(new SampleUserId(1));
+        SampleUser sampleUser = sampleRepository.findBySampleUserId(new SampleUserId(1));
 
         return sampleReferResponse.build(SampleCheckStatus.REGISTERED);
     }

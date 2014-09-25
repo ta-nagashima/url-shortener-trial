@@ -18,9 +18,11 @@
 
     <!-- Controller層 -->
     <context:component-scan base-package="jp.co.biglobe.isp.sample.user.api"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.transaction.api"/>
 
     <!-- Service層 -->
     <context:component-scan base-package="jp.co.biglobe.isp.sample.user.service"/>
+    <context:component-scan base-package="jp.co.biglobe.isp.sample.transaction.service"/>
 
     <!-- DataSource層 -->
     <context:component-scan base-package="jp.co.biglobe.isp.sample.user.datasource"/>

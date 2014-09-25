@@ -1,6 +1,5 @@
-package jp.co.biglobe.isp.sample.user.datasource.sampleuser;
+package jp.co.biglobe.isp.sample.transaction.api.rollback;
 
-import jp.co.biglobe.isp.sample.user.domain.sampleuser.*;
 import jp.co.biglobe.isp.sample.user.fixture.FixtureSampleUser;
 import jp.co.biglobe.test.util.dbunit.DbUnitTester;
 import jp.co.biglobe.test.util.dbunit.assertion.DatabaseAssert;
@@ -12,76 +11,53 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Map;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = {"classpath:context.xml"})
-public class SampleRepositoryDbTest {
+public class RollbackApiTest {
+
+    private static final String URI = "/sample/rollback";
 
     @Autowired
-    private SampleRepository sut;
+    public DbUnitTester tester;
 
     @Autowired
-    private DbUnitTester tester;
+    private WebApplicationContext wac;
+    private MockMvc mockMvc;
 
     @Before
-    public void setUp() throws Exception {
+    public void setup() throws Exception {
+        mockMvc = webAppContextSetup(wac).build();
+
+        // 処理前にテーブルをクリアする
         tester.executeAllClearTableAndSeq();
+
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
     }
 
     @Test
-    public void _findSampleUserId() throws Exception {
+    public void _invoke() throws Exception {
         // テストデータの準備
         tester.cleanInsertQuery(FixtureSampleUser.One.getDefaultData());
 
-        // 準備
-        SampleUser expected = new SampleUser(
-                new SampleUserId(1),
-                new SampleUserName("小池直樹"),
-                SampleGender.MALE
-        );
-
         // 実行
-        SampleUser actual = sut.findBySampleUserId(new SampleUserId(1));
+        mockMvc.perform(post(URI));
 
-        // 評価
-        assertThat(actual, is(expected));
-    }
-
-    @Test
-    public void _update() throws Exception {
-        // テストデータの準備
-        tester.cleanInsertQuery(FixtureSampleUser.One.getDefaultData());
-
-        // 準備
-        SampleUser sampleUser = new SampleUser(
-                new SampleUserId(1),
-                new SampleUserName("小池直子"),
-                SampleGender.FEMALE
-        );
-
-        // 実行
-        sut.change(sampleUser);
-
-        // 評価
-        SampleUser expected = new SampleUser(
-                new SampleUserId(1),
-                new SampleUserName("小池直子"),
-                SampleGender.FEMALE
-        );
+        // DBが更新されてないことを確認
         SampleUserAssert sampleUserAssert = new SampleUserAssert(tester);
-        sampleUserAssert.assertTableWithAllColumns(FixtureSampleUser.One.getExpected(expected));
+        sampleUserAssert.assertTableWithAllColumns(FixtureSampleUser.One.getDefaultData());
     }
-
 
     public class SampleUserAssert {
 
@@ -100,4 +76,5 @@ public class SampleRepositoryDbTest {
             databaseAssert.assertTableWithAllColumns(expectedData, TABLE_NAME, sortColumns);
         }
     }
+
 }
