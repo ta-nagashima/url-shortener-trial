@@ -23,71 +23,14 @@
 
     <!-- Transaction Manager -->
     <tx:annotation-driven />
-        
-    <!-- MYBATIS3 SPRING3 -->
-    <bean id="mybatisExceptionTranslator"
-          class="jp.co.biglobe.lib.essential.mybatis.BOMyBatisExceptionTranslator">
-        <constructor-arg index="0" ref="dataSource" />
-        <constructor-arg index="1" value="true" />
-    </bean>
 
+    <!-- ExceptionTranslatorの設定 -->
+    <import resource="classpath:META-INF/base/database/exception-translator.xml"/>
 
-    <bean id="sqlSessionTemplate"
-          class="org.mybatis.spring.SqlSessionTemplate">
-        <constructor-arg index="0" ref="sqlSessionFactory" />
-        <constructor-arg index="1" value="SIMPLE" />
-        <constructor-arg index="2" ref="mybatisExceptionTranslator" />
-    </bean>
-    
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
-        <!-- Mybatisのconfigurationファイル。
-             http://mybatis.github.io/mybatis-3/ja/configuration.html -->
-        <property name="configLocation"
-                  value="classpath:META-INF/base/database/mybatis-configuration.xml"/>
-        <!-- MapperXmlのパスを指定する。複数指定する場合は、Value要素を追加していく。 -->
-        <property name="mapperLocations">
-            <list>
-                <!-- MyBatisのマッパーXMLのファイル名は○○QueryMapper.xmlとすること -->
-                <value>classpath*:/jp/co/biglobe/**/datasource/**/*QueryMapper.xml</value>
-            </list>
-        </property>
-    </bean>
-        <!-- MapperClassが存在するパッケージを指定する。複数指定する場合は、カンマ区切りとする  -->
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="jp.co.biglobe.**.datasource.**" />
-    </bean>
+    <!-- QueryMapperの設定 -->
+    <import resource="classpath:META-INF/base/database/query-mapper.xml"/>
 
-    <!-- TRANSACTION -->
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource">
-        </property>
-    </bean>
-    <bean id="transactionAttributeSource" class="org.springframework.transaction.interceptor.NameMatchTransactionAttributeSource">
-        <property name="properties">
-            <props>
-                <prop key="*">PROPAGATION_REQUIRED</prop>
-            </props>
-        </property>
-    </bean>
-    <bean id="transactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
-        <property name="transactionManager" ref="transactionManager">
-        </property>
-        <property name="transactionAttributeSource" ref="transactionAttributeSource">
-        </property>
-    </bean>
-    <!-- *Apiというクラス名の場合、メソッドに入ってから出るまでがトランザクションとなる。つまり、one commit とする。 -->
-    <bean id="beanNameAutoProxy" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
-        <property name="interceptorNames">
-            <list>
-                <value>transactionInterceptor</value>
-            </list>
-        </property>
-        <property name="beanNames">
-            <list>
-                <value>*Api</value>
-            </list>
-        </property>
-    </bean>
-  
+    <!-- トランザクションの設定 -->
+    <import resource="classpath:META-INF/base/database/transaction.xml"/>
+
 </beans>

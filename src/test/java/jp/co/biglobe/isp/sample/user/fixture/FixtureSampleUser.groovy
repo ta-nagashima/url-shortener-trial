@@ -1,5 +1,9 @@
 package jp.co.biglobe.isp.sample.user.fixture
 
+import jp.co.biglobe.isp.sample.user.domain.sampleuser.SampleUser
+import jp.co.biglobe.test.util.dbunit.xml.Fixture
+import jp.co.biglobe.test.util.dbunit.xml.FixtureChangeTarget
+
 class FixtureSampleUser {
 
     private final static String TABLE_NAME = "sample_user";
@@ -27,9 +31,15 @@ class FixtureSampleUser {
                 ]
         ]
 
-
         public static Map getDefaultData() {
             return VALUE
+        }
+
+        public static Map getExpected(SampleUser expected) {
+            Map<FixtureChangeTarget, String> map = new HashMap<FixtureChangeTarget, String>()
+            map.put(new FixtureChangeTarget(TABLE_NAME, expected.getSampleUserId().getValue(), "sample_user_name"), expected.getSampleUserName().getValue())
+            map.put(new FixtureChangeTarget(TABLE_NAME, expected.getSampleUserId().getValue(), "sample_gender"), expected.getSampleGender().getDbValue())
+            return Fixture.changeValueListForString(getDefaultData(), map)
         }
     }
 
