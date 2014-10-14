@@ -25,6 +25,7 @@ ext {
     mybatisSpringVersion = '1.2.2'
     commonsDbcpVersion = '1.4'
     groovyVersion = '2.3.6'
+    servletVersion = '3.0.1'
     lombokVersion = '1.14.6'
 
     // 自作ライブラリ
@@ -73,7 +74,7 @@ dependencies {
      * 外部ライブラリ（コンパイル時には必要だが、warファイルに含める必要なし）
      */
     // Servlet 関連
-    providedCompile "javax.servlet:javax.servlet-api:3.0.1" // tomcatに内蔵されているのでwarファイルには含めない
+    providedCompile "javax.servlet:javax.servlet-api:${servletVersion}" // tomcatに内蔵されているのでwarファイルには含めない
 
     // Getter等のボイラープレートコードの自動生成（参考URL　http://www.coppermine.jp/docs/programming/2014/01/lombok.html）
     providedCompile "org.projectlombok:lombok:${lombokVersion}"
