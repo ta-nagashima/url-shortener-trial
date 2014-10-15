@@ -1,1 +1,0 @@
-ALTER TABLE voice_mnp_out_personal_info_s ADD CONSTRAINT fk_voice_mnp_out_psnl_inf_s FOREIGN KEY ( voice_mnp_out_id ) REFERENCES voice_mnp_out_state( voice_mnp_out_id )

@@ -1,1 +1,0 @@
-ALTER TABLE voice_engagement_disengage_s ADD CONSTRAINT fk_voice_disengage_state FOREIGN KEY ( voice_engagement_number ) REFERENCES voice_engagement_state( voice_engagement_number )

@@ -1,1 +1,0 @@
-CREATE SEQUENCE seq_lte_connect_ctrl_policy_e

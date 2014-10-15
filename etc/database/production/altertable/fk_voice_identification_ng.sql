@@ -1,1 +1,0 @@
-ALTER TABLE voice_identification_ng_s ADD CONSTRAINT fk_voice_identification_ng FOREIGN KEY ( identification_result_id ) REFERENCES voice_identification_result_s( identification_result_id )

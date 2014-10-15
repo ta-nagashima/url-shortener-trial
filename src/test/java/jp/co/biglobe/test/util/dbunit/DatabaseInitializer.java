@@ -4,7 +4,6 @@ import jp.co.biglobe.test.util.dbunit.file.DDLFileReader;
 import org.dbunit.DatabaseUnitException;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -22,8 +21,8 @@ public class DatabaseInitializer {
     private DDLFileReader alterTableDdlFileReader;
 
     // 開発PC用
-    private DDLFileReader createDevelopmentTableDdlFileReader;
-    private DDLFileReader createDevelopmentIndexDdlFileReader;
+    private DDLFileReader createLocalTableDdlFileReader;
+    private DDLFileReader createLocalIndexDdlFileReader;
     private String dbName;
 
     public DatabaseInitializer(DbConnector dbConnector, DbUnitTesterProperty dbUnitTesterProperty) {
@@ -34,8 +33,8 @@ public class DatabaseInitializer {
         this.createIndexDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getCreateIndexDDLPath());
         this.createSequenceDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getCreateSequenceDDLPath());
         this.alterTableDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getAlterTableDDLPath());
-        this.createDevelopmentTableDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getDevCreateTableDDLPath());
-        this.createDevelopmentIndexDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getDevCreateIndexDDLPath());
+        this.createLocalTableDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getLocalCreateTableDDLPath());
+        this.createLocalIndexDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getLocalCreateIndexDDLPath());
 
         this.dbName = dbUnitTesterProperty.getDbName();
     }
@@ -66,16 +65,16 @@ public class DatabaseInitializer {
     private void executeDDL() throws DatabaseUnitException, SQLException, IOException {
         // H2の場合プロシージャを作成する。
         // Oracleで実行されてもExceptionを握りつぶすため、実行はする
-        DDLFileReader aliesDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getProceduresDDLPath());
+        DDLFileReader aliesDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getLocalAliasDDLPath());
         dbConnector.ddlExecute(aliesDdlFileReader);
 
         //
         //dbConnector.executeQuery("SET REFERENTIAL_INTEGRITY FALSE");
 
         // プロジェクト固有でないテーブルを作成する
-        dbConnector.executeDropTable(createDevelopmentTableDdlFileReader);
-        dbConnector.ddlExecute(createDevelopmentTableDdlFileReader);
-        dbConnector.ddlExecute(createDevelopmentIndexDdlFileReader);
+        dbConnector.executeDropTable(createLocalTableDdlFileReader);
+        dbConnector.ddlExecute(createLocalTableDdlFileReader);
+        dbConnector.ddlExecute(createLocalIndexDdlFileReader);
 
         // 最初に書くオブジェクトをDropする。ただし、存在しない場合などExceptionが発生しても握りつぶします
         dbConnector.executeDropTable(createTableDdlFileReader);
@@ -105,9 +104,9 @@ public class DatabaseInitializer {
 
 //      Truncate Table よりも、Delete の方が速い
 //        dbConnector.executeTruncateTableWithoutCommit(createTableDdlFileReader);
-//        dbConnector.executeTruncateTableWithoutCommit(createDevelopmentTableDdlFileReader);
+//        dbConnector.executeTruncateTableWithoutCommit(createLocalTableDdlFileReader);
         dbConnector.executeDeleteTable(createTableDdlFileReader);
-        dbConnector.executeDeleteTable(createDevelopmentTableDdlFileReader);
+        dbConnector.executeDeleteTable(createLocalTableDdlFileReader);
 
         dbConnector.executeQuery("SET REFERENTIAL_INTEGRITY TRUE"); // 上でfalseにしているので、参照制約が無効になっているので、元に戻す
         dbConnector.executeQuery("call fk_enabled()");

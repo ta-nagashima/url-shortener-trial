@@ -1,1 +1,0 @@
-ALTER TABLE lte_vcharge_complete_event ADD CONSTRAINT fk_lte_vcharge_complete_event FOREIGN KEY ( vcharge_engagement_number ) REFERENCES lte_vcharge_purchase_event( vcharge_engagement_number )

@@ -1,1 +1,0 @@
-CREATE SEQUENCE seq_wifi_use_rights_id

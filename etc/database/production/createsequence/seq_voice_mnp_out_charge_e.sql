@@ -1,2 +1,0 @@
-CREATE SEQUENCE seq_voice_mnp_out_charge_e
-
