@@ -1,1 +1,0 @@
-CREATE SEQUENCE seq_inside_wifi_reg_device_e

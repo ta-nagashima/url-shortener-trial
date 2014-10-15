@@ -1,1 +1,0 @@
-CREATE SEQUENCE seq_inside_wifi_private_id
