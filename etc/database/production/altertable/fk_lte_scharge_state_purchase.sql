@@ -1,1 +1,0 @@
-ALTER TABLE lte_scharge_state ADD CONSTRAINT fk_lte_scharge_state_purchase FOREIGN KEY ( scharge_engagement_number ) REFERENCES lte_scharge_purchase_event( scharge_engagement_number )
