@@ -71,4 +71,11 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
     </resource-ref>
+
+
+    <!-- SpringMVCの外で発生した例外のハンドリング -->
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/error</location>
+    </error-page>
 </web-app>

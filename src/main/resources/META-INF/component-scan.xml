@@ -27,7 +27,4 @@
     <!-- DataSource層 -->
     <context:component-scan base-package="jp.co.biglobe.isp.sample.user.datasource"/>
 
-    <!-- 監視 -->
-    <context:component-scan base-package="jp.co.biglobe.isp.sample.monitoring"/>
-
 </beans>
