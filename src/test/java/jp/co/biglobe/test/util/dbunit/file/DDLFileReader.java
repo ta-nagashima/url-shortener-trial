@@ -25,8 +25,10 @@ public class DDLFileReader {
         File dir = new File(ddlPathDir);
         File[] filelist = dir.listFiles();
         if(filelist == null)return;
-        for (int i = 0; i < filelist.length; i++) {
-            files.add(new SQLFile(filelist[i]));
+        for (File file : filelist) {
+            if (file.getName().contains(SQLFile.SQL_EXTENSION)) {
+                files.add(new SQLFile(file));
+            }
         }
     }
 }

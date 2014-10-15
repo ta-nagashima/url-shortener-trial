@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class SQLFile {
+    static final String SQL_EXTENSION = ".sql";
+
     private final String objectName;
     private final File file;
 
@@ -20,7 +22,7 @@ public class SQLFile {
      * @return
      */
     private String makeTableName(String name){
-        return name.substring(0, name.indexOf(".sql"));
+        return name.substring(0, name.indexOf(SQL_EXTENSION));
     }
 
     public String getObjectName() {
