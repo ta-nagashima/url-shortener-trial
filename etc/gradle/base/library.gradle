@@ -29,7 +29,7 @@ ext {
     lombokVersion = '1.14.6'
 
     // 自作ライブラリ
-    isplibraryVersion = '1.1.0'
+    isplibraryVersion = '1.2.0'
     charsetVersion = '2.0'
 }
 
