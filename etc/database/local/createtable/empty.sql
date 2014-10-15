@@ -15,12 +15,3 @@
 -- ・ファイル名のテーブルに対してDROP TABLEが行われます
 -- ・Oracle向けのTABLESPACEの指定は、別ディレクトリでALTER文を作成してください。
 */
-/*
-CREATE TABLE sample_user
-(
-    sample_user_id NUMBER(10) ,
-    sample_user_name VARCHAR2(255) NOT NULL,
-    sample_gender VARCHAR2(28) NOT NULL,
-    PRIMARY KEY( sample_user_id )
-)
-*/
