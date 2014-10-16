@@ -54,7 +54,7 @@ ext {
     groovyVersion = '2.3.7'
 
     // 参考：http://mvnrepository.com/artifact/org.projectlombok/lombok
-    lombokVersion = '1.14.6'
+    lombokVersion = '1.14.8'
 
     // 参考：http://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
     servletVersion = '3.0.1'
