@@ -51,7 +51,7 @@ ext {
     commonsDbcpVersion = '1.4'
 
     // 参考：http://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all
-    groovyVersion = '2.3.6'
+    groovyVersion = '2.3.7'
 
     // 参考：http://mvnrepository.com/artifact/org.projectlombok/lombok
     lombokVersion = '1.14.6'
