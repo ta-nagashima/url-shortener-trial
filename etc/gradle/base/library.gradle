@@ -42,7 +42,7 @@ ext {
     elVersion = '2.2.6'
 
     // 参考：http://mvnrepository.com/artifact/org.mybatis/mybatis
-    mybatisVersion = '3.2.7'
+    mybatisVersion = '3.2.8'
 
     // 参考：http://mvnrepository.com/artifact/org.mybatis/mybatis-spring
     mybatisSpringVersion = '1.2.2'
