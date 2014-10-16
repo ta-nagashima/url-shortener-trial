@@ -10,25 +10,58 @@ repositories {
 /**
  * プロダクトコードで使用する依存ライブラリの設定
  */
+
+// 外部ライブラリ
 ext {
-    // 外部ライブラリ
+
+    // 参考：http://mvnrepository.com/artifact/org.springframework/spring-core
     springframeworkVersion = '4.1.1.RELEASE'
+
+    // 参考：http://mvnrepository.com/artifact/org.springframework.data/spring-data-commons
     springDataCommonsVersion = '1.9.0.RELEASE'
+
+    // 参考：http://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     jacksonVersion = '2.4.2'
+
+    // 参考：http://mvnrepository.com/artifact/org.aspectj/aspectjweaver
     aspectjVersion = '1.8.2'
+
+    // 参考：http://mvnrepository.com/artifact/ch.qos.logback/logback-classic
     logbackVersion = '1.1.2'
+
+    // 参考：http://mvnrepository.com/artifact/org.slf4j/slf4j-api
     slf4jVersion = '1.7.7'
+
+    // 参考：http://mvnrepository.com/artifact/org.hibernate/hibernate-validator
     hibernateValidatorVersion = '5.1.2.Final'
+
+    // 参考：http://mvnrepository.com/artifact/javax.el/javax.el-api
     elApiVersion = '3.0.0'
+
+    // 参考：http://mvnrepository.com/artifact/org.glassfish.web/javax.el
     elVersion = '2.2.6'
+
+    // 参考：http://mvnrepository.com/artifact/org.mybatis/mybatis
     mybatisVersion = '3.2.7'
+
+    // 参考：http://mvnrepository.com/artifact/org.mybatis/mybatis-spring
     mybatisSpringVersion = '1.2.2'
+
+    // 参考：http://mvnrepository.com/artifact/commons-dbcp/commons-dbcp
     commonsDbcpVersion = '1.4'
+
+    // 参考：http://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all
     groovyVersion = '2.3.6'
-    servletVersion = '3.0.1'
+
+    // 参考：http://mvnrepository.com/artifact/org.projectlombok/lombok
     lombokVersion = '1.14.6'
 
-    // 自作ライブラリ
+    // 参考：http://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+    servletVersion = '3.0.1'
+}
+
+// 自作ライブラリ
+ext {
     isplibraryVersion = '1.2.0'
     charsetVersion = '2.0'
 }
@@ -102,8 +135,9 @@ dependencies {
 /**
  * テストコードで使用する依存ライブラリの設定
  */
+
+// 外部ライブラリ
 ext {
-    // 外部ライブラリ
     junitDepVersion = '4.10'
     dbunitVersion = '2.4.9'
     cloningVersion = '1.9.0'
@@ -128,11 +162,14 @@ dependencies {
 /**
  * ローカル環境でのみ使用する依存ライブラリの設定
  */
-ext {
-    // 外部ライブラリ
-    h2Version = '1.4.181'
 
-    // 自作ライブラリ
+// 外部ライブラリ
+ext {
+    h2Version = '1.4.181'
+}
+
+// 自作ライブラリ
+ext {
     h2storedprocedureVersion = '2.0'
 }
 
