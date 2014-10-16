@@ -23,6 +23,8 @@ public class DatabaseInitializer {
     // 開発PC用
     private DDLFileReader createLocalTableDdlFileReader;
     private DDLFileReader createLocalIndexDdlFileReader;
+    private DDLFileReader createLocalSequenceDdlFileReader;
+
     private String dbName;
 
     public DatabaseInitializer(DbConnector dbConnector, DbUnitTesterProperty dbUnitTesterProperty) {
@@ -35,6 +37,7 @@ public class DatabaseInitializer {
         this.alterTableDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getAlterTableDDLPath());
         this.createLocalTableDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getLocalCreateTableDDLPath());
         this.createLocalIndexDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getLocalCreateIndexDDLPath());
+        this.createLocalSequenceDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getLocalCreateSequenceDDLPath());
 
         this.dbName = dbUnitTesterProperty.getDbName();
     }
@@ -73,8 +76,10 @@ public class DatabaseInitializer {
 
         // プロジェクト固有でないテーブルを作成する
         dbConnector.executeDropTable(createLocalTableDdlFileReader);
+        dbConnector.executeDropSequence(createLocalSequenceDdlFileReader);
         dbConnector.ddlExecute(createLocalTableDdlFileReader);
         dbConnector.ddlExecute(createLocalIndexDdlFileReader);
+        dbConnector.ddlExecute(createLocalSequenceDdlFileReader);
 
         // 最初に書くオブジェクトをDropする。ただし、存在しない場合などExceptionが発生しても握りつぶします
         dbConnector.executeDropTable(createTableDdlFileReader);
@@ -114,6 +119,8 @@ public class DatabaseInitializer {
         // Sequenceを作り直す
         dbConnector.executeDropSequenceWithoutCommit(createSequenceDdlFileReader);
         dbConnector.ddlExecuteWithoutCommit(createSequenceDdlFileReader);
+        dbConnector.executeDropSequenceWithoutCommit(createLocalSequenceDdlFileReader);
+        dbConnector.ddlExecuteWithoutCommit(createLocalSequenceDdlFileReader);
     }
 
 }
