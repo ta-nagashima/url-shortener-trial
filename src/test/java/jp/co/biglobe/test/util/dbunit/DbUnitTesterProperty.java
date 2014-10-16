@@ -45,6 +45,10 @@ public class DbUnitTesterProperty {
     private String localCreateTableDDLPath;
 
     @Getter
+    @Value("${jdbc.ddl.localCreateSequencePath}")
+    private String localCreateSequenceDDLPath;
+
+    @Getter
     @Value("${jdbc.ddl.localCreateIndexPath}")
     private String localCreateIndexDDLPath;
 }
