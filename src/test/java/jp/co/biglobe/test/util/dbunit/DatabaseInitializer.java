@@ -68,8 +68,8 @@ public class DatabaseInitializer {
     private void executeDDL() throws DatabaseUnitException, SQLException, IOException {
         // H2の場合プロシージャを作成する。
         // Oracleで実行されてもExceptionを握りつぶすため、実行はする
-        DDLFileReader aliesDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getLocalAliasDDLPath());
-        dbConnector.ddlExecute(aliesDdlFileReader);
+        DDLFileReader localAliesDdlFileReader = new DDLFileReader(dbUnitTesterProperty.getLocalAliasDDLPath());
+        dbConnector.ddlExecute(localAliesDdlFileReader);
 
         //
         //dbConnector.executeQuery("SET REFERENTIAL_INTEGRITY FALSE");
