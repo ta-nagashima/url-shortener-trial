@@ -62,7 +62,7 @@ ext {
 
 // 自作ライブラリ
 ext {
-    isplibraryVersion = '1.2.0'
+    isplibraryVersion = '1.2.1'
     charsetVersion = '2.0'
 }
 
