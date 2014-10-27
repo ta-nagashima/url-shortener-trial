@@ -1,1 +1,0 @@
-CREATE SEQUENCE seq_voice_mnp_in_psnl_inf_e

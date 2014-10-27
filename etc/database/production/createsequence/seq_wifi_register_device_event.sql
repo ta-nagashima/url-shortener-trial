@@ -1,1 +1,0 @@
-CREATE SEQUENCE seq_wifi_register_device_event

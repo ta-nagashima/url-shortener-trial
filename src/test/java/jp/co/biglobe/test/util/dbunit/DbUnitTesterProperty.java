@@ -5,64 +5,50 @@
 
 package jp.co.biglobe.test.util.dbunit;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DbUnitTesterProperty {
 
+    @Getter
     @Value("${jdbc.dbName}")
     private String dbName;
+
+    @Getter
     @Value("${jdbc.ddl.createTablePath}")
     private String createTableDDLPath;
+
+    @Getter
     @Value("${jdbc.ddl.createIndexPath}")
     private String createIndexDDLPath;
+
+    @Getter
     @Value("${jdbc.ddl.createSequencePath}")
     private String createSequenceDDLPath;
+
+    @Getter
     @Value("${jdbc.ddl.alterTablePath}")
     private String alterTableDDLPath;
+
+    @Getter
     @Value("${jdbc.ddl.tableSpaceDDLPath}")
     private String tableSpaceDDLPath;
-    @Value("${jdbc.ddl.proceduresPath}")
-    private String proceduresDDLPath;
-    @Value("${jdbc.ddl.devCreateTablePath}")
-    private String devCreateTableDDLPath;
-    @Value("${jdbc.ddl.devCreateIndexPath}")
-    private String devCreateIndexDDLPath;
 
-    public String getDbName(){
-        return dbName;
-    }
+    @Getter
+    @Value("${jdbc.ddl.localAliasPath}")
+    private String localAliasDDLPath;
 
-    public String getCreateTableDDLPath() {
-        return createTableDDLPath;
-    }
+    @Getter
+    @Value("${jdbc.ddl.localCreateTablePath}")
+    private String localCreateTableDDLPath;
 
-    public String getCreateIndexDDLPath() {
-        return createIndexDDLPath;
-    }
+    @Getter
+    @Value("${jdbc.ddl.localCreateSequencePath}")
+    private String localCreateSequenceDDLPath;
 
-    public String getCreateSequenceDDLPath() {
-        return createSequenceDDLPath;
-    }
-
-    public String getAlterTableDDLPath() {
-        return alterTableDDLPath;
-    }
-
-    public String getProceduresDDLPath() {
-        return proceduresDDLPath;
-    }
-
-    public String getTableSpaceDDLPath() {
-        return tableSpaceDDLPath;
-    }
-
-    public String getDevCreateTableDDLPath() {
-        return devCreateTableDDLPath;
-    }
-
-    public String getDevCreateIndexDDLPath() {
-        return devCreateIndexDDLPath;
-    }
+    @Getter
+    @Value("${jdbc.ddl.localCreateIndexPath}")
+    private String localCreateIndexDDLPath;
 }

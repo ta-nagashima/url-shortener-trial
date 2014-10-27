@@ -1,2 +1,0 @@
-CREATE SEQUENCE seq_voice_e_month_dise_chrg_e
-
