@@ -10,7 +10,6 @@ import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.SortedTable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
-import org.joda.time.DateTime;
 import org.xml.sax.InputSource;
 
 import java.io.IOException;
@@ -79,12 +78,12 @@ public class TestDataMaker extends AbstractDatabaseTester {
         InputStream expectedIn = getClass().getResourceAsStream(expectedFileName);
         ReplacementDataSet expectedDataSetReplacement = new ReplacementDataSet(new FlatXmlDataSetBuilder().build(expectedIn));
         expectedDataSetReplacement.addReplacementObject("[null]", null);
-        expectedDataSetReplacement.addReplacementObject("[yyyyMM]", new DateTime().toString("yyyyMM"));
-        expectedDataSetReplacement.addReplacementObject("[yyyyMM-1]", new DateTime().plusMonths(-1).toString("yyyyMM"));
-        expectedDataSetReplacement.addReplacementObject("[yyyyMMDD]", new DateTime().toString("yyyyMMdd"));
-        expectedDataSetReplacement.addReplacementObject("[yyyyMMDD-1]", new DateTime().plusDays(-1).toString("yyyyMMdd"));
-        expectedDataSetReplacement.addReplacementObject("[yyyy-MM-DD]", new DateTime().toString("yyyy-MM-dd"));
-        expectedDataSetReplacement.addReplacementObject("[timestamp]", new DateTime().toString("yyyy-MM-dd 00:00:00"));
+//        expectedDataSetReplacement.addReplacementObject("[yyyyMM]", new DateTime().toString("yyyyMM"));
+//        expectedDataSetReplacement.addReplacementObject("[yyyyMM-1]", new DateTime().plusMonths(-1).toString("yyyyMM"));
+//        expectedDataSetReplacement.addReplacementObject("[yyyyMMDD]", new DateTime().toString("yyyyMMdd"));
+//        expectedDataSetReplacement.addReplacementObject("[yyyyMMDD-1]", new DateTime().plusDays(-1).toString("yyyyMMdd"));
+//        expectedDataSetReplacement.addReplacementObject("[yyyy-MM-DD]", new DateTime().toString("yyyy-MM-dd"));
+//        expectedDataSetReplacement.addReplacementObject("[timestamp]", new DateTime().toString("yyyy-MM-dd 00:00:00"));
 
         try {
             expectedIn.close();

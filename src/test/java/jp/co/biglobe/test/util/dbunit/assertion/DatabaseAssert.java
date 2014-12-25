@@ -8,7 +8,6 @@ import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.SortedTable;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.joda.time.DateTime;
 import org.xml.sax.InputSource;
 
 import java.io.StringReader;
