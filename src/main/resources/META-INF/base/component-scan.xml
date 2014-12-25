@@ -65,7 +65,7 @@
     ・jp.co.biglobe.lib.plugin.alarmmail.TransferMassageCreator
     ・jp.co.biglobe.lib.plugin.db.DbGlobalCache
      -->
-    <context:component-scan base-package="jp.co.biglobe.lib.component.controller"/>
+    <context:component-scan base-package="jp.co.biglobe.lib.component.processevent"/>
 
     <!-- MyBatisのグローバル二次キャッシュを無効にするコンポーネント
 
