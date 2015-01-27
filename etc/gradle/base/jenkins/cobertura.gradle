@@ -7,7 +7,10 @@ configurations{
 }
 
 dependencies {
-    cobertura "net.sourceforge.cobertura:cobertura:2.0.3",'log4j:log4j:1.2.16','xml-apis:xml-apis:2.0.2'
+    cobertura ("net.sourceforge.cobertura:cobertura:2.0.3") {
+        exclude group: "org.mortbay.jetty"
+    }
+    cobertura 'log4j:log4j:1.2.16', 'xml-apis:xml-apis:2.0.2'
 }
 
 def tmpDir = new File(buildDir, "tmp")
