@@ -57,6 +57,8 @@ public class SampleRepositoryDbTest {
 
         // 評価
         assertThat(actual, is(expected));
+        assertThat(true, is(false));
+
     }
 
     @Test
