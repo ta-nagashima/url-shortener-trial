@@ -8,6 +8,10 @@ import lombok.Getter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
+
 @ToString(includeFieldNames = false)
 @EqualsAndHashCode
 @AllArgsConstructor
@@ -21,6 +25,6 @@ public class SampleDateTimeForm implements FormToValueObject<SampleDateTime> {
     @Override
     public SampleDateTime getValueObject() {
 //        return new SampleDateTime(new Date());
-        return new SampleDateTime(org.joda.time.format.DateTimeFormat.forPattern("yyyyMMddHHmmss").parseDateTime(value).toDate());
+        return new SampleDateTime(LocalDateTime.parse(value, DateTimeFormatter.ofPattern("uuuuMMddHHmmss").withResolverStyle(ResolverStyle.STRICT)));
     }
 }
