@@ -6,6 +6,5 @@
  */
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
-    jarFile = "${project.projectDir}/etc/gradle/base/wrapper/gradle-wrapper.jar"
+    gradleVersion = '3.5'
 }
