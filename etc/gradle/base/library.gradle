@@ -45,6 +45,10 @@ dependencies {
      */
     // Getter等のボイラープレートコードの自動生成（参考URL　http://www.coppermine.jp/docs/programming/2014/01/lombok.html）
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
+
+    providedRuntime "javax.el:javax.el-api:3.0.0"
+
+    providedRuntime "javax.servlet:javax.servlet-api:3.0.1"
 }
 
 /**
