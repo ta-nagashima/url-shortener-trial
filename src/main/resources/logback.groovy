@@ -14,9 +14,6 @@ import static ch.qos.logback.classic.Level.TRACE
  */
 def LOG_DIR_NAME = "sample"
 
-// ログ出力先ファイルパス
-def logFile = "/var/log/blc/tomcat/BIG0116_01/${LOG_DIR_NAME}/logs/application.log"
-
 // ログレベル
 def logLevel = DEBUG
 
@@ -26,22 +23,28 @@ def LOG_FORMAT = "%d{yyyy/MM/dd HH:mm:ss.SSS} %level [%thread] %logger{40} %mess
 // ログのデフォルト文字コード
 def DEFAULT_CHARSET = Charset.forName("UTF-8")
 
+def filePathPrefix = "/var/log/blc/tomcat/BIG0116_01/${LOG_DIR_NAME}/logs"
+
 // ローカルだけ設定を変更
 if (System.getProperty("os.name").startsWith("Mac")) {
-    logFile = "build/tomcat/logs/${LOG_DIR_NAME}-application.log"
+    filePathPrefix = "build/tomcat/${LOG_DIR_NAME}/logs/"
     logLevel = TRACE
 }
 
+
+// ログ出力先ファイルパス
+def filePath = "${filePathPrefix}/application.log"
+
 // ログファイルへのログ出力設定
 appender("FILE", RollingFileAppender) {
-    file = logFile
+    file = filePath
 
     encoder(PatternLayoutEncoder) {
         charset = DEFAULT_CHARSET
         pattern = LOG_FORMAT
     }
     rollingPolicy(TimeBasedRollingPolicy) {
-        fileNamePattern = file + ".%d{yyyy-MM-dd}"
+        fileNamePattern = "${filePath}.%d{yyyy-MM-dd}"
     }
 }
 

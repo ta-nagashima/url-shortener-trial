@@ -13,17 +13,6 @@
         <param-value>local</param-value>
     </context-param>
 
-
-    <!-- SpringでWebApplicationContextを使用するための設定 -->
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
-    <!-- リクエストスコープを使用するための設定 -->
-    <listener>
-        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
-    </listener>
-
-
     <!-- 文字コードを設定（参考：http://ameblo.jp/spring-beginner/entry-10232480113.html） -->
     <filter>
         <filter-name>characterEncodingFilter</filter-name>
@@ -53,8 +42,7 @@
         <!-- アプリケーションコンテキストの設定ファイルの場所を指定 -->
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <!-- TODO BOの環境も合わせて変更しなければいけないことかも？／関係ない可能性もあるが -->
-            <param-value>WEB-INF/applicationContext.xml</param-value>
+            <param-value>classpath:context.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

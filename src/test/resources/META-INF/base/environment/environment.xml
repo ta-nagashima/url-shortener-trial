@@ -16,10 +16,10 @@
           class="jp.co.biglobe.lib.essential.property.PropertyAccessor">
         <property name="locations">
             <list>
-                <value>classpath:properties/environment/${environment}.properties</value>
-                <value>classpath:properties/base/ddl-path.properties</value>
-                <value>classpath:properties/base/scenario.properties</value>
-                <value>classpath:properties/base/identifier.properties</value>
+                <value>classpath:META-INF/properties/environment/${environment}.properties</value>
+                <value>classpath:META-INF/properties/base/ddl-path.properties</value>
+                <value>classpath:META-INF/properties/base/scenario.properties</value>
+                <value>classpath:META-INF/properties/base/identifier.properties</value>
             </list>
         </property>
     </bean>

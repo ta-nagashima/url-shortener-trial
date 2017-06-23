@@ -57,8 +57,12 @@ dependencies {
 
 // 外部ライブラリ
 ext {
+    spockVersion = '1.1-groovy-2.4'
+
     junitDepVersion = '4.10'
+
     dbunitVersion = '2.4.9'
+
     cloningVersion = '1.9.0'
     jsonpathVersion = '0.8.1'
 
@@ -74,12 +78,14 @@ ext {
 
 dependencies {
 
-    // テスト 関連
-    // testCompile "junit:junit:4.11"
-    testCompile "junit:junit-dep:${junitDepVersion}" // 参照 http://futurismo.biz/archives/1172
+    // TestSuites 関連
+    testCompile "org.spockframework:spock-core:${spockVersion}"
 
     // Springのコントローラテストで必要
+    testCompile "org.spockframework:spock-spring:${spockVersion}"
     testCompile "org.springframework:spring-test:${springframeworkVersion}"
+
+    testCompile "junit:junit-dep:${junitDepVersion}" // 参照 http://futurismo.biz/archives/1172
 
     // DBテストで必要
     testCompile "org.dbunit:dbunit:${dbunitVersion}"
