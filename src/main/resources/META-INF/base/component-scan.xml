@@ -15,6 +15,8 @@
     |
     =========================================================================== -->
 
+    <context:component-scan base-package="jp.co.biglobe.lib.component.system"/>
+
 
     <!-- ISP領域標準API向けのJSONテンプレートを構築するコンポーネント
 
@@ -65,7 +67,8 @@
     ・jp.co.biglobe.lib.plugin.alarmmail.TransferMassageCreator
     ・jp.co.biglobe.lib.plugin.db.DbGlobalCache
      -->
-    <context:component-scan base-package="jp.co.biglobe.lib.component.processevent"/>
+    <context:component-scan base-package="jp.co.biglobe.lib.component.processevent.database"/>
+    <!--<context:component-scan base-package="jp.co.biglobe.lib.component.processevent.dummy"/>-->
 
     <!-- MyBatisのグローバル二次キャッシュを無効にするコンポーネント
 
@@ -84,7 +87,9 @@
     ・jp.co.biglobe.lib.plugin.alarmmail.SendAlarmMail;
     ・jp.co.biglobe.lib.plugin.alarmmail.TransferMassageCreator
      -->
-    <context:component-scan base-package="jp.co.biglobe.lib.component.exceptionhandler"/>
+    <context:component-scan base-package="jp.co.biglobe.lib.component.exception.handler"/>
+    <context:component-scan base-package="jp.co.biglobe.lib.component.exception.log"/>
+    <context:component-scan base-package="jp.co.biglobe.lib.component.exception.transfer"/>
 
     <!-- アラームメールを扱うコンポーネント
 

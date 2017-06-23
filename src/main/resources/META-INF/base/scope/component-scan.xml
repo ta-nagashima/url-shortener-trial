@@ -21,6 +21,7 @@
     【Autowiredコンポーネント】
     ・なし
      -->
-    <context:component-scan base-package="jp.co.biglobe.lib.scope.event"/>
+    <context:component-scan base-package="jp.co.biglobe.lib.component.event"/>
+    <context:component-scan base-package="jp.co.biglobe.lib.scope.event.thread"/>
 
 </beans>

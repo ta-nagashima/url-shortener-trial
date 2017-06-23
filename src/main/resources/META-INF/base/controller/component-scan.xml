@@ -28,6 +28,9 @@
          ExceptionHandlerの振る舞いを変更したい場合は、このcomponent-scanの
          base-packageを差し替えることによって実現する
      -->
-    <context:component-scan base-package="jp.co.biglobe.lib.essential.exceptionhandler"/>
+    <context:component-scan base-package="jp.co.biglobe.lib.component.controller"/>
+    <context:component-scan base-package="jp.co.biglobe.lib.essential.controller"/>
+
+    <bean class="jp.co.biglobe.lib.essential.api.scenario.ScenarioExecutorImpl"/>
 
 </beans>
