@@ -21,7 +21,7 @@ def logFile = "/var/log/blc/tomcat/BIG0116_01/${LOG_DIR_NAME}/logs/application.l
 def logLevel = DEBUG
 
 // ログの出力フォーマット
-def LOG_FORMAT = "%d{yyyy/MM/dd HH:mm:ss.SSS} [%level] [%thread] [%logger{0}] %message [%logger] %n"
+def LOG_FORMAT = "%d{yyyy/MM/dd HH:mm:ss.SSS} %level [%thread] %logger{40} %message%n"
 
 // ログのデフォルト文字コード
 def DEFAULT_CHARSET = Charset.forName("UTF-8")
