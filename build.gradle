@@ -1,5 +1,6 @@
 // プラグイン定義 利用できるタスク(gradle tasks)が増える
 plugins {
+    id "org.flywaydb.flyway" version "4.2.0"
     id "com.bmuschko.tomcat" version "2.2.5"
 }
 
@@ -13,9 +14,6 @@ apply from: file('etc/gradle/base/environment.gradle')
 
 // プロジェクト固有の設定
 apply from: file('etc/gradle/project.gradle')
-
-// cleanタスクの設定
-apply from: file('etc/gradle/base/clean.gradle')
 
 // Javaのコンパイル＆テストの設定
 apply from: file('etc/gradle/base/java.gradle')
@@ -34,3 +32,6 @@ apply from: file('etc/gradle/base/wrapper.gradle')
 
 // Jenkinsの設定
 apply from: file('etc/gradle/base/jenkins.gradle')
+
+// Flywayの設定
+apply from: file('etc/gradle/base/flyway.gradle')
